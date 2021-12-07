@@ -1,0 +1,57 @@
+.TH yMAP· 7 2013-jan "linux" "decision rationale, scope, and objectives"
+
+.SH NAME
+.B yMAP
+- vikeys location and map-mode management
+
+.SH PATRON
+.B theseus-archegos (founder)
+great greek hero and early king of athens
+
+.SH IMAGERY
+young, handsome, vigorous man armed only with sword and sandals
+
+.SH SUMMARY
+yMAP is a custom c library providing universal vikeys movement and location
+management for the map-mode -- including five-dimensional navigation in x-axis, 
+y-axis, z-axis, buffers, and time.
+
+.SH SERIOUS DISCLAIMER
+i'm a crazy, naive, dog-fooding c programmer.  i'm NOT trying to be best.
+i optimize for learning, transparency, and ease of maintenance.  if i wanted
+awesome, fast, and cutting-edge, i'd use yours ;)
+
+.SH DOCUMENTATION FILES (see also)
+.nf  
+yMAP·(3)           interfacing applications with library
+yMAP·(5)           user files, data streams, and configuration
+yMAP·(6)           interactive feel, usage, and navigation
+.B yMAP·(7)···········decision rationale, scope, and objectives
+yMAP·(9)           user interface behavior guarantees
+
+.SH FILE PURPOSE
+
+.SH TABLE OF CONTENTS
+.nf  
+
+.SH HISTORY
+around late 2009, i began building out a concept of standardizing around a
+single, universal standard for application look, feel, features, and usage.
+the purpose was a maximize my productivity and provide advanced features to
+all my applications.
+
+in early 2010 i started building the yVIKEYS library which would evolve
+to support both ncurses and opengl and provide almost everything i liked
+about vi/vim including modes, searching, editing, layers, menus, undo/redo,
+registers, command-line, hints, marks, keyboard macros.
+
+yVIKEYS was used to drive gyges (my ncurses spreadsheet), gregg (my opengl gregg
+shorthand interpreter), and metis (my opengl task manager) amoungst others.
+i learned alot about the programming interface and how to standardize even more.
+
+it got way too big to easily maintain and unit test with confidence, so
+in 2021 i split the library into a cluster of interdependent libraries that
+i could enhance, tighten, and unit test with more confidence.
+
+one of those sub-libraries is yMAP.
+

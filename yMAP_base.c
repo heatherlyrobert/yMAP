@@ -10,8 +10,8 @@ tMY         myMAP;
 
 
 char    (*g_mapper)    (char  a_type);
-char    (*g_locator)   (char *a_label, int *a_buf, int *a_x, int *a_y, int *a_z);
-char*   (*g_addresser) (char *a_label, int  a_buf, int  a_x, int  a_y, int  a_z);
+char    (*g_locator)   (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+char*   (*g_addresser) (char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
 
 
 
@@ -42,6 +42,61 @@ yMAP_version            (void)
 
 
 /*====================------------------------------------====================*/
+/*===----                  shared support functions                    ----===*/
+/*====================------------------------------------====================*/
+static void  o___SHARED__________o () { return; }
+
+char
+ymap_pick_map           (uchar a_axis, tyMAP **r_map, tGRID **r_grid)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   tyMAP      *x_map       = NULL;
+   tGRID      *x_grid      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_MAP   yLOG_senter  (__FUNCTION__);
+   /*---(map)----------------------------*/
+   DEBUG_MAP   yLOG_schar   (a_axis);
+   --rce;  switch (a_axis) {
+   case YMAP_UNIV :
+      x_map  = &g_umap;
+      x_grid = g_ugrid;
+      break;
+   case YMAP_XAXIS :
+      x_map  = &g_xmap;
+      x_grid = g_xgrid;
+      break;
+   case YMAP_YAXIS :
+      x_map  = &g_ymap;
+      x_grid = g_ygrid;
+      break;
+   case YMAP_ZAXIS :
+      x_map  = &g_zmap;
+      x_grid = g_zgrid;
+      break;
+   case YMAP_WHEN :
+      x_map  = &g_wmap;
+      x_grid = g_wgrid;
+      break;
+   default  :
+      DEBUG_MAP   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_MAP   yLOG_spoint  (x_map);
+   DEBUG_MAP   yLOG_spoint  (x_grid);
+   /*---(save back)----------------------*/
+   DEBUG_MAP   yLOG_spoint  (r_map);
+   if (r_map  != NULL)  *r_map  = x_map;
+   DEBUG_MAP   yLOG_spoint  (r_grid);
+   if (r_grid != NULL)  *r_grid = x_grid;
+   /*---(complete)-----------------------*/
+   DEBUG_MAP   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
 /*===----                        program level                         ----===*/
 /*====================------------------------------------====================*/
 static void  o___PROGRAM_________o () { return; }
@@ -59,15 +114,22 @@ yMAP_init              (void)
       DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(header)-------------------------*/
+   /*---(globals)------------------------*/
    DEBUG_PROG   yLOG_note    ("default globals");
    myMAP.orient = YMAP_OFFICE;
    g_mapper     = NULL;
+   g_locator    = NULL;
+   g_addresser  = NULL;
+   /*---(clear)--------------------------*/
    DEBUG_PROG   yLOG_note    ("map clearing");
-   ymap_factory (&g_bmap, YMAP_BMAP);
-   ymap_factory (&g_xmap, YMAP_XMAP);
-   ymap_factory (&g_ymap, YMAP_YMAP);
-   ymap_factory (&g_zmap, YMAP_ZMAP);
+   ymap_mapinit (YMAP_UNIV);
+   ymap_mapinit (YMAP_XAXIS);
+   ymap_mapinit (YMAP_YAXIS);
+   ymap_mapinit (YMAP_ZAXIS);
+   ymap_mapinit (YMAP_WHEN);
+   /*---(visual)-------------------------*/
+   DEBUG_PROG   yLOG_note    ("visual setup");
+   ymap_visu_init ();
    /*---(update status)------------------*/
    yMODE_init_set   (MODE_MAP, NULL, ymap_mode);
    DEBUG_PROG   yLOG_exit    (__FUNCTION__);
@@ -104,55 +166,156 @@ yMAP_config             (char a_orient, void *a_mapper, void *a_locator, void *a
    return 0;
 }
 
+char         /*-> turn label into coordinates --------[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
+ymap_locator            (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         rce         =    0;
+   int         rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MAP_M yLOG_enter   (__FUNCTION__);
+   /*---(check locator)------------------*/
+   DEBUG_MAP_M yLOG_point   ("g_locator"  , g_locator);
+   --rce;  if (g_locator == NULL) {
+      DEBUG_MAP_M yLOG_exitr   (__FUNCTION__,rce);
+      return rce;
+   }
+   /*---(display input)------------------*/
+   DEBUG_MAP_M yLOG_point   ("a_label"   , a_label);
+   if (a_label != NULL)  DEBUG_MAP_M yLOG_info    ("a_label"   , a_label);
+   DEBUG_MAP_M yLOG_point   ("u"     , u);
+   if (u       != NULL)  DEBUG_MAP_M yLOG_value   ("*u"        , *u);
+   DEBUG_MAP_M yLOG_point   ("x"       , x);
+   if (x       != NULL)  DEBUG_MAP_M yLOG_value   ("*x"        , *x);
+   DEBUG_MAP_M yLOG_point   ("y"       , y);
+   if (y       != NULL)  DEBUG_MAP_M yLOG_value   ("*y"        , *y);
+   DEBUG_MAP_M yLOG_point   ("z"       , z);
+   if (z       != NULL)  DEBUG_MAP_M yLOG_value   ("*z"        , *z);
+   /*---(call locator)-------------------*/
+   rc = g_locator (a_label, u, x, y, z);
+   DEBUG_MAP   yLOG_value   ("locator"   , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_MAP_M yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(display output)-----------------*/
+   if (u != NULL)  DEBUG_MAP_M yLOG_value   ("*u", *u);
+   if (x != NULL)  DEBUG_MAP_M yLOG_value   ("*x", *x);
+   if (y != NULL)  DEBUG_MAP_M yLOG_value   ("*y", *y);
+   if (z != NULL)  DEBUG_MAP_M yLOG_value   ("*z", *z);
+   /*---(complete)-----------------------*/
+   DEBUG_MAP_M yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
+char         /*-> turn coordinates into label --------[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
+ymap_addresser          (char *a_label, ushort u, ushort x, ushort y, ushort z)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_MAP   yLOG_enter   (__FUNCTION__);
+   /*---(check addresser)----------------*/
+   DEBUG_MAP   yLOG_point   ("addresser" , g_addresser);
+   --rce;  if (g_addresser == NULL)  {
+      strlcpy (a_label, "-", LEN_LABEL);
+      DEBUG_MAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(display input)------------------*/
+   DEBUG_MAP   yLOG_point   ("a_label"   , a_label);
+   DEBUG_MAP   yLOG_value   ("u"         , u);
+   DEBUG_MAP   yLOG_value   ("x"         , x);
+   DEBUG_MAP   yLOG_value   ("y"         , y);
+   DEBUG_MAP   yLOG_value   ("z"         , z);
+   /*---(call locator)-------------------*/
+   rc = g_addresser (a_label, u, x, y, z);
+   DEBUG_MAP   yLOG_value   ("addresser" , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_MAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(display output)-----------------*/
+   if (a_label != NULL)  DEBUG_MAP   yLOG_info    ("a_label"   , a_label);
+   /*---(complete)-----------------------*/
+   DEBUG_MAP   yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
 char
-yVIEW_wrap              (void)
+ymap_valid              (ushort u, ushort x, ushort y, ushort z)
+{
+   char        rce         =  -10;
+   --rce;  if (u < g_umap.gmin || u > g_umap.gmax)  return rce;
+   --rce;  if (x < g_xmap.gmin || x > g_xmap.gmax)  return rce;
+   --rce;  if (y < g_ymap.gmin || y > g_ymap.gmax)  return rce;
+   --rce;  if (z < g_zmap.gmin || z > g_zmap.gmax)  return rce;
+   return 0;
+}
+
+char
+yMAP_current            (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z)
+{
+   char        rce         =  -10;
+   char        rc          =    0;
+   --rce;  if (a_label != NULL) {
+      rc = ymap_addresser (a_label, g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);
+      if (rc < 0) return rce;
+   }
+   if (u  != NULL)  *u  = g_umap.gcur;
+   if (x  != NULL)  *x  = g_xmap.gcur;
+   if (y  != NULL)  *y  = g_ymap.gcur;
+   if (z  != NULL)  *z  = g_zmap.gcur;
+   return 0;
+}
+
+char
+yMAP_current_unit       (ushort *u, ushort *x, ushort *y, ushort *z)
+{
+   if (u  != NULL)  *u  = g_umap.ucur;
+   if (x  != NULL)  *x  = g_xmap.ucur;
+   if (y  != NULL)  *y  = g_ymap.ucur;
+   if (z  != NULL)  *z  = g_zmap.ucur;
+   return 0;
+}
+
+char
+ymap_remap              (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_MAP   yLOG_enter   (__FUNCTION__);
+   /*---(update)-------------------------*/
+   DEBUG_MAP   yLOG_point   ("g_mapper"  , g_mapper);
+   if (g_mapper != NULL) {
+      DEBUG_MAP   yLOG_note    ("calling source program mapper");
+      g_mapper (YMAP_UPDATE);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_MAP   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+yMAP_refresh            (void)
+{
+   /*---(update)-------------------------*/
+   ymap_remap ();
+   /*---(refresh position)---------------*/
+   yMAP_update (YMAP_UNIV);
+   yMAP_update (YMAP_XAXIS);
+   yMAP_update (YMAP_YAXIS);
+   /*> yMAP_update (YMAP_ZAXIS);                                                      <*/
+   /*> yvikeys__map_vert (' ', '©');                                                  <* 
+    *> yvikeys__map_horz (' ', '©');                                                  <*/
+   /*> clear     ();                                                                  <*/
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char
+yMAP_wrap               (void)
 {
    return 0;
 }
 
-
-
-
-/*====================------------------------------------====================*/
-/*===----                         unit testing                         ----===*/
-/*====================------------------------------------====================*/
-static void  o___UNIT_TEST_______o () { return; }
-
-char           unit_answer [LEN_FULL];
-
-char       /*----: set up program urgents/debugging --------------------------*/
-ymap__unit_quiet         (void)
-{
-   int         x_narg       = 1;
-   char       *x_args [20]  = {"yMAP_unit" };
-   ymap_init ();
-   return 0;
-}
-
-char       /*----: set up program urgents/debugging --------------------------*/
-ymap__unit_loud          (void)
-{
-   int         x_narg       = 1;
-   char       *x_args [20]  = {"yMAP_unit" };
-   yURG_logger   (x_narg, x_args);
-   yURG_urgs     (x_narg, x_args);
-   yURG_name  ("kitchen"      , YURG_ON);
-   yURG_name  ("edit"         , YURG_ON);
-   yURG_name  ("ystr"         , YURG_ON);
-   yURG_name  ("ymode"        , YURG_ON);
-   yURG_name  ("mode"         , YURG_ON);
-   yURG_name  ("cmds"         , YURG_ON);
-   DEBUG_CMDS  yLOG_info     ("yMAP"     , yMAP_version   ());
-   ymap_init ();
-   return 0;
-}
-
-char       /*----: stop logging ----------------------------------------------*/
-ymap__unit_end           (void)
-{
-   DEBUG_CMDS  yLOG_enter   (__FUNCTION__);
-   yMAP_wrap   ();
-   DEBUG_CMDS  yLOG_exit    (__FUNCTION__);
-   yLOGS_end    ();
-   return 0;
-}

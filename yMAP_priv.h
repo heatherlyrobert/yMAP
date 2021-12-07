@@ -11,12 +11,12 @@
 
 #define     P_FOCUS     "RS (run-time support)"
 #define     P_NICHE     "us (user control)"
-#define     P_SUBJECT   "vikeys location management"
+#define     P_SUBJECT   "vi-keys location management"
 #define     P_PURPOSE   ""
 
 #define     P_NAMESAKE  "theseus"
 #define     P_HERITAGE  ""
-#define     P_IMAGERY   ""
+#define     P_IMAGERY   "young, handsome, vigorous man armed only with sword and sandals"
 #define     P_REASON    ""
 
 #define     P_ONELINE   P_NAMESAKE " " P_SUBJECT
@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, complete and tie yVIKEYS back into it"
-#define     P_VERNUM    "2.0a"
-#define     P_VERTXT    "initial split of code"
+#define     P_VERNUM    "2.0b"
+#define     P_VERTXT    "updates based on gyges and changes to other libraries"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -55,11 +55,113 @@
 #include    <yURG.h>              /* heatherly urgent processing              */
 #include    <yLOG.h>              /* heatherly program logging                */
 #include    <ySTR.h>              /* heatherly string processing              */
-/*---(custom vikeys)---------------------*/
-#include    <yKEYS.h>             /* heatherly vikeys key handling            */
-#include    <yMODE.h>             /* heatherly vikeys mode tracking           */
-#include    <yVIEW.h>             /* heatherly vikeys view management         */
+/*---(custom vi-keys)--------------------*/
+#include    <yKEYS.h>             /* heatherly vi-keys key handling            */
+#include    <yMODE.h>             /* heatherly vi-keys mode tracking           */
+#include    <yVIEW.h>             /* heatherly vi-keys view management         */
+#include    <yMACRO.h>            /* heatherly vi-keys macro processing        */
+#include    <ySRC.h>              /* heatherly vi-keys source editing         */
+#include    <yDLST_solo.h>        /* heatherly double-double-list             */
 
+
+
+typedef  struct  cGRID    tGRID;
+struct cGRID {
+   short       ref;                    /* host name for grid item             */
+   uchar       wide;                   /* width of grid                       */
+   uchar       used;                   /* content classification              */
+   ushort      unit;                   /* tie to map                          */
+};
+tGRID       *g_ugrid;   /* universe/buffer  */
+tGRID       *g_xgrid;   /* x-axis           */
+tGRID       *g_ygrid;   /* y-axis           */
+tGRID       *g_zgrid;   /* z-axis           */
+tGRID       *g_wgrid;   /* when/time        */
+
+typedef  struct cyMAP  tyMAP;
+struct cyMAP {
+   /*---(identity)-------------*/
+   uchar       axis;                        /* b, x, y, z, or t               */
+   uchar       inc;                         /* normal movement increment      */
+   /*---(lefts)----------------*/
+   ushort      umin;                        /* lowest map position            */
+   ushort      gmin;                        /* global min, used or not        */
+   ushort      gamin;                       /* min of all used space          */
+   ushort      glmin;                       /* min for col/row                */
+   ushort      gprev;                       /* prev change for "end"          */
+   /*---(current)--------------*/
+   ushort      glen;                        /* length of grid                 */
+   tGRID      *grid;                        /* pointer to grid                */
+   ushort      mlen;                        /* length of map                  */
+   ushort     *map;                         /* full unit map                  */
+   /*---(middles)--------------*/
+   ushort      gavg;                        /* average position in local      */
+   ushort      gmid;                        /* average position of limits     */
+   /*---(rights)---------------*/
+   ushort      gnext;                       /* next change for "end"          */
+   ushort      glmax;                       /* max for col/row                */
+   ushort      gamax;                       /* max of all used space          */
+   ushort      gmax;                        /* global max, used or not        */
+   ushort      umax;                        /* highest map position           */
+   /*---(screen units)---------*/
+   ushort      ubeg;                        /* beg abs pos shown on screen    */
+   ushort      ucur;                        /* cur abs pos shown on screen    */
+   ushort      uend;                        /* end abs pos shown on screen    */
+   ushort      ulen;                        /* len shown on screen (end-beg+1)*/
+   ushort      utend;                       /* theoretical end of screen      */
+   ushort      uavail;                      /* full availible room on screen  */
+   /*---(screen grids)---------*/
+   short       gbeg;                        /* grid at start of screen        */
+   short       gcur;                        /* current grid position          */
+   short       gend;                        /* grid at end of screen          */
+   /*---(done)-----------------*/
+};
+tyMAP        g_umap;
+tyMAP        g_xmap;
+tyMAP        g_ymap;
+tyMAP        g_zmap;
+tyMAP        g_wmap;
+
+
+
+#define     S_VISU_MAX     100
+#define     VISU_NOT       '-'
+#define     VISU_YES       'y'
+
+typedef     struct cVISU    tVISU;
+struct cVISU {
+   /*---(flag)---------------------------*/
+   uchar       abbr;
+   char        active;
+   char        modded;
+   /*---(root)---------------------------*/
+   ushort      u_all;
+   ushort      x_root;
+   ushort      y_root;
+   ushort      z_root;
+   /*---(begin)--------------------------*/
+   ushort      x_beg;
+   ushort      y_beg;
+   ushort      z_beg;
+   /*---(end)----------------------------*/
+   ushort      x_end;
+   ushort      y_end;
+   ushort      z_end;
+   /*---(labels)-------------------------*/
+   char        b_label     [LEN_LABEL];
+   char        e_label     [LEN_LABEL];
+   /*---(special)------------------------*/
+   char        x_lock;
+   char        y_lock;
+   char        z_lock;
+   char        source;
+   /*---(end)----------------------------*/
+};
+extern      tVISU       s_visus     [S_VISU_MAX];
+extern      char        s_nvisu;
+extern      char        S_VISU_LIST [S_VISU_MAX];
+extern      tVISU      *s_curr;
+extern      tVISU      *s_prev;
 
 
 
@@ -67,20 +169,157 @@
 typedef    struct    cMY    tMY;
 struct cMY {
    char        orient;            /* normal (down = neg) office (down = pos)  */
+   uchar       v_head;
+   uchar       v_curr;
+   uchar       v_tail;
 };
 extern tMY         myMAP;
 
+#define     YMAP_MAX       65000
+
+
+extern char        g_print     [LEN_RECD];
+
+
+
 extern char    (*g_mapper)    (char  a_type);
-extern char    (*g_locator)   (char *a_label, int *a_buf, int *a_x, int *a_y, int *a_z);
-extern char*   (*g_addresser) (char *a_label, int  a_buf, int  a_x, int  a_y, int  a_z);
+extern char    (*g_locator)   (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+extern char*   (*g_addresser) (char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
 
 
-/*===[[ yVIEW_base.c ]]=======================================================*/
+
+/*===[[ yMAP_base.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char*       yMAP_version            (void);
+/*---(shared)---------------*/
+char        ymap_pick_map           (uchar a_axis, tyMAP **r_map, tGRID **r_grid);
+char        ymap_grid_set           (uchar a_axis, tyMAP *a_map, tGRID *a_grid);
+char        ymap_grid_free          (uchar a_full, uchar a_axis);
+char        ymap_grid_clear         (tGRID *a_grid, ushort a_len);
+char        yMAP_init               (void);
+char        ymap_locator            (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+char        ymap_valid              (ushort u, ushort x, ushort y, ushort z);
+char        ymap_remap              (void);
+char        ymap_refresh            (void);
+char        yMAP_wrap               (void);
+
+
+
+/*===[[ yMAP_load.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*---(program)--------------*/
-char        ymap__clear             (char a_full, tMAP *a_map, char a_which);
-char        ymap_factory            (tMAP *a_map, char a_which);
-char        ymap_load               (char a_style, tMAP *a_map);
+char        ymap__clear             (uchar a_full, uchar a_axis);
+char        ymap_mapinit            (uchar a_axis);
+char        ymap_factory            (uchar a_axis);
+char        yMAP_clear              (uchar a_axis);
+int         ymap_grid_walk          (tyMAP *a_map);
+
+
+
+/*===[[ yMAP_mode.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        ymap_mode               (uchar a_major, uchar a_minor);
+
+
+
+/*===[[ yMAP_move.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(translate)------------*/
+char        ymap_office             (uchar a_axis, uchar *r_minor);
+char        ymap_corners            (uchar a_src, uchar a_axis, char *r_minor);
+/*---(placement)------------*/
+char        ymap__grid_up           (tyMAP *a_map, short a_count);
+char        ymap__grid_down         (tyMAP *a_map, short a_count);
+char        ymap__grid_at           (tyMAP *a_map, ushort a_unit, char a_limit);
+/*---(general)--------------*/
+char        ymap_simple             (tyMAP *a_map, uchar a_minor);
+char        ymap_goto               (tyMAP *a_map, uchar a_minor);
+char        ymap_scroll             (tyMAP *a_map, uchar a_minor);
+char        ymap_ends               (tyMAP *a_map, uchar a_minor);
+/*---(driver)---------------*/
+char        ymap_move_hmode         (uchar a_major, uchar a_minor);
+/*---(done)-----------------*/
+
+
+
+/*===[[ yMAP_display.c ]]=====================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(align)----------------*/
+char        ymap__align2left        (tyMAP *a_map, ushort *a_pos);
+char        ymap__align2right       (tyMAP *a_map, ushort *a_pos);
+char        ymap__align2next        (tyMAP *a_map, ushort *a_pos);
+/*---(screen)---------------*/
+char        ymap_update_grid        (tyMAP *a_map);
+char        ymap__screen_small      (tyMAP *a_map);
+char        ymap__screen_beg        (tyMAP *a_map);
+char        ymap__screen_end        (tyMAP *a_map);
+/*---(support)--------------*/
+char        ymap_display            (tyMAP *a_map);
+/*---(unittest)-------------*/
+char        ymap_display_show       (tyMAP *a_map, char *a_disp);
+char        ymap_display_map        (tyMAP *a_map, char *a_disp);
+char        ymap_display_units      (tyMAP *a_map, char *a_disp);
+
+
+
+/*===[[ yMAP_visual.c ]]======================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(utility)--------------*/
+char        ymap_visu_valid         (uchar a_abbr);
+char        ymap_visu_index         (uchar a_abbr);
+/*---(helpers)--------------*/
+char        ymap__visu_wipe         (uchar a_abbr);
+char        ymap__visu_copy         (uchar a_dst, uchar a_src);
+char        ymap_visu_update        (void);
+/*---(program)--------------*/
+char        ymap_visu_purge         (char a_scope);
+char        ymap_visu_init          (void);
+/*---(quick)----------------*/
+char        ymap_visu_getlive       (void);
+char        ymap_visu_islive        (void);
+char        ymap_visu_isdead        (void);
+char        ymap_visu_makelive      (void);
+/*---(setting)--------------*/
+char        ymap_visu_clear         (void);
+char        ymap_visu_exact         (ushort u, ushort xb, ushort xe, ushort yb, ushort ye, ushort zb, ushort ze);
+char        ymap_visu_reverse       (void);
+char        ymap_visu_locking       (char a_type);
+/*---(history)--------------*/
+char        ymap__visu_save         (uchar a_abbr);
+/*---(cursor)---------------*/
+char        yMAP_visu_range         (ushort *u, ushort *xb, ushort *xe, ushort *yb, ushort *ye, ushort *zb, ushort *ze);
+char        yMAP_visu_first         (ushort *u, ushort *x, ushort *y, ushort *z);
+char        yMAP_visu_next          (ushort *u, ushort *x, ushort *y, ushort *z);
+/*---(status)---------------*/
+char        yMAP_root               (ushort u, ushort x, ushort y, ushort z);
+char        yMAP_visual             (ushort u, ushort x, ushort y, ushort z);
+/*---(umode)----------------*/
+char        ymap_visu_hmode         (uchar a_major, uchar a_minor);
+char        ymap_visu_umode         (uchar a_major, uchar a_minor);
+/*---(done)-----------------*/
+
+
+
+/*===[[ yMAP_test.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(load)-----------------*/
+char        ymap__unit_load         (uchar a_axis, uchar a_style);
+char        ymap__unit_full         (uchar a_axis, uchar a_style);
+char*       ymap_print              (uchar a_axis);
+char*       ymap_print_grid         (uchar a_axis);
+/*---(driver)---------------*/
+char        ymap__unit_quiet        (void);
+char        ymap__unit_loud         (void);
+char        ymap__unit_end          (void);
+/*---(mock)-----------------*/
+char        ymap__unit_map_general  (void);
+char        ymap__unit_mapper       (char a_type);
+char        ymap__unit_locator      (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+char        ymap__unit_addresser    (char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
+/*---(accessor)-------------*/
+char*       yMAP__unit              (char *a_question, char a_index);
+/*---(done)-----------------*/
+
 
 
 #endif
