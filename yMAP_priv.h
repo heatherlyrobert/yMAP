@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, complete and tie yVIKEYS back into it"
-#define     P_VERNUM    "2.0b"
-#define     P_VERTXT    "updates based on gyges and changes to other libraries"
+#define     P_VERNUM    "2.0c"
+#define     P_VERTXT    "mundo integrated and unit tested locally"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -56,12 +56,15 @@
 #include    <yLOG.h>              /* heatherly program logging                */
 #include    <ySTR.h>              /* heatherly string processing              */
 /*---(custom vi-keys)--------------------*/
-#include    <yKEYS.h>             /* heatherly vi-keys key handling            */
-#include    <yMODE.h>             /* heatherly vi-keys mode tracking           */
-#include    <yVIEW.h>             /* heatherly vi-keys view management         */
-#include    <yMACRO.h>            /* heatherly vi-keys macro processing        */
+#include    <yKEYS.h>             /* heatherly vi-keys key handling           */
+#include    <yMODE.h>             /* heatherly vi-keys mode tracking          */
+#include    <yVIEW.h>             /* heatherly vi-keys view management        */
+#include    <yMACRO.h>            /* heatherly vi-keys macro processing       */
 #include    <ySRC.h>              /* heatherly vi-keys source editing         */
+#include    <yFILE.h>             /* heatherly vi-keys content file handling  */
+/*---(custom other)----------------------*/
 #include    <yDLST_solo.h>        /* heatherly double-double-list             */
+/*---(done)------------------------------*/
 
 
 
@@ -164,27 +167,59 @@ extern      tVISU      *s_curr;
 extern      tVISU      *s_prev;
 
 
+#define     YMAP_MAX       65000
+
+
+typedef   struct cHIST  tHIST;
+#define     MAX_HIST    100000
+struct cHIST {
+   uchar       mode;
+   uchar       act;
+   uchar      *label;
+   uchar      *before;
+   uchar      *after;
+   tHIST      *h_prev;
+   tHIST      *h_next;
+};
+
 
 
 typedef    struct    cMY    tMY;
 struct cMY {
    char        orient;            /* normal (down = neg) office (down = pos)  */
+   char      (*e_mapper)     (char  a_type);
+   char      (*e_locator)    (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+   char*     (*e_addresser)  (char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
    uchar       v_head;
    uchar       v_curr;
    uchar       v_tail;
+   /*---(mreg)-----------------*/
+   char      (*e_regkill)    (void *a_thing);
+   void*     (*e_copier)     (char a_type, long a_stamp);
+   char      (*e_clearer)    (char a_1st, int b, int x, int y, int z);
+   char      (*e_router)     (void *a_thing, char *a_list);
+   char      (*e_paster)     (char a_regs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, void *a_thing, char *a_list);
+   char      (*e_finisher)   (int a_boff, int a_xoff, int a_yoff, int a_zoff, void *a_thing);
+   char      (*e_exim)       (char a_dir, char a_style);
+   /*---(mundo/hist)-----------*/
+   uchar       h_active;               /* history is active y/-               */
+   tHIST      *h_head;
+   tHIST      *h_curr;
+   tHIST      *h_tail;
+   int         h_count;
+   int         h_index;
+   char        h_len;
+   char      (*e_mundo)      (char a_dir, char a_act, char *a_label, char *a_format, char *a_content);
+   /*---(debugging)------------*/
+   char        g_print     [LEN_RECD];      /* printable for testing          */
 };
 extern tMY         myMAP;
-
-#define     YMAP_MAX       65000
 
 
 extern char        g_print     [LEN_RECD];
 
 
 
-extern char    (*g_mapper)    (char  a_type);
-extern char    (*g_locator)   (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
-extern char*   (*g_addresser) (char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
 
 
 
@@ -303,6 +338,7 @@ char        ymap_visu_umode         (uchar a_major, uchar a_minor);
 /*===[[ yMAP_test.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*---(load)-----------------*/
+char        ymap__unit_massive      (void);
 char        ymap__unit_load         (uchar a_axis, uchar a_style);
 char        ymap__unit_full         (uchar a_axis, uchar a_style);
 char*       ymap_print              (uchar a_axis);
@@ -316,11 +352,83 @@ char        ymap__unit_map_general  (void);
 char        ymap__unit_mapper       (char a_type);
 char        ymap__unit_locator      (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
 char        ymap__unit_addresser    (char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
+/*---(mreg)-----------------*/
+char        ymap__unit_base         (void);
+char        ymap__unit_config       (void);
+char*       ymap__unit_orig         (void);
+char*       ymap__unit_reqs         (void);
+char*       ymap__unit_adds         (void);
+char*       ymap__unit_mreg         (void);
+/*---(mundo)----------------*/
+char        ymap__unit_mundo        (char a_dir, char a, char *l, char *f, char *c);
 /*---(accessor)-------------*/
 char*       yMAP__unit              (char *a_question, char a_index);
 /*---(done)-----------------*/
 
 
 
-#endif
+/*===[[ yMAP_mreg.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(support)--------------*/
+char        ymap__mreg_valid        (char a_abbr);
+char        ymap__mreg_by_abbr      (char a_abbr);
+/*---(memory)---------------*/
+char        ymap__mreg_new          (char a_abbr, void *a_item, char *a_label);
+char        ymap__mreg_wipe         (char a_abbr, char a_scope);
+char        ymap__mreg_set          (char a_abbr);
+char        ymap__mreg_reset        (void);
+char        ymap_mreg_curr          (void);
+/*---(program)--------------*/
+char        ymap_mreg_purge         (char a_scope);
+char        ymap_mreg_init          (void);
+char        yMAP_mreg_config        (void *a_clearer, void *a_copier, void *a_router, void *a_paster, void *a_finisher, void *a_regkill, void *a_exim);
+char        ymap_mreg_wrap          (void);
+/*---(attach)---------------*/
+char        yMAP_mreg_add           (void *a_thing, char *a_label);
+char        ymap_mreg_save          (void);
+char*       ymap_mreg_list          (char a_abbr);
+char*       ymap_mreg_detail        (char a_abbr);
+/*---(actions)--------------*/
+char        ymap_mreg_clear         (void);
+char        ymap_mreg_clear_combo   (void);
+char        ymap_mreg_paste         (char *a_type);
+char        ymap_mreg_paste_combo   (char *a_type);
+char        ymap_mreg_visual        (void);
+/*---(mode)-----------------*/
+char        ymap_mreg_smode         (uchar a_major, uchar a_minor);
+/*---(done)-----------------*/
 
+
+
+/*===[[ yMAP_mreg.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(memory)---------------*/
+char        ymap__mundo_new         (char a_mode, char a_type, char *a_label, tHIST **r_curr);
+char        ymap__mundo_free        (tHIST **r_curr);
+/*---(program)--------------*/
+char        ymap_mundo_init         (void);
+char        ymap__mundo_prune       (char a_type);
+char        ymap_mundo_wrap         (void);
+/*---(search)---------------*/
+char        ymap__mundo_by_cursor   (char a_move);
+char        ymap__mundo_by_index    (int n);
+char*       ymap_mundo_action       (char a_mode, char a_act);
+/*---(undo/redo)------------*/
+char        ymap__mundo_parse       (char a_act, char *a_field, char *a_format, char *a_content);
+char        ymap_mundo_undo         (void);
+char        ymap_mundo_redo         (void);
+/*---(mode)-----------------*/
+char        ymap_mundo_hmode        (uchar a_major, uchar a_minor);
+/*---(done)-----------------*/
+
+
+
+/*===[[ yMAP_rptg.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char*       ymap_mundo_detail       (int n);
+char        ymap_mundo_dump         (FILE *f);
+
+
+
+
+#endif

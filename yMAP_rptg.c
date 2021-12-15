@@ -176,3 +176,58 @@ yMAP_visu_status        (char a_size, short a_wide, char *a_list)
 
 
 
+/*====================------------------------------------====================*/
+/*===----                      mundo reporting                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___MUNDO___________o () { return; }
+
+char*
+ymap_mundo_detail       (int n)
+{
+   int         c           =    0;
+   tHIST      *x_curr      = NULL;
+   char        s           [LEN_HUND]  = "";
+   char        t           [LEN_HUND]  = "";
+   if      (n == -1)  n  = myMAP.h_index;
+   else if (n <  0)   return "n/a";
+   x_curr = myMAP.h_head;
+   while (x_curr != NULL) {
+      if (c == n) {
+         sprintf (s, "%2då%-.30sæ", strlen (x_curr->before), x_curr->before);
+         sprintf (t, "%2då%-.30sæ", strlen (x_curr->after ), x_curr->after );
+         sprintf (myMAP.g_print, "%-2d  %c  %c  %-6.6s  %-34.34s  %s",
+               c, x_curr->mode, x_curr->act, x_curr->label, s, t);
+         return myMAP.g_print;
+      }
+      x_curr = x_curr->h_next;
+      ++c;
+   }
+   return "n/a";
+}
+
+char         /*-> list history -----------------------[ leaf   [ge.740.042.20]*/ /*-[03.0000.103.!]-*/ /*-[--.---.---.--]-*/
+ymap_mundo_dump         (FILE *f)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         c           = 0;
+   tHIST      *x_curr      = NULL;
+   /*---(print)--------------------------*/
+   fprintf (f, "s_count = %d\n" , myMAP.h_count);
+   fprintf (f, "s_index = %d\n" , myMAP.h_index);
+   x_curr = myMAP.h_head;
+   while (x_curr != NULL) {
+      if (c % 5 == 0)  fprintf (f, "\n-ref- § m a § ---action----- § --label--- § ---before----------------------------------------- § ---after------------------------------------------ §\n");
+      fprintf (f, "%-5d § %c § %c § %-12.12s § %-10.10s § %-50.50s § %-50.50s §\n",
+            c, x_curr->mode, x_curr->act,
+            ymap_mundo_action (x_curr->mode, x_curr->act),
+            x_curr->label, x_curr->before, x_curr->after);
+      ++c;
+      x_curr = x_curr->h_next;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+
+
+

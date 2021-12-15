@@ -289,6 +289,13 @@ ymap_mode               (uchar a_major, uchar a_minor)
       DEBUG_USER   yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
+   /*---(mundo)--------------------------*/
+   rc = ymap_mundo_hmode  (a_major, a_minor);
+   DEBUG_USER   yLOG_value   ("mundo"     , rc);
+   if (rc != 0) {
+      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rc);
+      return 0;
+   }
    /*---(single key)---------------------*/
    DEBUG_USER   yLOG_note    ("review single keys");
    /*> --rce;                                                                         <* 

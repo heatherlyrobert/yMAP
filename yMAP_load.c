@@ -367,9 +367,9 @@ yMAP_size               (uchar a_axis, ushort a_len)
    x_map->glen    = a_len;
    /*---(show)---------------------------*/
    DEBUG_MAP    yLOG_value   ("glen"      , x_map->glen);
-   for (i = 0; i < x_map->glen; ++i) {
-      DEBUG_MAP   yLOG_complex ("auditing"  , "%3d, %6d, %2d, %c", i, x_new [i].ref, x_new [i].wide, x_new [i].used);
-   }
+   /*> for (i = 0; i < x_map->glen; ++i) {                                                                                  <* 
+    *>    DEBUG_MAP   yLOG_complex ("auditing"  , "%3d, %6d, %2d, %c", i, x_new [i].ref, x_new [i].wide, x_new [i].used);   <* 
+    *> }                                                                                                                    <*/
    /*---(complete)-----------------------*/
    DEBUG_MAP   yLOG_exit    (__FUNCTION__);
    return 0;

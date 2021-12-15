@@ -8,7 +8,7 @@ NAME_BASE  = yMAP
 # additional standard and outside libraries
 LIB_STD    = -lm
 # all heatherly libraries used, debug versions whenever available
-LIB_MINE   = -lyKEYS_debug -lyMODE_debug -lyVIEW_debug -lyMACRO_debug -lySRC_debug -lySTR_debug
+LIB_MINE   = -lyKEYS_debug -lyMODE_debug -lyVIEW_debug -lyMACRO_debug -lySRC_debug -lyFILE_debug -lySTR_debug
 # directory for production code, no trailing slash
 INST_DIR   = 
 

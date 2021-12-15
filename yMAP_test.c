@@ -176,6 +176,58 @@ struct {
 };
 
 char
+ymap__unit_massive      (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   int         i           =    0;
+   int         c           =    0;
+   tGRID      *x_grid      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_MAP   yLOG_enter   (__FUNCTION__);
+   /*---(univers)------------------------*/
+   DEBUG_MAP   yLOG_note    ("universe");
+   c = 40;
+   rc = yMAP_size (YMAP_UNIV, c);
+   rc = ymap_pick_map (YMAP_UNIV, NULL, &x_grid);
+   DEBUG_MAP   yLOG_note    ("load data");
+   for (i = 0; i < c; ++i) {
+      DEBUG_MAP   yLOG_value   ("grid"     , i);
+      x_grid [i].ref  = i;
+      x_grid [i].wide = 1;
+      x_grid [i].used = '·';
+   }
+   rc = yMAP_update     (YMAP_UNIV);
+   /*---(x/col)--------------------------*/
+   DEBUG_MAP   yLOG_note    ("xaxis");
+   c = 500;
+   rc = yMAP_size (YMAP_XAXIS, c);
+   rc = ymap_pick_map (YMAP_XAXIS, NULL, &x_grid);
+   DEBUG_MAP   yLOG_note    ("load data");
+   for (i = 0; i < c; ++i) {
+      x_grid [i].ref  = i;
+      x_grid [i].wide = 1;
+      x_grid [i].used = '·';
+   }
+   rc = yMAP_update     (YMAP_XAXIS);
+   /*---(y/row)--------------------------*/
+   DEBUG_MAP   yLOG_note    ("yaxis");
+   c = 500;
+   rc = yMAP_size (YMAP_YAXIS, c);
+   rc = ymap_pick_map (YMAP_YAXIS, NULL, &x_grid);
+   DEBUG_MAP   yLOG_note    ("load data");
+   for (i = 0; i < c; ++i) {
+      x_grid [i].ref  = i;
+      x_grid [i].wide = 1;
+      x_grid [i].used = '·';
+   }
+   rc = yMAP_update     (YMAP_YAXIS);
+   /*---(complete)-----------------------*/
+   DEBUG_MAP   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
 ymap__unit_load         (uchar a_axis, uchar a_style)
 {
    /*---(locals)-----------+-----+-----+-*/
@@ -493,6 +545,7 @@ ymap__unit_loud          (void)
    yURG_name  ("cmds"         , YURG_ON);
    yURG_name  ("map"          , YURG_ON);
    yURG_name  ("keys"         , YURG_ON);
+   yURG_name  ("regs"         , YURG_ON);
    DEBUG_CMDS  yLOG_info     ("yMAP"     , yMAP_version   ());
    yMODE_init (MODE_MAP);
    yMODE_handler_setup ();
@@ -546,6 +599,412 @@ char
 ymap__unit_addresser    (char *a_label, ushort b, ushort x, ushort y, ushort z)
 {
    return str4gyges (b, x, y, 0, 0, a_label, YSTR_CHECK);
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        mreg testing                          ----===*/
+/*====================------------------------------------====================*/
+static void  o___MREG____________o () { return; }
+
+typedef  struct cTHING  tTHING;
+struct cTHING {
+   int         x, y, z;
+   char        l           [LEN_LABEL];
+   tTHING     *n;
+};
+static tTHING  *s_things  [10][10];
+static tTHING  *s_head    = NULL;
+static tTHING  *s_tail    = NULL;
+static int      s_nthing  =    0;
+static int      s_nbase   =    0;
+static int      s_nfree   =    0;
+
+char
+ymap__unit_purge        (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         i           =    0;
+   tTHING     *p           = NULL;
+   tTHING     *n           = NULL;
+   int         x, y;
+   /*---(create)-------------------------*/
+   p = s_head;
+   /*---(wipe)---------------------------*/
+   for (i = 0; i < s_nthing; ++i) {
+      n = p->n;
+      free (p);
+      p = n;
+   }
+   s_nthing = 0;
+   s_head   = NULL;
+   s_tail   = NULL;
+   /*---(clear matrix)-------------------*/
+   for (x = 0; x < 10; ++x) {
+      for (y = 0; y < 10; ++y) {
+         s_things [x][y] = NULL;
+      }
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+tTHING*
+ymap__unit_create      (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   tTHING     *p           = NULL;
+   /*---(create)-------------------------*/
+   p = (tTHING *) malloc (sizeof (tTHING));
+   /*---(link)---------------------------*/
+   p->n = NULL;
+   if (s_head == NULL) {
+      s_head   = s_tail   = p;
+      s_nthing = 1;
+   } else {
+      s_tail->n = p;
+      s_tail    = p;
+      ++s_nthing;
+   }
+   /*---(complete)-----------------------*/
+   return p;
+}
+
+char
+ymap__unit_regkill     (void *a_thing)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         i           =    0;
+   tTHING     *c           = NULL;
+   tTHING     *p           = NULL;
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_value   ("s_nthing"  , s_nthing);
+   c  = s_head;
+   p  = s_head;
+   for (i = 0; i < s_nthing; ++i) {
+      DEBUG_REGS   yLOG_value   ("pos"       , i);
+      DEBUG_REGS   yLOG_info    ("label"     , c->l);
+      /*---(not found)-------------------*/
+      if (c != a_thing) {
+         DEBUG_REGS   yLOG_note    ("wrong one, move to next");
+         p = c;
+         c = c->n;
+         continue;
+      }
+      /*---(found)-----------------------*/
+      if (s_nthing == 1) {
+         DEBUG_REGS   yLOG_note    ("only one entry");
+         s_head = s_tail = NULL;
+      } else if (c == s_head) {
+         DEBUG_REGS   yLOG_note    ("change head");
+         s_head = c->n;
+      } else if (c == s_tail) {
+         DEBUG_REGS   yLOG_note    ("change tail");
+         s_tail = p;
+         p->n  = NULL;
+      } else {
+         DEBUG_REGS   yLOG_note    ("change middle");
+         p->n  = c->n;
+      }
+      /*---(common)----------------------*/
+      free (a_thing);
+      --s_nthing;
+      break;
+   }
+   DEBUG_REGS   yLOG_value   ("s_nthing"  , s_nthing);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+tTHING*
+ymap__unit_dup          (tTHING *p)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   tTHING     *q           = NULL;
+   char        t           [LEN_LABEL];
+   /*---(create)-------------------------*/
+   q = ymap__unit_create ();
+   /*---(copy contents)------------------*/
+   q->x = p->x;
+   q->y = p->y;
+   q->z = 2;
+   sprintf (t, "%d%d", p->y, p->x);
+   strlcpy (q->l, t, LEN_LABEL);
+   /*---(complete)-----------------------*/
+   return q;
+}
+
+char
+ymap__unit_hook         (tTHING *p, int x, int y)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        t           [LEN_LABEL];
+   /*---(check)--------------------------*/
+   if (s_things [x][y] != NULL) {
+      s_things [x][y] = NULL;
+      ymap__unit_regkill (s_things [x][y]);
+   }
+   /*---(populate)-----------------------*/
+   s_things [x][y] = p;
+   p->x = x;
+   p->y = y;
+   p->z = 0;
+   sprintf (t, "%d%d", y, x);
+   strlcpy (p->l, t, LEN_LABEL);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char ymap__unit_mark    (tTHING *p) { p->z = 1; return 0; }
+
+char
+ymap__unit_base         (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   tTHING     *p           = NULL;
+   /*---(purge)--------------------------*/
+   ymap__unit_purge      ();
+   /*---(3 secondary)--------------------*/
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 0, 5);
+   ymap__unit_mark       (p);
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 3, 6);
+   ymap__unit_mark       (p);
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 6, 7);
+   ymap__unit_mark       (p);
+   /*---(5 primary)----------------------*/
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 2, 0);
+   ymap__unit_mark       (p);
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 0, 2);
+   ymap__unit_mark       (p);
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 3, 2);
+   ymap__unit_mark       (p);
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 6, 2);
+   ymap__unit_mark       (p);
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 6, 4);
+   ymap__unit_mark       (p);
+   /*---(4 inner)------------------------*/
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 2, 1);
+   ymap__unit_mark       (p);
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 2, 3);
+   ymap__unit_mark       (p);
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 4, 1);
+   ymap__unit_mark       (p);
+   p = ymap__unit_create ();
+   ymap__unit_hook       (p, 4, 3);
+   ymap__unit_mark       (p);
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char*
+ymap__unit_orig         (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         i           =    0;
+   tTHING     *p           = NULL;
+   char        s           [LEN_RECD]  = "";
+   char        t           [LEN_LABEL] = "";
+   char        c           =    0;
+   /*---(prepare)------------------------*/
+   strlcpy (s, ",", LEN_RECD);
+   s_nbase = 0;
+   /*---(prepare)------------------------*/
+   p = s_head;
+   for (i = 0; i < s_nthing; ++i) {
+      if (p->z == 1) {
+         sprintf (t, "%s,", p->l);
+         strlcat (s, t, LEN_RECD);
+         ++s_nbase;
+         ++c;
+      }
+      p = p->n;
+   }
+   /*---(finalize)-----------------------*/
+   if (strcmp (s, ",") == 0)  strlcpy (s, "n/a", LEN_RECD);
+   sprintf (myMAP.g_print, "%-2d  %s", c, s);
+   /*---(complete)-----------------------*/
+   return myMAP.g_print;
+}
+
+char*
+ymap__unit_regs                 (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         i           =    0;
+   tTHING     *p           = NULL;
+   char        s           [LEN_RECD]  = "";
+   char        t           [LEN_LABEL] = "";
+   char        c           =    0;
+   /*---(prepare)------------------------*/
+   strlcpy (s, ",", LEN_RECD);
+   s_nfree = 0;
+   /*---(prepare)------------------------*/
+   p = s_head;
+   for (i = 0; i < s_nthing; ++i) {
+      if (p->z == 2) {
+         sprintf (t, "%s,", p->l);
+         strlcat (s, t, LEN_RECD);
+         ++s_nfree;
+         ++c;
+      }
+      p = p->n;
+   }
+   /*---(finalize)-----------------------*/
+   if (strcmp (s, ",") == 0)  strlcpy (s, "n/a", LEN_RECD);
+   sprintf (myMAP.g_print, "%-2d  %s", c, s);
+   /*---(complete)-----------------------*/
+   return myMAP.g_print;
+}
+
+char*
+ymap__unit_adds                 (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         i           =    0;
+   tTHING     *p           = NULL;
+   char        s           [LEN_RECD]  = "";
+   char        t           [LEN_LABEL] = "";
+   char        c           =    0;
+   /*---(prepare)------------------------*/
+   strlcpy (s, ",", LEN_RECD);
+   /*---(walk)---------------------------*/
+   p = s_head;
+   for (i = 0; i < s_nthing; ++i) {
+      if (p->z == 0) {
+         sprintf (t, "%s,", p->l);
+         strlcat (s, t, LEN_RECD);
+         ++c;
+      }
+      p = p->n;
+   }
+   /*---(finalize)-----------------------*/
+   if (strcmp (s, ",") == 0)  strlcpy (s, "n/a", LEN_RECD);
+   sprintf (myMAP.g_print, "%-2d  %s", c, s);
+   /*---(complete)-----------------------*/
+   return myMAP.g_print;
+}
+
+char*
+ymap__unit_mreg         (void)
+{
+   int    x, y;
+   strlcpy (myMAP.g_print, "", LEN_RECD);
+   for (y = 0; y < 8; ++y) {
+      if (y > 0)  strlcat (myMAP.g_print, "  ", LEN_RECD);
+      for (x = 0; x < 10; ++x) {
+         if      (s_things [x][y] == NULL) {
+            if (yMAP_visual (0, x, y, 0))    strlcat (myMAP.g_print, "`", LEN_RECD);
+            else                             strlcat (myMAP.g_print, "·", LEN_RECD);
+         }
+         else if (s_things [x][y]->z == 1)   strlcat (myMAP.g_print, "Ï", LEN_RECD);
+         else if (s_things [x][y]->z == 0)   strlcat (myMAP.g_print, "+", LEN_RECD);
+         else                                strlcat (myMAP.g_print, "·", LEN_RECD);
+      }
+   }
+   return myMAP.g_print;
+}
+
+char
+ymap__unit_copier       (char a_type, long a_stamp)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rc          = 0;
+   tTHING     *x_thing     = NULL;
+   tTHING     *x_new       = NULL;
+   ushort      b           =    0;
+   ushort      x           =    0;
+   ushort      y           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   rc = yMAP_visu_first (&b, &x, &y, NULL);
+   while (rc >= 0) {
+      x_thing = s_things [x][y];
+      if (x_thing != NULL) {
+         rc = yMAP_visual (b, x, y, 0);
+         if (rc == 1) {
+            x_new = ymap__unit_dup (x_thing);
+            yMAP_mreg_add (x_new, x_new->l);
+         }
+      }
+      rc = yMAP_visu_next  (&b, &x, &y, NULL);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+ymap__unit_clearer      (char a_1st, int b, int x, int y, int z)
+{
+   tTHING     *x_thing     = NULL;
+   if (s_things [x][y] == NULL)  return 0;
+   myMAP.e_regkill (s_things [x][y]);
+   s_things [x][y] = NULL;
+   return 0;
+}
+
+char
+ymap__unit_paster       (char a_regs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, void *a_thing)
+{
+   tTHING     *x_thing;
+   int         x, y;
+   x_thing = ymap__unit_dup (a_thing);
+   x = x_thing->x + a_xoff;
+   y = x_thing->y + a_yoff;
+   ymap__unit_hook (x_thing, x, y);
+   return 0;
+}
+
+char
+ymap__unit_config       (void)
+{
+   char        rc          =    0;
+   rc = yMAP_mreg_config (ymap__unit_clearer, ymap__unit_copier, NULL, ymap__unit_paster, NULL, ymap__unit_regkill, NULL);
+   return rc;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         unit testing                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___MUNDO___________o () { return; }
+
+static int    s_undos = 0;
+static int    s_redos = 0;
+static char   s_mundo [LEN_RECD] = "··n ··u ··r  §  · · ········ ··åæ       ··åæ";
+
+char
+ymap__unit_mundo_save   (char d, char a, char *l, char *f, char *c)
+{
+   char        s           [LEN_HUND]  = "";
+   char        t           [LEN_HUND]  = "";
+   if (d == '<')  ++s_undos;
+   if (d == '>')  ++s_redos;
+   sprintf (s, "%2då%-.6sæ", strlen (f), f);
+   sprintf (t, "%2då%sæ", strlen (c), c);
+   sprintf (s_mundo, "%2dn %2du %2dr  §  %c %c %-8.8s %-10.10s %s",
+         myMAP.h_count, s_undos, s_redos,
+         d, a, l, s, t);
+   return 0;
+}
+
+char
+ymap__unit_mundo        (char d, char a, char *l, char *f, char *c)
+{
+   return ymap__unit_mundo_save (d, a, l, f, c);
 }
 
 
@@ -616,6 +1075,9 @@ yMAP__unit              (char *a_question, char a_index)
       }
    }
    else if (strcmp (a_question, "range"          )   == 0) {
+   }
+   else if (strcmp (a_question, "mundo"          )   == 0) {
+      sprintf (unit_answer, "MAP mundo exec   : %s", s_mundo);
    }
    else if (strcmp (a_question, "visual"         )   == 0) {
       n = ymap_visu_index (a_index);
