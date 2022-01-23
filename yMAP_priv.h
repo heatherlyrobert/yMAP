@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, complete and tie yVIKEYS back into it"
-#define     P_VERNUM    "2.0c"
-#define     P_VERTXT    "mundo integrated and unit tested locally"
+#define     P_VERNUM    "2.0d"
+#define     P_VERTXT    "pushed back into gyges made improvements"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -62,6 +62,7 @@
 #include    <yMACRO.h>            /* heatherly vi-keys macro processing       */
 #include    <ySRC.h>              /* heatherly vi-keys source editing         */
 #include    <yFILE.h>             /* heatherly vi-keys content file handling  */
+#include    <yCMD.h>              /* heatherly vi-keys command processing     */
 /*---(custom other)----------------------*/
 #include    <yDLST_solo.h>        /* heatherly double-double-list             */
 /*---(done)------------------------------*/
@@ -85,6 +86,7 @@ typedef  struct cyMAP  tyMAP;
 struct cyMAP {
    /*---(identity)-------------*/
    uchar       axis;                        /* b, x, y, z, or t               */
+   uchar       change;                      /* flag as content needs changing */
    uchar       inc;                         /* normal movement increment      */
    /*---(lefts)----------------*/
    ushort      umin;                        /* lowest map position            */
@@ -92,15 +94,18 @@ struct cyMAP {
    ushort      gamin;                       /* min of all used space          */
    ushort      glmin;                       /* min for col/row                */
    ushort      gprev;                       /* prev change for "end"          */
-   /*---(current)--------------*/
+   ushort      gpuse;                       /* prev change for "used"         */
+   /*---(layout)---------------*/
    ushort      glen;                        /* length of grid                 */
    tGRID      *grid;                        /* pointer to grid                */
    ushort      mlen;                        /* length of map                  */
    ushort     *map;                         /* full unit map                  */
+   ushort      gused;                       /* nunber of used grids           */
    /*---(middles)--------------*/
    ushort      gavg;                        /* average position in local      */
    ushort      gmid;                        /* average position of limits     */
    /*---(rights)---------------*/
+   ushort      gnuse;                       /* next change for "used"         */
    ushort      gnext;                       /* next change for "end"          */
    ushort      glmax;                       /* max for col/row                */
    ushort      gamax;                       /* max of all used space          */
@@ -160,11 +165,6 @@ struct cVISU {
    char        source;
    /*---(end)----------------------------*/
 };
-extern      tVISU       s_visus     [S_VISU_MAX];
-extern      char        s_nvisu;
-extern      char        S_VISU_LIST [S_VISU_MAX];
-extern      tVISU      *s_curr;
-extern      tVISU      *s_prev;
 
 
 #define     YMAP_MAX       65000
@@ -183,16 +183,19 @@ struct cHIST {
 };
 
 
-
 typedef    struct    cMY    tMY;
 struct cMY {
+   /*---(universe)-------------*/
+   char      (*e_switcher)   (char u);
+   char       u_last;
+   /*---(map)------------------*/
    char        orient;            /* normal (down = neg) office (down = pos)  */
-   char      (*e_mapper)     (char  a_type);
-   char      (*e_locator)    (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
-   char*     (*e_addresser)  (char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
-   uchar       v_head;
-   uchar       v_curr;
-   uchar       v_tail;
+   char      (*e_locator)    (char a_strict, char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+   char      (*e_addresser)  (char a_strict, char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
+   char      (*e_sizer)      (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);
+   char      (*e_entry)      (char a_axis, ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
+   char      (*e_placer)     (char a_axis, ushort b, ushort c, ushort e);
+   char      (*e_done)       (void);
    /*---(mreg)-----------------*/
    char      (*e_regkill)    (void *a_thing);
    void*     (*e_copier)     (char a_type, long a_stamp);
@@ -210,6 +213,17 @@ struct cMY {
    int         h_index;
    char        h_len;
    char      (*e_mundo)      (char a_dir, char a_act, char *a_label, char *a_format, char *a_content);
+   /*---(other)----------------*/
+   char      (*e_format)     (uchar a_type, uchar a_abbr, ushort u, ushort x, ushort y, ushort z, uchar *r);
+   /*---(visual)---------------*/
+   tVISU       v_visus     [S_VISU_MAX];
+   char        v_nvisu;
+   char        v_list      [S_VISU_MAX];
+   tVISU      *v_curr;
+   tVISU      *v_prev;
+   uchar       v_ahead;                     /* first visual abbr in use       */
+   uchar       v_acurr;                     /* current visual abbr in use     */
+   uchar       v_atail;                     /* last visual abbr in use        */
    /*---(debugging)------------*/
    char        g_print     [LEN_RECD];      /* printable for testing          */
 };
@@ -233,8 +247,11 @@ char        ymap_grid_free          (uchar a_full, uchar a_axis);
 char        ymap_grid_clear         (tGRID *a_grid, ushort a_len);
 char        yMAP_init               (void);
 char        ymap_locator            (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+char        ymap_locator_strict     (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+char        ymap_addresser          (char *a_label, ushort u, ushort x, ushort y, ushort z);
+char        ymap_addresser_strict   (char *a_label, ushort u, ushort x, ushort y, ushort z);
 char        ymap_valid              (ushort u, ushort x, ushort y, ushort z);
-char        ymap_remap              (void);
+/*> char        ymap_remap              (void);                                       <*/
 char        ymap_refresh            (void);
 char        yMAP_wrap               (void);
 
@@ -247,7 +264,12 @@ char        ymap__clear             (uchar a_full, uchar a_axis);
 char        ymap_mapinit            (uchar a_axis);
 char        ymap_factory            (uchar a_axis);
 char        yMAP_clear              (uchar a_axis);
-int         ymap_grid_walk          (tyMAP *a_map);
+/*---(walking)--------------*/
+char        ymap__load_limits       (tyMAP *a_map, ushort a_umin, ushort a_umax);
+char        ymap__load_ends         (tyMAP *a_map, char a_dir);
+char        ymap_update_large       (uchar a_axis);
+char        ymap_update_small       (uchar a_axis);
+/*---(done)-----------------*/
 
 
 
@@ -262,6 +284,9 @@ char        ymap_mode               (uchar a_major, uchar a_minor);
 /*---(translate)------------*/
 char        ymap_office             (uchar a_axis, uchar *r_minor);
 char        ymap_corners            (uchar a_src, uchar a_axis, char *r_minor);
+/*---(shared)---------------*/
+char        ymap_set_by_unit        (tyMAP *a_map, ushort a_pos);
+char        ymap_set_by_grid        (tyMAP *a_map, ushort b, ushort c, ushort e);
 /*---(placement)------------*/
 char        ymap__grid_up           (tyMAP *a_map, short a_count);
 char        ymap__grid_down         (tyMAP *a_map, short a_count);
@@ -272,7 +297,7 @@ char        ymap_goto               (tyMAP *a_map, uchar a_minor);
 char        ymap_scroll             (tyMAP *a_map, uchar a_minor);
 char        ymap_ends               (tyMAP *a_map, uchar a_minor);
 /*---(driver)---------------*/
-char        ymap_move_hmode         (uchar a_major, uchar a_minor);
+char        yMAP_move_hmode         (uchar a_major, uchar a_minor);
 /*---(done)-----------------*/
 
 
@@ -311,23 +336,27 @@ char        ymap_visu_purge         (char a_scope);
 char        ymap_visu_init          (void);
 /*---(quick)----------------*/
 char        ymap_visu_getlive       (void);
-char        ymap_visu_islive        (void);
+char        yMAP_visu_islive        (void);
 char        ymap_visu_isdead        (void);
 char        ymap_visu_makelive      (void);
 /*---(setting)--------------*/
+char        ymap__visu_range        (void);
 char        ymap_visu_clear         (void);
-char        ymap_visu_exact         (ushort u, ushort xb, ushort xe, ushort yb, ushort ye, ushort zb, ushort ze);
+char        ymap_visu_exact         (ushort u, ushort xb, ushort xe, ushort yb, ushort ye, ushort zb, ushort ze, char c);
 char        ymap_visu_reverse       (void);
 char        ymap_visu_locking       (char a_type);
 /*---(history)--------------*/
 char        ymap__visu_save         (uchar a_abbr);
+char        ymap__visu_return       (uchar a_abbr);
+char        ymap_visu_reselect      (void);
 /*---(cursor)---------------*/
-char        yMAP_visu_range         (ushort *u, ushort *xb, ushort *xe, ushort *yb, ushort *ye, ushort *zb, ushort *ze);
+char        yMAP_visu_range         (ushort *u, ushort *xb, ushort *xe, ushort *yb, ushort *ye, ushort *zb, ushort *ze, char *c);
 char        yMAP_visu_first         (ushort *u, ushort *x, ushort *y, ushort *z);
 char        yMAP_visu_next          (ushort *u, ushort *x, ushort *y, ushort *z);
 /*---(status)---------------*/
 char        yMAP_root               (ushort u, ushort x, ushort y, ushort z);
 char        yMAP_visual             (ushort u, ushort x, ushort y, ushort z);
+char        ymap_visu_dump          (FILE *f);
 /*---(umode)----------------*/
 char        ymap_visu_hmode         (uchar a_major, uchar a_minor);
 char        ymap_visu_umode         (uchar a_major, uchar a_minor);
@@ -349,9 +378,21 @@ char        ymap__unit_loud         (void);
 char        ymap__unit_end          (void);
 /*---(mock)-----------------*/
 char        ymap__unit_map_general  (void);
+char        ymap__unit_map_bigger   (void);
+char        ymap__unit_map_block    (void);
+char        ymap__unit_locator      (char a_strict, char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+char        ymap__unit_addresser    (char a_strict, char *a_label, ushort u, ushort x, ushort y, ushort z);
+char        ymap__unit_init         (void);
+char        ymap__unit_presizer     (ushort a_min, ushort a_max);
+char        ymap__unit_sizer        (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);
+char        ymap__unit_entry        (char a_axis, ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
+char        ymap__unit_placer       (char a_axis, ushort b, ushort c, ushort e);
+char        ymap__unit_done         (void);
 char        ymap__unit_mapper       (char a_type);
-char        ymap__unit_locator      (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
-char        ymap__unit_addresser    (char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
+/*---(format)---------------*/
+char        ymap__unit_format_init  (void);
+char        ymap__unit_formatter    (uchar a_type, uchar a_abbr, ushort u, ushort x, ushort y, ushort z, uchar *r);
+char*       ymap__unit_formatted    (ushort y);
 /*---(mreg)-----------------*/
 char        ymap__unit_base         (void);
 char        ymap__unit_config       (void);
@@ -425,10 +466,47 @@ char        ymap_mundo_hmode        (uchar a_major, uchar a_minor);
 
 /*===[[ yMAP_rptg.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char*       ymap_mundo_detail       (int n);
 char        ymap_mundo_dump         (FILE *f);
+char        ymap_map_dump           (FILE *f);
 
 
+
+/*===[[ yMAP_univ.c ]]========================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        ymap_univ_init          (void);
+char        ymap_univ_current       (void);
+char        ymap_univ_umode         (uchar a_major, uchar a_minor);
+
+
+
+/*===[[ yMAP_refresh.c ]]=====================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(control)--------------*/
+char        ymap__change            (char *a_func, char a_axis, char a_level);
+char        ymap_uchange            (char a_level);
+char        ymap_xchange            (char a_level);
+char        ymap_ychange            (char a_level);
+char        ymap_zchange            (char a_level);
+char        ymap_change             (char a_axis, char a_level);
+/*---(realtime)-------------*/
+char        ymap_used               (ushort x, ushort y, ushort z);
+char        ymap_empty              (ushort x, ushort y, ushort z);
+char        ymap_wide               (ushort a_pos, uchar a_wide);
+char        ymap_tall               (ushort a_pos, uchar a_tall);
+char        ymap_deep               (ushort a_pos, uchar a_deep);
+/*---(done)-----------------*/
+
+
+
+/*===[[ yMAP_format.c ]]======================================================*/
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        ymap__format_abbr       (char a_abbr);
+char        ymap__format_units      (char a_abbr);
+char        ymap__multisize         (char *a_label, uchar a_type, uchar a_size, uchar a_count);
+char        ymap_multi_wide_reset   (void);
+char        ymap_multi_tall_reset   (void);
+char        ymap_format_xmode       (uchar a_major, uchar a_minor);
+char        ymap_units_xmode        (uchar a_major, uchar a_minor);
 
 
 #endif

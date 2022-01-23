@@ -218,17 +218,17 @@ ymap__mreg_valid        (char a_abbr)
    char        rce         =  -10;
    char        rc          =    0;
    /*---(header)-------------------------*/
-   DEBUG_HIST   yLOG_senter  (__FUNCTION__);
+   DEBUG_REGS   yLOG_senter  (__FUNCTION__);
    /*---(check)--------------------------*/
-   DEBUG_HIST   yLOG_snote   ("check");
+   DEBUG_REGS   yLOG_snote   ("check");
    rc = strlchr (S_REG_LIST, a_abbr, S_REG_MAX);
-   DEBUG_HIST   yLOG_sint    (rc);
+   DEBUG_REGS   yLOG_sint    (rc);
    --rce;  if (rc < 0) {
-      DEBUG_HIST   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_REGS   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_HIST   yLOG_sexit   (__FUNCTION__);
+   DEBUG_REGS   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -239,17 +239,17 @@ ymap__mreg_by_abbr      (char a_abbr)
    char        rce         =  -10;
    int         n           =   -1;
    /*---(header)-------------------------*/
-   DEBUG_HIST   yLOG_senter  (__FUNCTION__);
+   DEBUG_REGS   yLOG_senter  (__FUNCTION__);
    /*---(check)--------------------------*/
-   DEBUG_HIST   yLOG_snote   ("check");
+   DEBUG_REGS   yLOG_snote   ("check");
    n  = strlchr (S_REG_LIST, a_abbr, S_REG_MAX);
-   DEBUG_HIST   yLOG_sint    (n);
+   DEBUG_REGS   yLOG_sint    (n);
    --rce;  if (n  < 0) {
-      DEBUG_HIST   yLOG_sexitr  (__FUNCTION__, n);
+      DEBUG_REGS   yLOG_sexitr  (__FUNCTION__, n);
       return n;
    }
    /*---(complete)-----------------------*/
-   DEBUG_HIST   yLOG_sexit   (__FUNCTION__);
+   DEBUG_REGS   yLOG_sexit   (__FUNCTION__);
    return n;
 }
 
@@ -357,7 +357,7 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label)
    char        t           [LEN_LABEL]  = "";
    char        x_labels    [LEN_RECD]   = "";
    /*---(header)-------------------------*/
-   DEBUG_CMDS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    DEBUG_REGS   yLOG_char    ("a_abbr"    , a_abbr);
    x_reg  = ymap__mreg_by_abbr  (a_abbr);
@@ -366,9 +366,9 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label)
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return  rce;
    }
-   DEBUG_CMDS   yLOG_point   ("a_item"    , a_item);
+   DEBUG_REGS   yLOG_point   ("a_item"    , a_item);
    --rce;  if (a_item == NULL) {
-      DEBUG_CMDS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(allocate)-----------------------*/
@@ -376,25 +376,25 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label)
       ++x_tries;
       x_new = (tITEM *) malloc (sizeof (tITEM));
    }
-   DEBUG_CMDS   yLOG_value   ("x_tries"   , x_tries);
-   DEBUG_CMDS   yLOG_point   ("x_new"     , x_new);
+   DEBUG_REGS   yLOG_value   ("x_tries"   , x_tries);
+   DEBUG_REGS   yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL) {
-      DEBUG_CMDS   yLOG_note    ("FAILED");
-      DEBUG_CMDS   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_REGS   yLOG_note    ("FAILED");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(populate)-----------------------*/
-   DEBUG_CMDS   yLOG_note    ("populate");
+   DEBUG_REGS   yLOG_note    ("populate");
    x_new->data     = a_item;
    x_new->b_next   = NULL;
    x_new->b_prev   = NULL;
    x_new->routes   = NULL;
    /*---(tie to master list)-------------*/
    if (s_regs [x_reg].hbuf == NULL) {
-      DEBUG_CMDS   yLOG_note    ("nothing in master list, make first");
+      DEBUG_REGS   yLOG_note    ("nothing in master list, make first");
       s_regs [x_reg].hbuf = x_new;
    } else  {
-      DEBUG_CMDS   yLOG_note    ("append to master list");
+      DEBUG_REGS   yLOG_note    ("append to master list");
       s_regs [x_reg].tbuf->b_next = x_new;
       x_new->b_prev  = s_regs [x_reg].tbuf;
    }
@@ -414,13 +414,13 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label)
    /*---(list)---------------------------*/
    x_curr = s_regs [x_reg].hbuf;
    while  (x_curr != NULL) {
-      DEBUG_CMDS   yLOG_complex ("item"      , "%-10p, %-10p, %-10p, %-10p", x_curr, x_curr->data, x_curr->b_prev, x_curr->b_next);
+      DEBUG_REGS   yLOG_complex ("item"      , "%-10p, %-10p, %-10p, %-10p", x_curr, x_curr->data, x_curr->b_prev, x_curr->b_next);
       x_curr = x_curr->b_next;
    }
    /*---(update counts)------------------*/
    ++s_regs [x_reg].nbuf;
    /*---(complete)-----------------------*/
-   DEBUG_CMDS   yLOG_exit    (__FUNCTION__);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -503,20 +503,20 @@ ymap_mreg_purge         (char a_scope)
    int         i           =    0;
    char        x_abbr      =  '-';
    /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_SCRP   yLOG_char    ("a_scope"   , a_scope);
+   DEBUG_REGS   yLOG_char    ("a_scope"   , a_scope);
    --rce;  switch (a_scope) {
    case YSTR_ILOWER  : case YSTR_IUPPER  : case YSTR_INUMBER :
    case YSTR_IGREEK  : case YSTR_IFULL   : case YSTR_INIT    :
       break;
    default :
-      DEBUG_SCRP   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(clear)--------------------------*/
    s_creg = '"';
-   DEBUG_SCRP   yLOG_value   ("s_nreg"    , s_nreg);
+   DEBUG_REGS   yLOG_value   ("s_nreg"    , s_nreg);
    for (i = 0; i < s_nreg; ++i) {
       x_abbr = S_REG_LIST [i];
       if (a_scope == YSTR_IUPPER  && strchr (YSTR_UPPER , x_abbr) == NULL)  continue;
@@ -526,7 +526,7 @@ ymap_mreg_purge         (char a_scope)
       ymap__mreg_wipe (x_abbr, a_scope);
    }
    /*---(complete)-----------------------*/
-   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -536,11 +536,11 @@ ymap_mreg_init                  (void)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    --rce;  if (!yMODE_check_prep  (SMOD_MREG)) {
-      DEBUG_PROG   yLOG_note    ("status is not ready for init");
-      DEBUG_PROG   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_REGS   yLOG_note    ("status is not ready for init");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(macro abbrev list)--------------*/
@@ -563,7 +563,7 @@ ymap_mreg_init                  (void)
    /*---(update status)------------------*/
    yMODE_init_set   (SMOD_MREG, NULL, ymap_mreg_smode);
    /*---(complete)-----------------------*/
-   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -571,11 +571,11 @@ char         /*-> clear all selections ---------------[ shoot  [gz.311.001.02]*/
 ymap_mreg_wrap          (void)
 {
    /*---(header)-------------------------*/
-   DEBUG_PROG   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(registers)----------------------*/
    ymap_mreg_purge    (YSTR_INIT);
    /*---(complete)-----------------------*/
-   DEBUG_PROG   yLOG_exit    (__FUNCTION__);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -623,7 +623,7 @@ static void  o___ATTACH__________o () { return; }
 
 static char    s_saving   = '-';
 
-char         /*-> attach a cell to a buffer ----------[ ------ [fe.870.378.72]*/ /*-[00.0000.025.7]-*/ /*-[--.---.---.--]-*/
+char         /*-> attach a cell to a universe --------[ ------ [fe.870.378.72]*/ /*-[00.0000.025.7]-*/ /*-[--.---.---.--]-*/
 yMAP_mreg_add           (void *a_thing, char *a_label)
 {
    /*---(locals)-----------+-----------+-*/
@@ -695,7 +695,7 @@ ymap_mreg_save          (void)
       return  rce;
    }
    /*---(save selection)-----------------*/
-   rc = yMAP_visu_range (&u, &xb, &xe, &yb, &ye, &z, NULL);
+   rc = yMAP_visu_range (&u, &xb, &xe, &yb, &ye, &z, NULL, NULL);
    DEBUG_REGS   yLOG_value   ("visu rc"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -775,7 +775,7 @@ ymap__mreg_clear             (char a_1st)
       return rce;
    }
    /*---(save selection)-----------------*/
-   rc = yMAP_visu_range (&u, &x_beg, &x_end, &y_beg, &y_end, &z, NULL);
+   rc = yMAP_visu_range (&u, &x_beg, &x_end, &y_beg, &y_end, &z, NULL, NULL);
    DEBUG_REGS   yLOG_value   ("visu rc"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -1010,7 +1010,7 @@ ymap__mreg_paste        (char a_1st, char *a_type)
    if (myMAP.e_router != NULL) {
       x_curr = s_regs [s_reg].hbuf;
       --rce;  while (x_curr != NULL) {
-         DEBUG_CMDS   yLOG_complex ("item"      , "%-10p, %-10p, %-10p, %-10p", x_curr, x_curr->data, x_curr->b_prev, x_curr->b_next);
+         DEBUG_REGS   yLOG_complex ("item"      , "%-10p, %-10p, %-10p, %-10p", x_curr, x_curr->data, x_curr->b_prev, x_curr->b_next);
          rc = myMAP.e_router (x_curr->data, x_list);
          if (rc < 0) {
             DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -1024,7 +1024,7 @@ ymap__mreg_paste        (char a_1st, char *a_type)
    DEBUG_REGS   yLOG_value   ("nbuf"      , s_regs [s_reg].nbuf);
    x_curr = s_regs [s_reg].hbuf;
    --rce;  while (x_curr != NULL) {
-      DEBUG_CMDS   yLOG_complex ("item"      , "%-10p, %-10p, %-10p, %-10p", x_curr, x_curr->data, x_curr->b_prev, x_curr->b_next);
+      DEBUG_REGS   yLOG_complex ("item"      , "%-10p, %-10p, %-10p, %-10p", x_curr, x_curr->data, x_curr->b_prev, x_curr->b_next);
       rc = myMAP.e_paster (s_reqs, s_pros, s_intg, a_1st, s_boff, s_xoff, s_yoff, s_zoff, x_curr->data, x_curr->routes);
       if (rc < 0) {
          DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
@@ -1040,7 +1040,7 @@ ymap__mreg_paste        (char a_1st, char *a_type)
    if (myMAP.e_finisher != NULL) {
       x_curr = s_regs [s_reg].hbuf;
       --rce;  while (x_curr != NULL) {
-         DEBUG_CMDS   yLOG_complex ("item"      , "%-10p, %-10p, %-10p, %-10p", x_curr, x_curr->data, x_curr->b_prev, x_curr->b_next);
+         DEBUG_REGS   yLOG_complex ("item"      , "%-10p, %-10p, %-10p, %-10p", x_curr, x_curr->data, x_curr->b_prev, x_curr->b_next);
          rc = myMAP.e_finisher (s_boff, s_xoff, s_yoff, s_zoff, x_curr->data);
          x_curr = x_curr->b_next;
       }
@@ -1049,7 +1049,7 @@ ymap__mreg_paste        (char a_1st, char *a_type)
    /*> yCALC_garbage_collect ();                                                      <*/
    /*> yCALC_calculate ();                                                            <*/
    /*> yvikeys_map_reposition  ();                                                    <*/
-   yMAP_refresh ();
+   /*> yMAP_refresh ();                                                               <*/
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1079,12 +1079,13 @@ ymap_mreg_visual        (void)
          s_regs [x_reg].u_all + s_boff,
          s_regs [x_reg].x_beg + s_xoff, s_regs [x_reg].x_end + s_xoff,
          s_regs [x_reg].y_beg + s_yoff, s_regs [x_reg].y_end + s_yoff,
-         s_regs [x_reg].z_all + s_zoff, s_regs [x_reg].z_all + s_zoff);
-   yMAP_jump (
-         s_regs [x_reg].u_all + s_boff,
-         s_regs [x_reg].x_end + s_xoff,
-         s_regs [x_reg].y_end + s_yoff,
-         s_regs [x_reg].z_all + s_zoff);
+         s_regs [x_reg].z_all + s_zoff, s_regs [x_reg].z_all + s_zoff,
+         'e');
+   /*> yMAP_jump (                                                                    <* 
+    *>       s_regs [x_reg].u_all + s_boff,                                           <* 
+    *>       s_regs [x_reg].x_end + s_xoff,                                           <* 
+    *>       s_regs [x_reg].y_end + s_yoff,                                           <* 
+    *>       s_regs [x_reg].z_all + s_zoff);                                          <*/
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1106,50 +1107,50 @@ ymap_mreg_smode         (uchar a_major, uchar a_minor)
    char       *x_majors    = "m'";
    static char x_prev      =  '-';
    /*---(header)-------------------------*/
-   DEBUG_USER   yLOG_enter   (__FUNCTION__);
-   DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , chrvisible (a_minor));
-   DEBUG_USER   yLOG_char    ("x_prev"    , x_prev);
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   DEBUG_REGS   yLOG_char    ("a_major"   , a_major);
+   DEBUG_REGS   yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_REGS   yLOG_char    ("x_prev"    , x_prev);
    /*> myVIKEYS.info_win = '-';                                                       <*/
    /*---(defenses)-----------------------*/
-   DEBUG_USER   yLOG_char    ("mode"      , yMODE_curr ());
+   DEBUG_REGS   yLOG_char    ("mode"      , yMODE_curr ());
    --rce;  if (yMODE_not (SMOD_MREG)) {
-      DEBUG_USER   yLOG_note    ("not the correct mode");
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_REGS   yLOG_note    ("not the correct mode");
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(exit mode)----------------------*/
    if (a_minor == G_KEY_ESCAPE || a_minor == G_KEY_RETURN) {
-      DEBUG_USER   yLOG_note    ("escape/return means leave");
+      DEBUG_REGS   yLOG_note    ("escape/return means leave");
       yMODE_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return  0;
    }
    /*---(register selection)-------------*/
    --rce;  if (a_major == '"') {
       if (strchr ("+-", a_minor) != NULL) {
-         DEBUG_USER   yLOG_note    ("enter export-import");
+         DEBUG_REGS   yLOG_note    ("enter export-import");
          ymap__mreg_set    (a_minor);
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
          return a_minor;
       } else if (strchr (S_REG_LIST, a_minor) != 0) {
          ymap__mreg_set    (a_minor);
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
          return 0;
       } else if (a_minor == '?') {
          /*> my.info_win = G_INFO_REGS;                                               <*/
          /*> REG_set ('"');                                                           <*/
          /*> yVIKEYS_mode_exit ();                                                          <*/
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
          return  0;
       } else if (a_minor == '!') {
          /*> my.layout_status = G_STATUS_REGS;                                        <*/
          /*> REG_set ('"');                                                           <*/
          /*> yVIKEYS_mode_exit ();                                                    <*/
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
          return  0;
       }
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(register actions)---------------*/
@@ -1158,52 +1159,52 @@ ymap_mreg_smode         (uchar a_major, uchar a_minor)
       switch (a_minor) {
          /*---(multikey prefixes)-----------*/
       case 'p'  :
-         DEBUG_USER   yLOG_note    ("p for paste normal");
+         DEBUG_REGS   yLOG_note    ("p for paste normal");
          ymap_mreg_paste ("normal");
          yMODE_exit ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
       case 'P'  :
-         DEBUG_USER   yLOG_note    ("P is a multi-key");
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_note    ("P is a multi-key");
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
          return a_minor;
       case 'y'  :
-         DEBUG_USER   yLOG_note    ("y for yank/copy");
+         DEBUG_REGS   yLOG_note    ("y for yank/copy");
          ymap_mreg_save  ();
          ymap_visu_clear ();
          yMODE_exit ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
       case 'Y'  :
-         DEBUG_USER   yLOG_note    ("y for yank/clear");
+         DEBUG_REGS   yLOG_note    ("y for yank/clear");
          ymap_mreg_save  ();
          ymap_mreg_clear ();
          ymap_visu_clear ();
          yMODE_exit ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
       case 'x'  :
-         DEBUG_USER   yLOG_note    ("x for clear");
+         DEBUG_REGS   yLOG_note    ("x for clear");
          ymap_mreg_clear ();
          ymap_visu_clear ();
          yMODE_exit ();
-         DEBUG_USER   yLOG_exit    (__FUNCTION__);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
          return 0;
          break;
       }
    }
    /*---(export-import)------------------*/
    --rce;  if (strchr ("+-", a_major) != NULL) {
-      DEBUG_USER   yLOG_note    ("calling external export-import function");
-      DEBUG_USER   yLOG_point   ("e_exim"    , myMAP.e_exim);
+      DEBUG_REGS   yLOG_note    ("calling external export-import function");
+      DEBUG_REGS   yLOG_point   ("e_exim"    , myMAP.e_exim);
       if (myMAP.e_exim != NULL)  rc = myMAP.e_exim (a_major, a_minor);
-      DEBUG_USER   yLOG_value   ("rc"        , rc);
+      DEBUG_REGS   yLOG_value   ("rc"        , rc);
       ymap_visu_clear ();
       yMODE_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(pasting actions)----------------*/
@@ -1220,13 +1221,13 @@ ymap_mreg_smode         (uchar a_major, uchar a_minor)
       default  :  rc = rce;                               break;
       }
       yMODE_exit ();
-      DEBUG_USER   yLOG_exit    (__FUNCTION__);
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(failure)------------------------*/
    --rce;
    yMODE_exit ();
-   DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+   DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
    return rce;
 }
 
@@ -1255,7 +1256,7 @@ ymap_mreg_detail        (char a_abbr)
          s_regs [n].y_min, s_regs [n].y_beg, s_regs [n].y_end, s_regs [n].y_max,
          s_regs [n].nbuf , t);
    /*---(complete)-----------------------*/
-   DEBUG_USER   yLOG_exit    (__FUNCTION__);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return myMAP.g_print;
 }
 
