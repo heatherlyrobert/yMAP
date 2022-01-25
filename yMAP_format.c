@@ -4,6 +4,7 @@
 #include    "yMAP_priv.h"
 
 
+static char  s_hist = YMAP_BEG;
 
 #define    MAX_FORMATS      100
 static const struct {
@@ -198,7 +199,6 @@ ymap__format_range      (uchar a_type, uchar a_abbr)
    int         n           =    0;
    int         c           =    0;
    ushort      x_top, x_left, x_deep;
-   uchar       x_mode      = YMAP_BEG;
    char        x_label     [LEN_LABEL] = "";
    uchar       r           =    0;
    /*---(header)-------------------------*/
@@ -225,46 +225,59 @@ ymap__format_range      (uchar a_type, uchar a_abbr)
       case YMAP_WIDTH    : case YMAP_WEXACT   :
          DEBUG_YMAP    yLOG_note    ("width change");
          rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, &r);
-         if (rc > 0 && y == x_top)  {
-            yMAP_mundo_width    (x_mode, x_label, rc, r);
+         if (rc > 0 && y == x_top && rc != r)  {
+            yMAP_mundo_width    (s_hist, x_label, rc, r);
             ymap_wide (x, r);
+            s_hist = YMAP_ADD;
          }
          break;
       case YMAP_HEIGHT   : case YMAP_HEXACT   :
          DEBUG_YMAP    yLOG_note    ("height change");
          rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, &r);
-         if (rc > 0 && x == x_left)  {
-            yMAP_mundo_height   (x_mode, x_label, rc, r);
+         if (rc > 0 && x == x_left && rc != r)  {
+            yMAP_mundo_height   (s_hist, x_label, rc, r);
             ymap_tall (y, r);
+            s_hist = YMAP_ADD;
          }
          break;
       case YMAP_DEPTH    : case YMAP_DEXACT   :
          DEBUG_YMAP    yLOG_note    ("found a frontmost item");
          rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, &r);
-         if (rc > 0 && z == x_deep)  {
-            yMAP_mundo_depth    (x_mode, x_label, rc, r);
+         if (rc > 0 && z == x_deep && rc != r)  {
+            yMAP_mundo_depth    (s_hist, x_label, rc, r);
             ymap_deep (z, r);
+            s_hist = YMAP_ADD;
          }
          break;
       case YMAP_FORMAT   :
          rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, NULL);
-         if (rc > 0)  yMAP_mundo_format   (x_mode, x_label, rc, a_abbr);
+         if (rc > 0) {
+            yMAP_mundo_format   (s_hist, x_label, rc, a_abbr);
+            s_hist = YMAP_ADD;
+         }
          break;
       case YMAP_ALIGN    :
          rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, NULL);
-         if (rc > 0)  yMAP_mundo_align    (x_mode, x_label, rc, a_abbr);
+         if (rc > 0) {
+            yMAP_mundo_align    (s_hist, x_label, rc, a_abbr);
+            s_hist = YMAP_ADD;
+         }
          break;
       case YMAP_DECIMALS :
          rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, NULL);
-         if (rc > 0)  yMAP_mundo_decimals (x_mode, x_label, rc, a_abbr);
+         if (rc > 0) {
+            yMAP_mundo_decimals (s_hist, x_label, rc, a_abbr);
+            s_hist = YMAP_ADD;
+         }
          break;
       case YMAP_UNITS    :
          rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, NULL);
-         if (rc > 0)  yMAP_mundo_units    (x_mode, x_label, rc, a_abbr);
+         if (rc > 0) {
+            yMAP_mundo_units    (s_hist, x_label, rc, a_abbr);
+            s_hist = YMAP_ADD;
+         }
          break;
       }
-      /*---(mode change)-----------------*/
-      if (rc > 0)  x_mode = YMAP_ADD;
       /*---(get next)--------------------*/
       rc      = yMAP_visu_next  (&u, &x, &y, &z);
       DEBUG_YMAP    yLOG_complex ("next"      , "%4dr, %4du, %4dx, %4dy, %4dz", rc, u, x, y, z);
@@ -306,6 +319,14 @@ ymap__multisize      (char *a_label, uchar a_type, uchar a_size, uchar a_count)
    /*---(prepare)------------------------*/
    if (a_count >  0)  --a_count;
    DEBUG_YMAP   yLOG_value   ("a_count"   , a_count);
+   if (a_size == '-') {
+      switch (a_type) {
+      case YMAP_XAXIS : a_size = 8; break;
+      case YMAP_YAXIS : a_size = 1; break;
+      case YMAP_ZAXIS : a_size = 1; break;
+      }
+   }
+   DEBUG_YMAP   yLOG_value   ("a_size"    , a_size);
    /*---(get range)----------------------*/
    x_live = yMAP_visu_islive ();
    yMAP_visu_range (&ua, &xb, &xe, &yb, &ye, &zb, &ze, &r);
@@ -335,29 +356,83 @@ ymap__multisize      (char *a_label, uchar a_type, uchar a_size, uchar a_count)
    return 0;
 }
 
-char yMAP_multi_wide         (char *a_label, uchar a_size, uchar a_count) { return ymap__multisize (a_label, YMAP_XAXIS, a_size, a_count); }
-char yMAP_multi_tall         (char *a_label, uchar a_size, uchar a_count) { return ymap__multisize (a_label, YMAP_YAXIS, a_size, a_count); }
-char yMAP_multi_deep         (char *a_label, uchar a_size, uchar a_count) { return ymap__multisize (a_label, YMAP_ZAXIS, a_size, a_count); }
+char yMAP_multi_wide         (char *a_label, uchar a_size, uchar a_count) { s_hist = YMAP_BEG; return ymap__multisize (a_label, YMAP_XAXIS, a_size, a_count); }
+char yMAP_multi_tall         (char *a_label, uchar a_size, uchar a_count) { s_hist = YMAP_BEG; return ymap__multisize (a_label, YMAP_YAXIS, a_size, a_count); }
+char yMAP_multi_deep         (char *a_label, uchar a_size, uchar a_count) { s_hist = YMAP_BEG; return ymap__multisize (a_label, YMAP_ZAXIS, a_size, a_count); }
 
 char
-ymap_multi_wide_reset   (void)
+ymap_multi_wide_def     (char *a_label, uchar a_count)
 {
-   ushort      u           =    0;
    char        x_label     [LEN_LABEL] = "";
-   yMAP_current (NULL, &u, NULL, NULL, NULL);
-   ymap_addresser_strict (x_label, u, 0, 0, 0);
-   yMAP_multi_wide (x_label, 8, g_xmap.gmax);
+   if (a_label == NULL || a_label [0] == '\0')  yMAP_current (x_label, NULL, NULL, NULL, NULL);
+   else                                        strlcpy (x_label, a_label, LEN_LABEL);
+   yMAP_multi_wide (x_label, '-', a_count);
    return 0;
 }
 
 char
-ymap_multi_tall_reset   (void)
+ymap_multi_wide_reset   (char *a_label)
 {
    ushort      u           =    0;
    char        x_label     [LEN_LABEL] = "";
-   yMAP_current (NULL, &u, NULL, NULL, NULL);
+   if (a_label == NULL || a_label [0] == '\0')  yMAP_current (NULL, &u, NULL, NULL, NULL);
+   else if (strlen (a_label) == 1)              u = INDEX_tab (a_label [0]);
+   else                                         ymap_locator_strict (x_label, &u, NULL, NULL, NULL);
    ymap_addresser_strict (x_label, u, 0, 0, 0);
-   yMAP_multi_tall (x_label, 1, g_ymap.gmax);
+   yMAP_multi_wide (x_label, '-', g_xmap.gmax);
+   return 0;
+}
+
+char
+ymap_multi_tall_def     (char *a_label, uchar a_count)
+{
+   char        x_label     [LEN_LABEL] = "";
+   if (a_label == NULL || a_label [0] == '\0')  yMAP_current (x_label, NULL, NULL, NULL, NULL);
+   else                                        strlcpy (x_label, a_label, LEN_LABEL);
+   yMAP_multi_tall (x_label, '-', a_count);
+   return 0;
+}
+
+char
+ymap_multi_tall_reset   (char *a_label)
+{
+   ushort      u           =    0;
+   char        x_label     [LEN_LABEL] = "";
+   if (a_label == NULL || a_label [0] == '\0')  yMAP_current (NULL, &u, NULL, NULL, NULL);
+   else if (strlen (a_label) == 1)              u = INDEX_tab (a_label [0]);
+   else                                         ymap_locator_strict (x_label, &u, NULL, NULL, NULL);
+   ymap_addresser_strict (x_label, u, 0, 0, 0);
+   yMAP_multi_tall (x_label, '-', g_ymap.gmax);
+   return 0;
+}
+
+char
+ymap_multi_deep_def     (char *a_label, uchar a_count)
+{
+   char        x_label     [LEN_LABEL] = "";
+   if (a_label == NULL || a_label [0] == '\0')  yMAP_current (x_label, NULL, NULL, NULL, NULL);
+   else                                        strlcpy (x_label, a_label, LEN_LABEL);
+   yMAP_multi_deep (x_label, '-', a_count);
+   return 0;
+}
+
+char
+ymap_multi_deep_reset   (char *a_label)
+{
+   ushort      u           =    0;
+   char        x_label     [LEN_LABEL] = "";
+   if (a_label == NULL || a_label [0] == '\0')  yMAP_current (NULL, &u, NULL, NULL, NULL);
+   else if (strlen (a_label) == 1)              u = INDEX_tab (a_label [0]);
+   else                                         ymap_locator_strict (x_label, &u, NULL, NULL, NULL);
+   ymap_addresser_strict (x_label, u, 0, 0, 0);
+   yMAP_multi_deep (x_label, '-', g_zmap.gmax);
+   return 0;
+}
+
+char
+ymap_format_prepper     (void)
+{
+   s_hist = YMAP_BEG;
    return 0;
 }
 

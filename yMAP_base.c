@@ -141,13 +141,17 @@ yMAP_init              (void)
    DEBUG_YMAP   yLOG_note    ("universe setup");
    ymap_univ_init ();
    /*---(prepare external modes)---------*/
-   yMODE_init_set   (XMOD_FORMAT , NULL, ymap_format_xmode);
+   yMODE_init_set   (XMOD_FORMAT , ymap_format_prepper, ymap_format_xmode);
    yMODE_init_set   (XMOD_UNITS  , NULL, ymap_units_xmode);
-   rc = yCMD_add (YCMD_M_FORMAT, "xwide"       , ""    , "sii"  , yMAP_multi_wide            , "change the width of columns"           );
-   rc = yCMD_add (YCMD_M_FORMAT, "xreset"      , ""    , ""     , ymap_multi_wide_reset      , "reset width of call columns to default");
-   rc = yCMD_add (YCMD_M_FORMAT, "ytall"       , ""    , "sii"  , yMAP_multi_tall            , "change the height of rows"             );
-   rc = yCMD_add (YCMD_M_FORMAT, "yreset"      , ""    , ""     , ymap_multi_tall_reset      , "reset height of all rows to default"   );
-   rc = yCMD_add (YCMD_M_FORMAT, "zdeep"       , ""    , "sii"  , yMAP_multi_deep            , "change the thickness of levels"        );
+   rc = yCMD_add (YCMD_M_FORMAT, "xwide"       , ""    , "sii"  , yMAP_multi_wide            , "change the width of columns"              );
+   rc = yCMD_add (YCMD_M_FORMAT, "xdef"        , ""    , "si"   , ymap_multi_wide_def        , "change current column widht to default"   );
+   rc = yCMD_add (YCMD_M_FORMAT, "xreset"      , ""    , "s"    , ymap_multi_wide_reset      , "reset width of call columns to default"   );
+   rc = yCMD_add (YCMD_M_FORMAT, "ytall"       , ""    , "sii"  , yMAP_multi_tall            , "change the height of rows"                );
+   rc = yCMD_add (YCMD_M_FORMAT, "ydef"        , ""    , "si"   , ymap_multi_tall_def        , "change current row height to default"     );
+   rc = yCMD_add (YCMD_M_FORMAT, "yreset"      , ""    , "s"    , ymap_multi_tall_reset      , "reset height of all rows to default"      );
+   rc = yCMD_add (YCMD_M_FORMAT, "zdeep"       , ""    , "sii"  , yMAP_multi_deep            , "change the thickness of levels"           );
+   rc = yCMD_add (YCMD_M_FORMAT, "zdef"        , ""    , "si"   , ymap_multi_deep_def        , "change current level thickness to default");
+   rc = yCMD_add (YCMD_M_FORMAT, "zreset"      , ""    , "s"    , ymap_multi_deep_reset      , "reset thickness of all levels to default" );
    /*---(update status)------------------*/
    yMODE_init_set   (MODE_MAP, NULL, ymap_mode);
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);

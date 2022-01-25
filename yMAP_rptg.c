@@ -227,8 +227,9 @@ yMAP_mundo_detail       (int n)
          sprintf (s, "%2då%-.30sæ", strlen (x_curr->before), x_curr->before);
          sprintf (t, "%2då%-.30sæ", strlen (x_curr->after ), x_curr->after );
          strlcpy (r, ymap_mundo_action (x_curr->mode, x_curr->act), LEN_LABEL);
-         sprintf (myMAP.g_print, "%-3d %-3d %c %c %-10.10s %-6.6s %-34.34s  %s",
-               myMAP.h_count, c, x_curr->mode, x_curr->act, r, x_curr->label, s, t);
+         sprintf (myMAP.g_print, "%-4d %c %-4d %c %c %-12.12s %-7.7s %-34.34s  %s",
+               myMAP.h_count, (myMAP.h_index == c) ? '>' : '·', c,
+               x_curr->mode, x_curr->act, r, x_curr->label, s, t);
          return myMAP.g_print;
       }
       x_curr = x_curr->h_next;
@@ -244,14 +245,17 @@ ymap_mundo_dump         (FILE *f)
    int         c           = 0;
    tHIST      *x_curr      = NULL;
    /*---(print)--------------------------*/
-   fprintf (f, "s_count = %d\n" , myMAP.h_count);
-   fprintf (f, "s_index = %d\n" , myMAP.h_index);
+   fprintf (f, "#@ parsing åÏ---·Ï·Ï---··Ï··Ï··Ï-----------··Ï------·§·Ï--------------------------------------------------§·Ï-------------------------------------------------§æ\n");
+   fprintf (f, "#@ titles  åtot··c·ref···m··a··action········label·····before···············································after··············································æ\n");
+   fprintf (f, "\n");
+   fprintf (f, "# count = %d\n" , myMAP.h_count);
+   fprintf (f, "# index = %d\n" , myMAP.h_index);
    x_curr = myMAP.h_head;
    while (x_curr != NULL) {
-      if (c % 5 == 0)  fprintf (f, "\n-ref- § m § a § ---action--- § --label--- § ---before----------------------------------------- § ---after------------------------------------------ §\n");
-      fprintf (f, "%-5d § %c § %c § %-12.12s § %-10.10s § %-50.50s § %-50.50s §\n",
-            c, x_curr->mode, x_curr->act,
-            ymap_mundo_action (x_curr->mode, x_curr->act),
+      if (c % 5 == 0)  fprintf (f, "\n#tot ref- m a ---action--- -label- § ---before-----------------------------------------  ---after------------------------------------------ \n");
+      fprintf (f, "%-4d %c %-4d %c %c %-12.12s %-7.7s § %-50s § %-50s §\n",
+            myMAP.h_count, (myMAP.h_index == c) ? '>' : '·', c,
+            x_curr->mode, x_curr->act, ymap_mundo_action (x_curr->mode, x_curr->act),
             x_curr->label, x_curr->before, x_curr->after);
       ++c;
       x_curr = x_curr->h_next;

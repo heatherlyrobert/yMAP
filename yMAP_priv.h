@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, complete and tie yVIKEYS back into it"
-#define     P_VERNUM    "2.0d"
-#define     P_VERTXT    "pushed back into gyges made improvements"
+#define     P_VERNUM    "2.0e"
+#define     P_VERTXT    "improved formatting mundo handling (greatly) and unit tested"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -503,8 +503,13 @@ char        ymap_deep               (ushort a_pos, uchar a_deep);
 char        ymap__format_abbr       (char a_abbr);
 char        ymap__format_units      (char a_abbr);
 char        ymap__multisize         (char *a_label, uchar a_type, uchar a_size, uchar a_count);
-char        ymap_multi_wide_reset   (void);
-char        ymap_multi_tall_reset   (void);
+char        ymap_multi_wide_def     (char *a_label, uchar a_count);
+char        ymap_multi_wide_reset   (char *a_label);
+char        ymap_multi_tall_def     (char *a_label, uchar a_count);
+char        ymap_multi_tall_reset   (char *a_label);
+char        ymap_multi_deep_def     (char *a_label, uchar a_count);
+char        ymap_multi_deep_reset   (char *a_label);
+char        ymap_format_prepper     (void);
 char        ymap_format_xmode       (uchar a_major, uchar a_minor);
 char        ymap_units_xmode        (uchar a_major, uchar a_minor);
 
