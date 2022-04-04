@@ -154,6 +154,7 @@ typedef  unsigned short       ushort;
 #define     YMAP_FORMAT       'f'
 #define     YMAP_DECIMALS     'd'
 #define     YMAP_UNITS        'u'
+#define     YMAP_MULTIPLE     '*'
 /*---(validations)---------------*/
 #define     YMAP_FORMATS      "afdu"
 #define     YMAP_SIZES        "xyz"
@@ -235,14 +236,20 @@ char*       yMAP_mundo_detail       (int n);
 /*===[[ yMAP_mreg.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        yMAP_mreg_config        (void *a_clearer, void *a_copier, void *a_router, void *a_paster, void *a_finisher, void *a_regkill, void *a_exim);
-char        yMAP_mreg_add           (void *a_thing, char *a_label);
+char        yMAP_mreg_add           (void *a_thing, char *a_label, char *a_reqs, char *a_pros);
+char*       yMAP_mreg_labels        (char a_abbr);
 
 
 
 /*===[[ yMAP_mundo.c ]]=======================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+/*---(support)--------------*/
+char        yMAP_mundo_make_add     (void);
+int         yMAP_mundo_count        (void);
+int         yMAP_mundo_current      (void);
 /*---(program)--------------*/
 char        yMAP_mundo_config       (char a_len, void *a_mundo);
+char        yMAP_mundo_rollback     (void);
 char        yMAP_mundo_purge        (void);
 /*---(simple)---------------*/
 char        yMAP_mundo_align        (char a_mode, char *a_label, char a_before, char a_after);
@@ -273,7 +280,7 @@ char        yMAP_multi_deep         (char *a_label, uchar a_size, uchar a_count)
 char        yMAP_formatter          (void *a_formatter);
 
 
-char        yMAP_inside             (short u, short x, short y, short z);
+char        yMAP_inside             (ushort u, ushort x, ushort y, ushort z);
 char        yMAP_move_hmode         (uchar a_major, uchar a_minor);
 char        yMAP__unit_wander       (void);
 

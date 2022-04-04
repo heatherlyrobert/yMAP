@@ -163,13 +163,13 @@ yMAP_switch             (ushort a_pos)
       return rce;
    }
    /*---(xpos)---------------------------*/
-   myMAP.e_sizer (YMAP_XAXIS, NULL, &bx, &cx, &ex, NULL, NULL);
+   myMAP.e_sizer (YMAP_XAXIS, NULL, NULL, &bx, &cx, &ex, NULL, NULL);
    DEBUG_YMAP   yLOG_complex ("xaxis"     , "%4db, %4dc, %4de", bx, cx, ex);
    /*---(ypos)---------------------------*/
-   myMAP.e_sizer (YMAP_YAXIS, NULL, &by, &cy, &ey, NULL, NULL);
+   myMAP.e_sizer (YMAP_YAXIS, NULL, NULL, &by, &cy, &ey, NULL, NULL);
    DEBUG_YMAP   yLOG_complex ("yaxis"     , "%4db, %4dc, %4de", by, cy, ey);
    /*---(zpos)---------------------------*/
-   myMAP.e_sizer (YMAP_ZAXIS, NULL, &bz, &cz, &ez, NULL, NULL);
+   myMAP.e_sizer (YMAP_ZAXIS, NULL, NULL, &bz, &cz, &ez, NULL, NULL);
    DEBUG_YMAP   yLOG_complex ("zaxis"     , "%4db, %4dc, %4de", bz, cz, ez);
    /*---(refresh)------------------------*/
    ymap_uchange (YMAP_FULL);

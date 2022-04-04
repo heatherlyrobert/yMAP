@@ -46,6 +46,7 @@ static const struct {
    { YMAP_FORMAT   , 'e' , "exponential"      },
    { YMAP_FORMAT   , 'E' , "exp-spaced"       },
    /*---(commas)-----------------------------*/
+   { YMAP_FORMAT   , ',' , "comma"            },
    { YMAP_FORMAT   , 'c' , "comma"            },
    { YMAP_FORMAT   , 'C' , "comma+"           },
    { YMAP_FORMAT   , 'a' , "accounting"       },
@@ -94,6 +95,10 @@ static const struct {
    { YMAP_DECIMALS , '7' , "exactly seven"    },
    { YMAP_DECIMALS , '8' , "exactly eight"    },
    { YMAP_DECIMALS , '9' , "exactly nine"     },
+   /*---(multiples)--------------------------*/
+   { YMAP_MULTIPLE , '?' , "all to defaults"  },
+   { YMAP_MULTIPLE , 'G' , "real with 6 dec"  },
+   { YMAP_MULTIPLE , 'g' , "real with 3 dec"  },
    /*---(done)-------------------------------*/
    { 0             ,  0  , "end-of-list"      },
 };
@@ -494,24 +499,41 @@ ymap_format_xmode       (uchar a_major, uchar a_minor)
    DEBUG_YMAP   yLOG_complex ("range"     , "%2du, %4d to %4dx, %4d to %4dy, %4d to %4dz, %c", ua, xb, xe, yb, ye, zb, ze, r);
    /*---(execute)------------------------*/
    switch (s_formats [n].type) {
-   case YMAP_WIDTH  :
+   case YMAP_WIDTH    :
       ymap_visu_exact (uo, xb, xe, 0, g_ymap.gmax, 0, g_zmap.gmax, r);
       rc = ymap__format_range (s_formats [n].type, a_minor);
       if (x_live) ymap_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
       else        { ymap_visu_clear ();  yMAP_jump (uo, xo, yo, zo); }
       break;
-   case YMAP_HEIGHT :
+   case YMAP_HEIGHT   :
       ymap_visu_exact (uo, 0, g_xmap.gmax, yb, ye, 0, g_zmap.gmax, r);
       rc = ymap__format_range (s_formats [n].type, a_minor);
       if (x_live) ymap_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
       else        { ymap_visu_clear ();  yMAP_jump (uo, xo, yo, zo); }
       break;
-   case YMAP_DEPTH  :
+   case YMAP_DEPTH    :
       ymap_visu_exact (uo, 0, g_xmap.gmax, 0, g_ymap.gmax, zb, ze, r);
       rc = ymap__format_range (s_formats [n].type, a_minor);
       if (x_live) ymap_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
       else        { ymap_visu_clear ();  yMAP_jump (uo, xo, yo, zo); }
       break;
+   case YMAP_MULTIPLE :
+      switch (a_minor) {
+      case '?' :
+         rc = ymap__format_range (YMAP_ALIGN    , '?');
+         rc = ymap__format_range (YMAP_FORMAT   , '?');
+         rc = ymap__format_range (YMAP_DECIMALS , '0');
+         rc = ymap__format_range (YMAP_UNITS    , '-');
+         break;
+      case 'G' :
+         rc = ymap__format_range (YMAP_FORMAT   , 'f');
+         rc = ymap__format_range (YMAP_DECIMALS , '6');
+         break;
+      case 'g' :
+         rc = ymap__format_range (YMAP_FORMAT   , 'f');
+         rc = ymap__format_range (YMAP_DECIMALS , '3');
+         break;
+      }
    default :
       rc = ymap__format_range (s_formats [n].type, a_minor);
       break;

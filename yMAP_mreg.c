@@ -52,6 +52,7 @@
 
 
 
+char        s_print     [LEN_RECD]  = "";
 
 
 #define     S_REG_MAX   100
@@ -61,7 +62,8 @@
 typedef  struct  cITEM  tITEM;
 struct cITEM {
    void       *data;
-   char       *routes;
+   char       *reqs;
+   char       *pros;
    tITEM      *b_next;
    tITEM      *b_prev;
 };
@@ -131,6 +133,30 @@ static      char       *s_stubby     = "n/a";
 /* data export and import -------------------------------------*/
 /*> static char    (*s_exim)       (char a_dir, char a_style);                        <*/
 
+/*
+ * pasting elements
+ * 
+ *    clear -- is the destination area fully cleared before pasting
+ *       -  no, merge by only writing over necessary cells
+ *       y  yes, clear all cells in destination area
+ *
+ *    reqs  -- how are the copied cell's formulas adjusted
+ *       n  no, all formulas are used exactly as originally copied
+ *       r  default, relative addresses are adjusted, absolute kept original
+ *       i  same as 'r', but inner address absolutes are treated as relative
+ *       b  all, all addresses are adjusted, inner or outer
+ *
+ *    pros  -- how are provider's formulas adjusted
+ *       N  default, provider formulas are not updated at all
+ *       R  relative references to copied cells are adjusted to new location
+ *       A  both, relative and absolute references are adjusted to new location
+ *       S  split, formulas are remade to reflect both original and new location
+ *
+ *    integration -- not defined yes
+ *       -  default
+ *
+ *
+ */
 
 
 #define   MAX_PASTING           500
@@ -140,10 +166,10 @@ struct cPASTING {
    char        ref         [LEN_LABEL];
    char        name        [LEN_LABEL];
    char        primary;
-   char        clear;       /* merge, clear, ... */
-   char        reqs;        /* none, relative, inner, both (rel/inner), every  */
-   char        pros;        /* none, relative, all, split */
-   char        intg;        /* tbd */
+   char        clear;
+   char        reqs;
+   char        pros;
+   char        intg;
    char        desc        [LEN_DESC ];
 };
 static const tPASTING   s_pasting [MAX_PASTING] = {
@@ -291,7 +317,7 @@ ymap__mreg_set                  (char a_abbr)
 char ymap_mreg_curr     (void) { return s_creg; }
 
 char         /*-> indicate whether cell is in a reg --[ leaf   [ge.430.419.80]*/ /*-[00.0000.209.#]-*/ /*-[--.---.---.--]-*/
-yMAP_inside             (short u, short x, short y, short z)
+yMAP_inside             (ushort u, ushort x, ushort y, ushort z)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -344,7 +370,7 @@ yMAP_inside             (short u, short x, short y, short z)
 static void  o___MEMORY__________o () { return; }
 
 char
-ymap__mreg_new          (char a_abbr, void *a_item, char *a_label)
+ymap__mreg_new          (char a_abbr, void *a_item, char *a_label, char *a_reqs, char *a_pros)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -356,6 +382,9 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label)
    tITEM      *x_curr      = NULL;
    char        t           [LEN_LABEL]  = "";
    char        x_labels    [LEN_RECD]   = "";
+   char       *p           = NULL;
+   char       *r           = NULL;
+   ushort      x, y;
    /*---(header)-------------------------*/
    DEBUG_REGS   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -388,7 +417,10 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label)
    x_new->data     = a_item;
    x_new->b_next   = NULL;
    x_new->b_prev   = NULL;
-   x_new->routes   = NULL;
+   x_new->reqs     = NULL;
+   if (a_reqs != NULL)  x_new->reqs     = strdup (a_reqs);
+   x_new->pros     = NULL;
+   if (a_pros != NULL)  x_new->pros     = strdup (a_pros);
    /*---(tie to master list)-------------*/
    if (s_regs [x_reg].hbuf == NULL) {
       DEBUG_REGS   yLOG_note    ("nothing in master list, make first");
@@ -419,6 +451,26 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label)
    }
    /*---(update counts)------------------*/
    ++s_regs [x_reg].nbuf;
+   /*---(update bounds)------------------*/
+   if (a_reqs != NULL) {
+      strlcpy (x_labels, a_reqs, LEN_RECD);
+      p = strtok_r (x_labels, ",", &r);
+      while (p != NULL) {
+         /*---(get coords)---------------*/
+         rc = ymap_locator (p, NULL, &x, &y, NULL);
+         if (rc >= 0) {
+            /*---(update mins)-----------*/
+            if (x < s_regs [x_reg].x_min)  s_regs [x_reg].x_min = x;
+            if (y < s_regs [x_reg].y_min)  s_regs [x_reg].y_min = y;
+            /*---(update maxs)-----------*/
+            if (x > s_regs [x_reg].x_max)  s_regs [x_reg].x_max = x;
+            if (y > s_regs [x_reg].y_max)  s_regs [x_reg].y_max = y;
+         }
+         /*---(next)---------------------*/
+         p = strtok_r (NULL    , ",", &r);
+         /*---(done)---------------------*/
+      }
+   }
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -473,7 +525,7 @@ ymap__mreg_wipe         (char a_abbr, char a_scope)
       x_curr->data   = NULL;
       x_curr->b_next = NULL;
       x_curr->b_prev = NULL;
-      if (x_curr->routes != NULL)  free (x_curr->routes);
+      if (x_curr->pros != NULL)  free (x_curr->pros);
       free (x_curr);
       x_curr = x_next;
    }
@@ -624,7 +676,7 @@ static void  o___ATTACH__________o () { return; }
 static char    s_saving   = '-';
 
 char         /*-> attach a cell to a universe --------[ ------ [fe.870.378.72]*/ /*-[00.0000.025.7]-*/ /*-[--.---.---.--]-*/
-yMAP_mreg_add           (void *a_thing, char *a_label)
+yMAP_mreg_add           (void *a_thing, char *a_label, char *a_reqs, char *a_pros)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         = -10;
@@ -642,7 +694,7 @@ yMAP_mreg_add           (void *a_thing, char *a_label)
    }
    DEBUG_REGS   yLOG_char    ("s_creg"    , s_creg);
    /*---(attach)-------------------------*/
-   rc = ymap__mreg_new (s_creg, a_thing, a_label);
+   rc = ymap__mreg_new (s_creg, a_thing, a_label, a_reqs, a_pros);
    --rce;  if (rc < 0) {
       DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
       return  rce;
@@ -652,6 +704,16 @@ yMAP_mreg_add           (void *a_thing, char *a_label)
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;
+}
+
+char
+ymap_mreg__reqs         (void)
+{
+}
+
+char
+ymap_mreg__pros         (void)
+{
 }
 
 char
@@ -747,6 +809,38 @@ ymap_mreg_list          (char a_abbr)
    return s_regs [x_reg].labels;
 }
 
+char*
+yMAP_mreg_labels        (char a_abbr)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   int         x_reg       =    0;
+   int         c           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_REGS   yLOG_enter   (__FUNCTION__);
+   /*---(identify register)--------------*/
+   DEBUG_REGS   yLOG_char    ("a_abbr"    , a_abbr);
+   x_reg  = ymap__mreg_by_abbr  (a_abbr);
+   DEBUG_REGS   yLOG_value   ("x_reg"     , x_reg);
+   --rce;  if (x_reg < 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return  "n/a";
+   }
+   c = s_regs [x_reg].nbuf;
+   DEBUG_REGS   yLOG_value   ("c"         , c);
+   --rce;  if (c <= 0) {
+      DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
+      return  "n/a";
+   }
+   DEBUG_REGS   yLOG_info    ("labels"    , s_regs [x_reg].labels);
+   strlcpy (s_print, s_regs [x_reg].labels, LEN_RECD);
+   ySORT_labels (s_print);
+   DEBUG_REGS   yLOG_info    ("s_print"   , s_print);
+   DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+   return s_print;
+}
+
+
 
 
 /*====================------------------------------------====================*/
@@ -803,10 +897,10 @@ ymap__mreg_clear             (char a_1st)
 char ymap_mreg_clear        (void) { ymap__mreg_clear ('y'); }
 char ymap_mreg_clear_combo  (void) { ymap__mreg_clear ('-'); }
 
-static ushort  s_boff  = 0;
-static ushort  s_xoff  = 0;
-static ushort  s_yoff  = 0;
-static ushort  s_zoff  = 0;
+static short   s_boff  = 0;
+static short   s_xoff  = 0;
+static short   s_yoff  = 0;
+static short   s_zoff  = 0;
 
 static char    s_reg   = 0;
 static char    s_clear = 0;
@@ -1016,7 +1110,7 @@ ymap__mreg_paste        (char a_1st, char *a_type)
             DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
             return rce;
          }
-         if (x_list != NULL && strlen (x_list) > 1)  x_curr->routes = strdup (x_list);
+         if (x_list != NULL && strlen (x_list) > 1)  x_curr->pros = strdup (x_list);
          x_curr = x_curr->b_next;
       }
    }
@@ -1025,7 +1119,7 @@ ymap__mreg_paste        (char a_1st, char *a_type)
    x_curr = s_regs [s_reg].hbuf;
    --rce;  while (x_curr != NULL) {
       DEBUG_REGS   yLOG_complex ("item"      , "%-10p, %-10p, %-10p, %-10p", x_curr, x_curr->data, x_curr->b_prev, x_curr->b_next);
-      rc = myMAP.e_paster (s_reqs, s_pros, s_intg, a_1st, s_boff, s_xoff, s_yoff, s_zoff, x_curr->data, x_curr->routes);
+      rc = myMAP.e_paster (s_reqs, s_pros, s_intg, a_1st, s_boff, s_xoff, s_yoff, s_zoff, x_curr->data, x_curr->pros);
       if (rc < 0) {
          DEBUG_REGS   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
@@ -1097,6 +1191,49 @@ ymap_mreg_visual        (void)
 /*===----                       mode handling                          ----===*/
 /*====================------------------------------------====================*/
 static void  o___MODE____________o () { return; }
+
+char
+yMAP_mreg_hmode         (uchar a_major, uchar a_minor)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        c           =    0;
+   /*---(quick-out)----------------------*/
+   if (a_minor == 0)            return 0;
+   /*---(header)-------------------------*/
+   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP   yLOG_char    ("a_major"   , a_major);
+   DEBUG_YMAP   yLOG_char    ("a_minor"   , a_minor);
+   /*---(single-key)---------------------*/
+   if (a_major == G_KEY_SPACE) {
+      if (strchr ("pyYx", a_minor) != NULL) {
+         DEBUG_REGS   yLOG_note    ("un-named register map operations");
+         ymap__mreg_reset ();
+         yMODE_enter (SMOD_MREG);
+         ymap_mreg_smode (a_major, a_minor);
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         return 1;
+      }
+      if (a_minor == 'P') {
+         DEBUG_REGS   yLOG_note    ("un-named register multi-key paste start");
+         DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+         return a_minor;
+      }
+   }
+   /*---(multi-key)----------------------*/
+   if (a_major == 'P') {
+      DEBUG_REGS   yLOG_note    ("un-named register multi-key paste end");
+      ymap__mreg_reset ();
+      yMODE_enter (SMOD_MREG);
+      ymap_mreg_smode (a_major, a_minor);
+      DEBUG_REGS   yLOG_exit    (__FUNCTION__);
+      return 1;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 char
 ymap_mreg_smode         (uchar a_major, uchar a_minor)
@@ -1178,7 +1315,7 @@ ymap_mreg_smode         (uchar a_major, uchar a_minor)
          return 0;
          break;
       case 'Y'  :
-         DEBUG_REGS   yLOG_note    ("y for yank/clear");
+         DEBUG_REGS   yLOG_note    ("Y for yank/clear");
          ymap_mreg_save  ();
          ymap_mreg_clear ();
          ymap_visu_clear ();
@@ -1218,7 +1355,7 @@ ymap_mreg_smode         (uchar a_major, uchar a_minor)
       case 'c' :  rc = ymap_mreg_paste  ("combo");     break;
       case 'm' :  rc = ymap_mreg_paste  ("move");      break;
       case 'f' :  rc = ymap_mreg_paste  ("force");     break;
-      default  :  rc = rce;                               break;
+      default  :  rc = rce;                            break;
       }
       yMODE_exit ();
       DEBUG_REGS   yLOG_exit    (__FUNCTION__);

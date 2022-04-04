@@ -7,8 +7,8 @@
 typedef  struct cMOCK  tMOCK;
 static struct cMOCK {
    char        s;
-   ushort      n, b, c, e;
-} myu, myx, myy, myz;
+   ushort      n, a, b, c, e;
+} myu, myx, myy, myz, myw;
 
 
 
@@ -222,7 +222,7 @@ struct {
    {  'w',   28,   4, '·' },
    {  'w',   29,   4, 'Ï' },
    /*---(wide)---------------------------*/
-   {  '1',    0,   0, 'Ï' },
+   {  '1',    0,   1, 'Ï' },
    /*---(done)---------------------------*/
    {   0 ,    0,   0,  0  },
 };
@@ -341,6 +341,7 @@ ymap__unit_load         (uchar a_axis, uchar a_style)
       ++n;
    }
    ymap__load_limits (x_map, 2000, 2000);
+   /*> printf ("ymap...full     load %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(show)---------------------------*/
    DEBUG_YMAP    yLOG_value   ("glen"      , x_map->glen);
    for (i = 0; i < x_map->glen; ++i) {
@@ -369,23 +370,29 @@ ymap__unit_load         (uchar a_axis, uchar a_style)
    }
    x_map->ulen  = x_map->uend - x_map->ubeg + 1;
    DEBUG_YMAP   yLOG_value   ("ulen"      , x_map->ulen);
+   /*> printf ("ymap...full     defs %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(unit test mock)-----------------*/
-   /*> switch (a_axis) {                                                              <* 
-    *> case 'u'  :  p = &myu;  break;                                                 <* 
-    *> case 'x'  :  p = &myx;  break;                                                 <* 
-    *> case 'y'  :  p = &myy;  break;                                                 <* 
-    *> case 'z'  :  p = &myz;  break;                                                 <* 
-    *> }                                                                              <* 
-    *> p->s  = a_style;                                                               <* 
-    *> p->n  = x_map->gmax + 1;                                                       <* 
-    *> p->b  = x_map->gbeg;                                                           <* 
-    *> p->c  = x_map->gcur;                                                           <* 
-    *> p->e  = x_map->gend;                                                           <*/
-   /*> DEBUG_YMAP   yLOG_complex ("LOADED"    , "%c, %3dn, %3db, %3dc, %3de", p->s, p->n, p->b, p->c, p->e);   <*/
+   switch (a_axis) {
+   case 'u'  :  p = &myu;  break;
+   case 'x'  :  p = &myx;  break;
+   case 'y'  :  p = &myy;  break;
+   case 'z'  :  p = &myz;  break;
+   case 'w'  :  p = &myw;  break;
+   }
+   p->s  = a_style;
+   p->a  = x_map->uavail;
+   p->n  = x_map->gmax + 1;
+   p->b  = x_map->gbeg;
+   p->c  = x_map->gcur;
+   p->e  = x_map->gend;
+   DEBUG_YMAP   yLOG_complex ("LOADED"    , "%c, %3dn, %3da, %3db, %3dc, %3de", p->s, p->n, p->a, p->b, p->c, p->e);
    rc = 0;
    if (rc >= 0)  rc = ymap_update_large (a_axis);
+   /*> printf ("ymap_update_large    %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    if (rc >= 0)  rc = ymap_update_small (a_axis);
+   /*> printf ("ymap_update_small    %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    if (rc >= 0)  ymap_visu_update ();
+   /*> printf ("ymap_visu_update     %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -402,18 +409,19 @@ ymap__unit_full         (uchar a_axis, uchar a_style)
    /*> if (rc >= 0)  rc = ymap_update_large (a_axis);                                 <* 
     *> if (rc >= 0)  rc = ymap_update_small (a_axis);                                 <* 
     *> if (rc >= 0)  ymap_visu_update ();                                             <*/
-   switch (a_axis) {
-   case 'u'  :  p = &myu;  m = &g_umap;  break;
-   case 'x'  :  p = &myx;  m = &g_xmap;  break;
-   case 'y'  :  p = &myy;  m = &g_ymap;  break;
-   case 'z'  :  p = &myz;  m = &g_zmap;  break;
-   }
-   p->s  = a_style;
-   p->n  = m->gmax + 1;
-   p->b  = m->gbeg;
-   p->c  = m->gcur;
-   p->e  = m->gend;
-   DEBUG_YMAP   yLOG_complex ("LOADED"    , "%c, %3dn, %3db, %3dc, %3de", p->s, p->n, p->b, p->c, p->e);
+   /*> switch (a_axis) {                                                              <* 
+    *> case 'u'  :  p = &myu;  m = &g_umap;  break;                                   <* 
+    *> case 'x'  :  p = &myx;  m = &g_xmap;  break;                                   <* 
+    *> case 'y'  :  p = &myy;  m = &g_ymap;  break;                                   <* 
+    *> case 'z'  :  p = &myz;  m = &g_zmap;  break;                                   <* 
+    *> }                                                                              <* 
+    *> p->s  = a_style;                                                               <* 
+    *> p->a  = m->uavail;                                                             <* 
+    *> p->n  = m->gmax + 1;                                                           <* 
+    *> p->b  = m->gbeg;                                                               <* 
+    *> p->c  = m->gcur;                                                               <* 
+    *> p->e  = m->gend;                                                               <*/
+   /*> DEBUG_YMAP   yLOG_complex ("LOADED"    , "%c, %3dn, %3da, %3db, %3dc, %3de", p->s, p->n, p->a, p->b, p->c, p->e);   <*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return rc;
 }
@@ -629,11 +637,17 @@ ymap__unit_quiet         (void)
    char       *x_args [20]  = {"yMAP_unit" };
    yMODE_init (MODE_MAP);
    yMODE_handler_setup ();
+   /*> printf ("yMODE_handler   aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    yMACRO_global_init ();
+   /*> printf ("yMACRO_...      aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    yMAP_init ();
+   /*> printf ("yMAP_init       aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    yMAP_config (YMAP_OFFICE, ymap__unit_locator, ymap__unit_addresser, ymap__unit_sizer, ymap__unit_entry, ymap__unit_placer, ymap__unit_done);
+   /*> printf ("yMAP_init       aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    ymap__unit_init ();
+   /*> printf ("ymap_unit_init  aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    ymap__unit_format_init ();
+   /*> printf ("ymap_unit_for   aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    return 0;
 }
 
@@ -702,6 +716,7 @@ ymap__unit_choose       (char a_axis)
    case 'x' : return &myx;  break;
    case 'y' : return &myy;  break;
    case 'z' : return &myz;  break;
+   case 'w' : return &myw;  break;
    }
    return NULL;
 }
@@ -724,6 +739,7 @@ ymap__unit_init         (void)
    ymap__unit__one ('x');
    ymap__unit__one ('y');
    ymap__unit__one ('z');
+   ymap__unit__one ('w');
    ymap__unit_presizer     (1000, 1000);
    return 0;
 }
@@ -731,10 +747,16 @@ ymap__unit_init         (void)
 char
 ymap__unit_map_general  (void)
 {
+   /*> printf ("ymap...general  beg  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    ymap__unit_full (YMAP_UNIV , 's');
+   /*> printf ("   universe     aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    ymap__unit_full (YMAP_XAXIS, 'F');
+   /*> printf ("   x-axis       aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    ymap__unit_full (YMAP_YAXIS, 'r');
+   /*> printf ("   y-axis       aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    ymap__unit_full (YMAP_ZAXIS, '1');
+   /*> printf ("   z-axis       aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
+   /*> printf ("ymap...general  end  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    return 0;
 }
 
@@ -770,7 +792,7 @@ ymap__unit_presizer     (ushort a_min, ushort a_max)
 }
 
 char
-ymap__unit_sizer        (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x)
+ymap__unit_sizer        (char a_axis, ushort *n, ushort *a, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x)
 {
    char        rce         =  -10;
    tMOCK      *p           = NULL;
@@ -782,6 +804,7 @@ ymap__unit_sizer        (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e
       return rce;
    }
    if (n != NULL)  *n = p->n;
+   if (a != NULL)  *a = p->a;
    if (b != NULL)  *b = p->b;
    if (c != NULL)  *c = p->c;
    if (e != NULL)  *e = p->e;
@@ -1207,6 +1230,7 @@ ymap__unit_base         (void)
    /*---(locals)-----------+-----+-----+-*/
    tTHING     *p           = NULL;
    /*---(purge)--------------------------*/
+   /*> printf ("ymap...base     beg  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    ymap__unit_purge      ();
    /*---(3 secondary)--------------------*/
    p = ymap__unit_create ();
@@ -1248,6 +1272,7 @@ ymap__unit_base         (void)
    ymap__unit_hook       (p, 4, 3);
    ymap__unit_mark       (p);
    /*---(complete)-----------------------*/
+   /*> printf ("ymap...base     end  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    return 0;
 }
 
@@ -1378,7 +1403,7 @@ ymap__unit_copier       (char a_type, long a_stamp)
          rc = yMAP_visual (b, x, y, 0);
          if (rc == 1) {
             x_new = ymap__unit_dup (x_thing);
-            yMAP_mreg_add (x_new, x_new->l);
+            yMAP_mreg_add (x_new, x_new->l, "", "");
          }
       }
       rc = yMAP_visu_next  (&b, &x, &y, NULL);
@@ -1524,6 +1549,12 @@ yMAP__unit              (char *a_question, char a_index)
    }
    else if (strcmp (a_question, "refresh"        )   == 0) {
       sprintf (unit_answer, "MAP refresh      : univ %d, xaxis %d, yaxis %d, zaxis %d", g_umap.change, g_xmap.change, g_ymap.change, g_zmap.change);
+   }
+   else if (strcmp (a_question, "mreg_list"      )   == 0) {
+         snprintf (unit_answer, LEN_FULL, "MAP mreg list    : %s", ymap_mreg_list   (a_index));
+   }
+   else if (strcmp (a_question, "mreg_detail"    )   == 0) {
+         snprintf (unit_answer, LEN_FULL, "MAP mreg detail  : %s", ymap_mreg_detail (a_index));
    }
    else if (strcmp (a_question, "visual"         )   == 0) {
       n = ymap_visu_index (a_index);

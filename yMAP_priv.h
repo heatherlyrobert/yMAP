@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, complete and tie yVIKEYS back into it"
-#define     P_VERNUM    "2.0f"
-#define     P_VERTXT    "updated mundo unit test with new mundo print/debug layout"
+#define     P_VERNUM    "2.0g"
+#define     P_VERTXT    "cleared troubles from unit tests (all but universe)"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -56,14 +56,16 @@
 #include    <yLOG.h>              /* heatherly program logging                */
 #include    <ySTR.h>              /* heatherly string processing              */
 /*---(custom vi-keys)--------------------*/
-#include    <yKEYS.h>             /* heatherly vi-keys key handling           */
-#include    <yMODE.h>             /* heatherly vi-keys mode tracking          */
-#include    <yVIEW.h>             /* heatherly vi-keys view management        */
-#include    <yMACRO.h>            /* heatherly vi-keys macro processing       */
-#include    <ySRC.h>              /* heatherly vi-keys source editing         */
-#include    <yFILE.h>             /* heatherly vi-keys content file handling  */
-#include    <yCMD.h>              /* heatherly vi-keys command processing     */
+#include    <yKEYS.h>             /* heatherly vikeys key handling           */
+#include    <yMODE.h>             /* heatherly vikeys mode tracking          */
+#include    <yVIEW.h>             /* heatherly vikeys view management        */
+#include    <yMACRO.h>            /* heatherly vikeys macro processing       */
+#include    <ySRC.h>              /* heatherly vikeys source editing         */
+#include    <yFILE.h>             /* heatherly vikeys content file handling  */
+#include    <yMARK.h>             /* heatherly vikeys search and marking      */
+#include    <yCMD.h>              /* heatherly vikeys command processing     */
 /*---(custom other)----------------------*/
+#include    <ySORT.h>        /* heatherly sorting library               */
 #include    <yDLST_solo.h>        /* heatherly double-double-list             */
 /*---(done)------------------------------*/
 
@@ -192,17 +194,17 @@ struct cMY {
    char        orient;            /* normal (down = neg) office (down = pos)  */
    char      (*e_locator)    (char a_strict, char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
    char      (*e_addresser)  (char a_strict, char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);
-   char      (*e_sizer)      (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);
+   char      (*e_sizer)      (char a_axis, ushort *n, ushort *a, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);
    char      (*e_entry)      (char a_axis, ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
    char      (*e_placer)     (char a_axis, ushort b, ushort c, ushort e);
    char      (*e_done)       (void);
    /*---(mreg)-----------------*/
    char      (*e_regkill)    (void *a_thing);
    void*     (*e_copier)     (char a_type, long a_stamp);
-   char      (*e_clearer)    (char a_1st, int b, int x, int y, int z);
+   char      (*e_clearer)    (char a_1st, ushort b, ushort x, ushort y, ushort z);
    char      (*e_router)     (void *a_thing, char *a_list);
-   char      (*e_paster)     (char a_regs, char a_pros, char a_intg, char a_1st, int a_boff, int a_xoff, int a_yoff, int a_zoff, void *a_thing, char *a_list);
-   char      (*e_finisher)   (int a_boff, int a_xoff, int a_yoff, int a_zoff, void *a_thing);
+   char      (*e_paster)     (char a_regs, char a_pros, char a_intg, char a_1st, ushort a_uoff, ushort a_xoff, ushort a_yoff, ushort a_zoff, void *a_thing, char *a_list);
+   char      (*e_finisher)   (ushort a_uoff, ushort a_xoff, ushort a_yoff, ushort a_zoff, void *a_thing);
    char      (*e_exim)       (char a_dir, char a_style);
    /*---(mundo/hist)-----------*/
    uchar       h_active;               /* history is active y/-               */
@@ -384,7 +386,7 @@ char        ymap__unit_locator      (char a_strict, char *a_label, ushort *u, us
 char        ymap__unit_addresser    (char a_strict, char *a_label, ushort u, ushort x, ushort y, ushort z);
 char        ymap__unit_init         (void);
 char        ymap__unit_presizer     (ushort a_min, ushort a_max);
-char        ymap__unit_sizer        (char a_axis, ushort *n, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);
+char        ymap__unit_sizer        (char a_axis, ushort *n, ushort *a, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);
 char        ymap__unit_entry        (char a_axis, ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);
 char        ymap__unit_placer       (char a_axis, ushort b, ushort c, ushort e);
 char        ymap__unit_done         (void);
@@ -414,7 +416,7 @@ char*       yMAP__unit              (char *a_question, char a_index);
 char        ymap__mreg_valid        (char a_abbr);
 char        ymap__mreg_by_abbr      (char a_abbr);
 /*---(memory)---------------*/
-char        ymap__mreg_new          (char a_abbr, void *a_item, char *a_label);
+char        ymap__mreg_new          (char a_abbr, void *a_item, char *a_label, char *a_reqs, char *a_pros);
 char        ymap__mreg_wipe         (char a_abbr, char a_scope);
 char        ymap__mreg_set          (char a_abbr);
 char        ymap__mreg_reset        (void);
@@ -425,7 +427,7 @@ char        ymap_mreg_init          (void);
 char        yMAP_mreg_config        (void *a_clearer, void *a_copier, void *a_router, void *a_paster, void *a_finisher, void *a_regkill, void *a_exim);
 char        ymap_mreg_wrap          (void);
 /*---(attach)---------------*/
-char        yMAP_mreg_add           (void *a_thing, char *a_label);
+char        yMAP_mreg_add           (void *a_thing, char *a_label, char *a_reqs, char *a_pros);
 char        ymap_mreg_save          (void);
 char*       ymap_mreg_list          (char a_abbr);
 char*       ymap_mreg_detail        (char a_abbr);
@@ -436,6 +438,7 @@ char        ymap_mreg_paste         (char *a_type);
 char        ymap_mreg_paste_combo   (char *a_type);
 char        ymap_mreg_visual        (void);
 /*---(mode)-----------------*/
+char        yMAP_mreg_hmode         (uchar a_major, uchar a_minor);
 char        ymap_mreg_smode         (uchar a_major, uchar a_minor);
 /*---(done)-----------------*/
 

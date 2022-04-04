@@ -110,6 +110,7 @@ yMAP_init              (void)
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*> printf ("yMAP_init       beg  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(globals)------------------------*/
    DEBUG_YMAP   yLOG_note    ("default globals");
    myMAP.orient = YMAP_OFFICE;
@@ -131,6 +132,7 @@ yMAP_init              (void)
    g_ygrid;   /* y-axis           */
    g_zgrid;   /* z-axis           */
    g_wgrid;   /* when/time        */
+   /*> printf ("yMAP_init       map  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(visual)-------------------------*/
    DEBUG_YMAP   yLOG_note    ("visual setup");
    ymap_visu_init ();
@@ -154,6 +156,7 @@ yMAP_init              (void)
    rc = yCMD_add (YCMD_M_FORMAT, "zreset"      , ""    , "s"    , ymap_multi_deep_reset      , "reset thickness of all levels to default" );
    /*---(update status)------------------*/
    yMODE_init_set   (MODE_MAP, NULL, ymap_mode);
+   /*> printf ("yMAP_init       end  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
 }

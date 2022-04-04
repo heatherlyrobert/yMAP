@@ -177,6 +177,7 @@ ymap__combo_wrap        (uchar a_major, uchar a_minor)
    DEBUG_MAP    yLOG_complex ("paste loc" , "          %3dxp %4dyp", s_xp, s_yp);
    switch (a_major) {
    case ACT_CLEAR  :
+      DEBUG_MAP    yLOG_note ("ACT_CLEAR");
       /*> case 'c' :                                                                     <*/
       /*---(clear)-------------*/
       rc = ymap_mreg_clear ();
@@ -185,6 +186,7 @@ ymap__combo_wrap        (uchar a_major, uchar a_minor)
    case ACT_DELCPY :
       strlcpy (x_method, "normal", LEN_LABEL);
    case ACT_DELMOV :
+      DEBUG_MAP    yLOG_note ("ACT_DELCPY/ACT_DELMOV");
       /*> case 'y' :                                                                     <*/
       /*---(copy)--------------*/
       rc = ymap_mreg_save  ();
@@ -199,6 +201,7 @@ ymap__combo_wrap        (uchar a_major, uchar a_minor)
    case ACT_APPCPY :
       strlcpy (x_method, "normal", LEN_LABEL);
    case ACT_APPMOV :
+      DEBUG_MAP    yLOG_note ("ACT_APPCPY/ACT_APPMOV");
       /*> case '-' :                                                                     <*/
       /*---(copy)--------------*/
       rc = ymap_mreg_save  ();
@@ -454,9 +457,11 @@ ymap__multiend          (uchar a_major, uchar a_minor)
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    /*---(pastes)-------------------------*/
    if (a_major == 'p') {
+      yKEYS_repeat_reset ();
       switch (a_minor) {
       case '_' :  rc = ymap_mreg_visual ();            break;
       case '#' :  rc = ymap_mreg_paste  ("clear");     break;
+      case 'x' :  rc = ymap_mreg_paste  ("clear");     break;
       case 'n' :  rc = ymap_mreg_paste  ("normal");    break;
       case 'r' :  rc = ymap_mreg_paste  ("replace");   break;
       case 'd' :  rc = ymap_mreg_paste  ("duplicate"); break;
@@ -468,18 +473,21 @@ ymap__multiend          (uchar a_major, uchar a_minor)
    }
    /*---(deletes)------------------------*/
    if (tolower (a_major) == 'd') {
+      yKEYS_repeat_reset ();
       rc = ymap__combo_delete     (a_major, a_minor);
       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(clears)-------------------------*/
    if (a_major == 'x') {
+      yKEYS_repeat_reset ();
       rc = ymap__combo_clear      (a_major, a_minor);
       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(appends)------------------------*/
    if (tolower (a_major) == 'a') {
+      yKEYS_repeat_reset ();
       rc = ymap__combo_append     (a_major, a_minor);
       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
       return rc;
@@ -720,6 +728,13 @@ ymap_mode               (uchar a_major, uchar a_minor)
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
+   /*---(registers)----------------------*/
+   rc = yMAP_mreg_hmode  (a_major, a_minor);
+   DEBUG_YMAP   yLOG_value   ("mreg"      , rc);
+   if (rc != 0) {
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      return 0;
+   }
    /*---(macros)-------------------------*/
    rc = yMACRO_hmode  (a_major, a_minor);
    DEBUG_YMAP   yLOG_value   ("macros"    , rc);
@@ -730,6 +745,13 @@ ymap_mode               (uchar a_major, uchar a_minor)
    /*---(mundo)--------------------------*/
    rc = ymap_mundo_hmode  (a_major, a_minor);
    DEBUG_YMAP   yLOG_value   ("mundo"     , rc);
+   if (rc != 0) {
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      return 0;
+   }
+   /*---(search)-------------------------*/
+   rc = yMARK_find_hmode  (a_major, a_minor);
+   DEBUG_YMAP   yLOG_value   ("srch"      , rc);
    if (rc != 0) {
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
       return 0;

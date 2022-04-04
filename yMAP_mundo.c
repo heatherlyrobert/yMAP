@@ -66,6 +66,17 @@ ymap__mundo_valid_act   (char a_act)
    return 0;
 }
 
+char
+yMAP_mundo_make_add     (void)
+{
+   if (myMAP.h_tail != NULL)  myMAP.h_tail->mode = YMAP_ADD;
+   return 0;
+}
+
+int yMAP_mundo_current      (void) { return myMAP.h_index; }
+
+int yMAP_mundo_count        (void) { return myMAP.h_count; }
+
 
 
 /*====================------------------------------------====================*/
@@ -285,6 +296,16 @@ yMAP_mundo_config       (char a_len, void *a_mundo)
    yMODE_conf_set   (UMOD_MUNDO, '1');
    /*---(complete)-----------------------*/
    DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+yMAP_mundo_rollback     (void)
+{
+   ymap__mundo_by_cursor (YDLST_TAIL);
+   ymap_mundo_undo ();
+   if (myMAP.h_head != myMAP.h_curr)  ymap__mundo_by_cursor (YDLST_NEXT);
+   ymap__mundo_prune ('-');
    return 0;
 }
 

@@ -706,7 +706,7 @@ ymap_update_large       (uchar a_axis)
       return rce;
    }
    /*---(get absolutes)------------------*/
-   rc = myMAP.e_sizer (a_axis, NULL, NULL, NULL, NULL, &x_min, &x_max);
+   rc = myMAP.e_sizer (a_axis, NULL, NULL, NULL, NULL, NULL, &x_min, &x_max);
    DEBUG_YMAP    yLOG_complex ("e_sizer"   , "%4dr, %4dm, %4dx", rc, x_min, x_max);
    /*---(run grid)-----------------------*/
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
@@ -774,10 +774,11 @@ ymap_update_small       (uchar a_axis)
    char        rc          =    0;
    tyMAP      *x_map       = NULL;
    tGRID      *x_grid      = NULL;
-   ushort      n, b, c, e, x_min, x_max;
+   ushort      n, a, b, c, e, x_min, x_max;
    ushort      x, y;
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   /*> printf ("ymap...small    beg  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(defense)------------------------*/
    DEBUG_YMAP   yLOG_char    ("a_axis"    , a_axis);
    rc = ymap_pick_map (a_axis, &x_map, &x_grid);
@@ -797,8 +798,10 @@ ymap_update_small       (uchar a_axis)
    }
    /*---(get absolutes)------------------*/
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
-   rc = myMAP.e_sizer (a_axis, &n, &b, &c, &e, &x_min, &x_max);
-   DEBUG_YMAP    yLOG_complex ("e_sizer"   , "%4dr, %4dn, %4db, %4dc, %4de, %4dm, %4dx", rc, n, b, c, e, x_min, x_max);
+   rc = myMAP.e_sizer (a_axis, &n, &a, &b, &c, &e, &x_min, &x_max);
+   DEBUG_YMAP    yLOG_complex ("e_sizer"   , "%4dr, %4dn, %4da, %4db, %4dc, %4de, %4dm, %4dx", rc, n, a, b, c, e, x_min, x_max);
+   /*---(load avail)---------------------*/
+   x_map->uavail = a;
    /*---(DEBUGGING)----------------------*/
    yMAP_current (NULL, NULL, &x, &y, NULL);
    DEBUG_YMAP    yLOG_complex ("current"   , "%c, %4dx, %4dy", a_axis, x, y);
@@ -810,6 +813,7 @@ ymap_update_small       (uchar a_axis)
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*> printf ("ymap...small    lims %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(update prev)--------------------*/
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
    rc = ymap__load_ends   (x_map, '<');
@@ -818,6 +822,7 @@ ymap_update_small       (uchar a_axis)
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*> printf ("ymap...small    end< %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(update next)--------------------*/
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
    rc = ymap__load_ends   (x_map, '>');
@@ -826,17 +831,20 @@ ymap_update_small       (uchar a_axis)
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*> printf ("ymap...small    end> %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(DEBUGGING)----------------------*/
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
-   rc = myMAP.e_sizer (a_axis, &n, &b, &c, &e, &x_min, &x_max);
+   rc = myMAP.e_sizer (a_axis, &n, &a, &b, &c, &e, &x_min, &x_max);
    DEBUG_YMAP    yLOG_complex ("e_sizer"   , "%4dr, %4dn, %4db, %4dc, %4de, %4dm, %4dx", rc, n, b, c, e, x_min, x_max);
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
    yMAP_current (NULL, NULL, &x, &y, NULL);
    DEBUG_YMAP    yLOG_complex ("current"   , "%c, %4dx, %4dy", a_axis, x, y);
+   /*> printf ("ymap...small    839  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(finalize)-----------------------*/
    DEBUG_YMAP    yLOG_complex ("map coords", "%4db, %4dc, %4de", x_map->gbeg, x_map->gcur, x_map->gend);
    DEBUG_YMAP    yLOG_complex ("units"     , "%4db, %4dc, %4de", x_map->ubeg, x_map->ucur, x_map->uend);
    ymap_update_grid  (x_map);
+   /*> printf ("ymap...small    grid %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
    DEBUG_YMAP    yLOG_complex ("map coords", "%4db, %4dc, %4de", x_map->gbeg, x_map->gcur, x_map->gend);
    DEBUG_YMAP    yLOG_complex ("units"     , "%4db, %4dc, %4de", x_map->ubeg, x_map->ucur, x_map->uend);
@@ -844,13 +852,15 @@ ymap_update_small       (uchar a_axis)
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
    DEBUG_YMAP    yLOG_complex ("map coords", "%4db, %4dc, %4de", x_map->gbeg, x_map->gcur, x_map->gend);
    DEBUG_YMAP    yLOG_complex ("units"     , "%4db, %4dc, %4de", x_map->ubeg, x_map->ucur, x_map->uend);
+   /*> printf ("ymap...small    disp %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    /*---(DEBUGGING)----------------------*/
-   rc = myMAP.e_sizer (a_axis, &n, &b, &c, &e, &x_min, &x_max);
+   rc = myMAP.e_sizer (a_axis, &n, &a, &b, &c, &e, &x_min, &x_max);
    DEBUG_YMAP    yLOG_complex ("e_sizer"   , "%4dr, %4dn, %4db, %4dc, %4de, %4dm, %4dx", rc, n, b, c, e, x_min, x_max);
    yMAP_current (NULL, NULL, &x, &y, NULL);
    DEBUG_YMAP    yLOG_complex ("current"   , "%c, %4dx, %4dy", a_axis, x, y);
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
    /*---(complete)-----------------------*/
+   /*> printf ("ymap...small    end  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
@@ -1026,6 +1036,7 @@ yMAP_axis_avail         (uchar a_axis, ushort a_avail)
       return rce;
    }
    /*---(assign)-------------------------*/
+   DEBUG_YMAP   yLOG_value   ("a_avail"   , a_avail);
    x_map->uavail = a_avail;
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);

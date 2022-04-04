@@ -103,6 +103,7 @@ static void  o___SCREEN__________o () { return; }
 char
 ymap_update_grid        (tyMAP *a_map)
 {
+   /*> printf ("update grid          %7dl %7db %7dc %7de\n", a_map->ulen, a_map->ubeg, a_map->ucur, a_map->uend);   <*/
    a_map->ulen  = a_map->uend - a_map->ubeg + 1;
    a_map->gbeg = a_map->map [a_map->ubeg];
    a_map->gcur = a_map->map [a_map->ucur];
@@ -315,6 +316,7 @@ ymap_display            (tyMAP *a_map)
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   DEBUG_YMAP   yLOG_value   ("->avail"   , a_map->uavail);
    /*---(screen fits all)----------------*/
    if (a_map->umax - a_map->umin <  a_map->uavail) {
       DEBUG_YMAP   yLOG_note    ("small format, all content fits");

@@ -203,8 +203,11 @@ ymap__refresh_analyze   (void)
    DEBUG_YMAP    yLOG_enter   (__FUNCTION__);
    /*---(universes)----------------------*/
    rc = yMAP_axis_grid (YMAP_UNIV , &b, &c, &e, NULL);
-   if (u_last == YMAP_EMPTY)  DEBUG_YMAP    yLOG_complex ("UNIV"      , "%4d, ····l, %4db, %4dc, %4de", rc, b, c, e);
-   else                       DEBUG_YMAP    yLOG_complex ("UNIV"      , "%4d, %4dl, %4db, %4dc, %4de", rc, u_last, b, c, e);
+   if (u_last == YMAP_EMPTY) {
+      DEBUG_YMAP    yLOG_complex ("UNIV"      , "%4d, ····l, %4db, %4dc, %4de", rc, b, c, e);
+   } else {
+      DEBUG_YMAP    yLOG_complex ("UNIV"      , "%4d, %4dl, %4db, %4dc, %4de", rc, u_last, b, c, e);
+   }
    if (c == u_last) {
       DEBUG_YMAP    yLOG_note    ("univ/tab did not change, do not remap");
    } else {
@@ -217,8 +220,11 @@ ymap__refresh_analyze   (void)
    u_last = c;
    /*---(columns)------------------------*/
    rc = yMAP_axis_grid (YMAP_XAXIS, &b, &c, &e, NULL);
-   if (x_last == YMAP_EMPTY)  DEBUG_YMAP    yLOG_complex ("COLS"      , "%4d, ····l, %4db, %4dc, %4de", rc, b, c, e);
-   else                       DEBUG_YMAP    yLOG_complex ("COLS"      , "%4d, %4dl, %4db, %4dc, %4de", rc, x_last, b, c, e);
+   if (x_last == YMAP_EMPTY) {
+      DEBUG_YMAP    yLOG_complex ("COLS"      , "%4d, ····l, %4db, %4dc, %4de", rc, b, c, e);
+   } else {
+      DEBUG_YMAP    yLOG_complex ("COLS"      , "%4d, %4dl, %4db, %4dc, %4de", rc, x_last, b, c, e);
+   }
    if (c == x_last) {
       DEBUG_YMAP    yLOG_note    ("xpos/col did not change, do not remap");
    } else {
@@ -230,8 +236,11 @@ ymap__refresh_analyze   (void)
    x_last = c;
    /*---(rows)---------------------------*/
    rc = yMAP_axis_grid (YMAP_YAXIS, &b, &c, &e, NULL);
-   if (y_last == YMAP_EMPTY)  DEBUG_YMAP    yLOG_complex ("ROWS"      , "%4d, ····l, %4db, %4dc, %4de", rc, b, c, e);
-   else                       DEBUG_YMAP    yLOG_complex ("ROWS"      , "%4d, %4dl, %4db, %4dc, %4de", rc, y_last, b, c, e);
+   if (y_last == YMAP_EMPTY) {
+      DEBUG_YMAP    yLOG_complex ("ROWS"      , "%4d, ····l, %4db, %4dc, %4de", rc, b, c, e);
+   } else  {
+      DEBUG_YMAP    yLOG_complex ("ROWS"      , "%4d, %4dl, %4db, %4dc, %4de", rc, y_last, b, c, e);
+   }
    if (c == y_last) {
       DEBUG_YMAP    yLOG_note    ("ypos/row did not change, do not remap");
    } else {
@@ -243,8 +252,11 @@ ymap__refresh_analyze   (void)
    y_last = c;
    /*---(rows)---------------------------*/
    rc = yMAP_axis_grid (YMAP_ZAXIS, &b, &c, &e, NULL);
-   if (y_last == YMAP_EMPTY)  DEBUG_YMAP    yLOG_complex ("DEEP"      , "%4d, ····l, %4db, %4dc, %4de", rc, b, c, e);
-   else                       DEBUG_YMAP    yLOG_complex ("DEEP"      , "%4d, %4dl, %4db, %4dc, %4de", rc, z_last, b, c, e);
+   if (y_last == YMAP_EMPTY) {
+      DEBUG_YMAP    yLOG_complex ("DEEP"      , "%4d, ····l, %4db, %4dc, %4de", rc, b, c, e);
+   } else {
+      DEBUG_YMAP    yLOG_complex ("DEEP"      , "%4d, %4dl, %4db, %4dc, %4de", rc, z_last, b, c, e);
+   }
    if (c == z_last) {
       DEBUG_YMAP    yLOG_note    ("zpos/deep did not change, do not remap");
    } else {
@@ -282,7 +294,7 @@ ymap__refresh           (char *a_name, char a_axis, tyMAP *a_map)
          DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      rc = myMAP.e_sizer (a_axis, &x_max, NULL, NULL, NULL, NULL, NULL);
+      rc = myMAP.e_sizer (a_axis, &x_max, NULL, NULL, NULL, NULL, NULL, NULL);
       DEBUG_YMAP   yLOG_value   ("e_sizer"   , rc);
       --rce;  if (rc < 0) {
          DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
