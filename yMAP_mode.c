@@ -104,24 +104,32 @@ ymap__combo_prep        (uchar a_major, uchar a_minor)
    char        rc          =    0;
    /*---(header)-------------------------*/
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   DEBUG_MAP    yLOG_complex ("a_args"    , "%c %c", a_major, a_minor);
+   /*---(set globals)--------------------*/
+   myMAP.h_1st = 'y';
    /*---(get current)--------------------*/
    rc = yMAP_visu_range  (&s_b, &s_xbs, &s_xes, &s_ybs, &s_yes, &s_z, NULL, NULL);
-   DEBUG_MAP    yLOG_complex ("src loc"   , "%3d, %2db, %3dxb %4dyb, %3dxe %4dye", rc, s_b, s_xbs, s_ybs, s_xes, s_yes);
+   DEBUG_MAP    yLOG_complex ("src loc"   , "%3d, %2db, %3dxbs %4dybs, %3dxes, %4dyes", rc, s_b, s_xbs, s_ybs, s_xes, s_yes);
    /*---(update for line cases)----------*/
    switch (a_minor) {
    case OBJ_COLAFT : case OBJ_COLBEF :
+      DEBUG_MAP    yLOG_note    ("full column request");
       s_ybs = g_ymap.gmin;
       s_yes = g_ymap.gmax;
       ymap_visu_exact  (s_b, s_xbs, s_xes, s_ybs, s_yes, s_z, s_z, 'e');
-      DEBUG_MAP    yLOG_complex ("src update", "%3d, %2db, %3dxb %4dyb, %3dxe %4dye", rc, s_b, s_xbs, s_ybs, s_xes, s_yes);
+      DEBUG_MAP    yLOG_complex ("src update", "%3d, %2db, %3dxbs, %4dybs, %3dxes, %4dyes", rc, s_b, s_xbs, s_ybs, s_xes, s_yes);
       break;
    case OBJ_ROWAFT : case OBJ_ROWBEF :
+      DEBUG_MAP    yLOG_note    ("full row request");
       s_xbs = g_xmap.gmin;
       s_xes = g_xmap.gmax;
       ymap_visu_exact  (s_b, s_xbs, s_xes, s_ybs, s_yes, s_z, s_z, 'e');
-      DEBUG_MAP    yLOG_complex ("src update", "%3d, %2db, %3dxb %4dyb, %3dxe %4dye", rc, s_b, s_xbs, s_ybs, s_xes, s_yes);
+      DEBUG_MAP    yLOG_complex ("src update", "%3d, %2db, %3dxbs, %4dybs, %3dxes, %4dyes", rc, s_b, s_xbs, s_ybs, s_xes, s_yes);
       break;
    case OBJ_DEPAFT : case OBJ_DEPBEF :
+      break;
+   default :
+      DEBUG_MAP    yLOG_note    ("normal request");
       break;
    }
    /*---(selection size)-----------------*/
@@ -129,7 +137,10 @@ ymap__combo_prep        (uchar a_major, uchar a_minor)
    s_yl   = (s_yes - s_ybs) + 1;
    DEBUG_MAP    yLOG_complex ("dims"      , "          %3dxl %4dyl", s_xl, s_yl);
    /*---(clear)--------------------------*/
-   if (strchr (ACT_DELETES, a_major) != NULL)  rc = ymap_mreg_clear ();
+   if (strchr (ACT_DELETES, a_major) != NULL) {
+      DEBUG_MAP    yLOG_note    ("was a delete-type, so clear");
+      rc = ymap_mreg_clear_combo ();
+   }
    rc = ymap_visu_clear ();
    /*---(save top/left)------------------*/
    s_lef  = g_xmap.ubeg;
@@ -139,11 +150,11 @@ ymap__combo_prep        (uchar a_major, uchar a_minor)
    s_ybc  = s_ybs;
    s_xec  = s_xes;
    s_yec  = s_yes;
-   DEBUG_MAP    yLOG_complex ("copy loc"  , "          %3dxb %4dyb, %3dxe %4dye", s_xbc, s_ybc, s_xec, s_yec);
+   DEBUG_MAP    yLOG_complex ("copy loc"  , "          %3dxbc, %4dybc, %3dxec, %4dyec", s_xbc, s_ybc, s_xec, s_yec);
    /*---(paste loc default)--------------*/
-   s_nopaste = '-';
-   s_xp   = s_xbs;
-   s_yp   = s_ybs;
+   s_nopaste   = '-';
+   s_xp        = s_xbs;
+   s_yp        = s_ybs;
    DEBUG_MAP    yLOG_complex ("paste loc" , "          %3dxp %4dyp", s_xp, s_yp);
    /*---(complete)-----------------------*/
    DEBUG_MAP    yLOG_exit    (__FUNCTION__);
@@ -158,6 +169,7 @@ ymap__combo_wrap        (uchar a_major, uchar a_minor)
    char        x_method    [LEN_LABEL] = "append";
    /*---(header)-------------------------*/
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
+   DEBUG_MAP    yLOG_complex ("a_args"    , "%c %c, %c = nopaste", a_major, a_minor, s_nopaste);
    /*---(defense on boundaries)----------*/
    if (s_xp  <  0          )  s_xp  = 0;
    if (s_xp  >= g_xmap.gmax)  s_xp  = g_xmap.gmax;
@@ -180,7 +192,7 @@ ymap__combo_wrap        (uchar a_major, uchar a_minor)
       DEBUG_MAP    yLOG_note ("ACT_CLEAR");
       /*> case 'c' :                                                                     <*/
       /*---(clear)-------------*/
-      rc = ymap_mreg_clear ();
+      rc = ymap_mreg_clear_combo ();
       rc = ymap_visu_clear ();
       break;
    case ACT_DELCPY :
@@ -205,7 +217,7 @@ ymap__combo_wrap        (uchar a_major, uchar a_minor)
       /*> case '-' :                                                                     <*/
       /*---(copy)--------------*/
       rc = ymap_mreg_save  ();
-      rc = ymap_mreg_clear ();
+      rc = ymap_mreg_clear_combo ();
       rc = ymap_visu_clear ();
       /*---(paste)-------------*/
       rc = yMAP_jump (s_b, s_xp, s_yp, s_z);
@@ -276,6 +288,7 @@ ymap__combo_delete      (char a_major, char a_minor)
    char        i           =    0;
    char        x_pos       =    0;
    char        x_minors    [LEN_LABEL]  = "lhxX·jkyY·iozZ";
+   char        x_nada      =  '-';
    /*---(header)-------------------------*/
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -293,19 +306,24 @@ ymap__combo_delete      (char a_major, char a_minor)
    }
    /*---(get and clear)------------------*/
    rc = ymap__combo_prep    (a_major, a_minor);
+   DEBUG_MAP    yLOG_complex ("src loc"   , "%2db, %3dxbs %4dybs, %3dxes, %4dyes",  s_b, s_xbs, s_ybs, s_xes, s_yes);
+   DEBUG_MAP    yLOG_complex ("bounds"    , "%4d xgmin, %4d xgmax%4d, ygmin, %4d ygmax", g_xmap.gmin, g_xmap.gmax, g_ymap.gmin, g_ymap.gmax);
    /*---(horizontal)---------------------*/
    switch (a_minor) {
    case 'l' : case OBJ_COLAFT :
       DEBUG_MAP    yLOG_note    ("horizontal RIGHT 'l' and 'x' handling");
       s_xbc = s_xes + 1;
       s_xec = g_xmap.gmax;
-      if (s_xbc > s_xec)  s_nopaste = 'y';
+      if (s_xbs >= g_xmap.gmax)  x_nada    = 'y';
+      if (s_xbc >  g_xmap.gmax)  s_nopaste = 'y';
+      s_xp  = s_xbs;
       break;
    case 'h' : case OBJ_COLBEF :
       DEBUG_MAP    yLOG_note    ("horizontal LEFT 'h' and 'X' handling");
       s_xbc = g_xmap.gmin;
       s_xec = s_xbs - 1;
-      if (s_xbc > s_xec)  s_nopaste = 'y';
+      if (s_xbs <= g_xmap.gmin)  x_nada    = 'y';
+      if (s_xec <  g_xmap.gmin)  s_nopaste = 'y';
       s_xp  = s_xes - (s_xec - s_xbc);
       break;
    }
@@ -315,21 +333,31 @@ ymap__combo_delete      (char a_major, char a_minor)
       DEBUG_MAP    yLOG_note    ("vertical DOWN 'j' and 'y' handling");
       s_ybc = s_yes + 1;
       s_yec = g_ymap.gmax;
+      if (s_ybs >= g_ymap.gmax)  x_nada    = 'y';
+      if (s_ybc >  g_ymap.gmax)  s_nopaste = 'y';
       s_yp  = s_ybs;
-      if (s_ybc > s_yec)  s_nopaste = 'y';
       break;
    case 'k' : case OBJ_ROWBEF :
       DEBUG_MAP    yLOG_note    ("vertical UP 'k' and 'Y' handling");
       s_yec = s_ybs - 1;
       s_ybc = g_ymap.gmin;
+      if (s_ybs <= g_ymap.gmin)  x_nada    = 'y';
+      if (s_yec <  g_ymap.gmin)  s_nopaste = 'y';
       s_yp  = s_ybc + s_yl;
-      if (s_ybc > s_yec)  s_nopaste = 'y';
       break;
    }
    /*---(paste/move)---------------------*/
-   DEBUG_MAP    yLOG_complex ("copy loc"  , "          %3dxb %4dyb, %3dxe %4dye", s_xbc, s_ybc, s_xec, s_yec);
+   DEBUG_MAP    yLOG_complex ("copy loc"  , "          %3dxbc, %4dybc, %3dxec, %4dyec", s_xbc, s_ybc, s_xec, s_yec);
    DEBUG_MAP    yLOG_complex ("paste loc" , "          %3dxp %4dyp", s_xp, s_yp);
-   rc = ymap__combo_wrap    (a_major, a_minor);
+   DEBUG_MAP    yLOG_complex ("actions"   , "s_nopaste %c, x_nada %c", s_nopaste, x_nada);
+   if (x_nada == '-') {
+      DEBUG_MAP    yLOG_complex ("copy loc"  , "          %3dxbc, %4dybc, %4dxec, %4dyec", s_xbc, s_ybc, s_xec, s_yec);
+      DEBUG_MAP    yLOG_complex ("paste loc" , "          %3dxp %4dyp", s_xp, s_yp);
+      rc = ymap__combo_wrap    (a_major, a_minor);
+   } else {
+      DEBUG_MAP    yLOG_note    ("skip ymap__combo_wrap, just clear reqister");
+      ymap_mreg_wipe_curr  ();
+   }
    /*---(complete)-----------------------*/
    DEBUG_MAP    yLOG_exit    (__FUNCTION__);
    return 0;

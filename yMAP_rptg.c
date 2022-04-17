@@ -252,7 +252,7 @@ ymap_mundo_dump         (FILE *f)
    fprintf (f, "# index = %d\n" , myMAP.h_index);
    x_curr = myMAP.h_head;
    while (x_curr != NULL) {
-      if (c % 5 == 0)  fprintf (f, "\n#tot ref- m a ---action--- -label- § ---before-----------------------------------------  ---after------------------------------------------ \n");
+      if (c % 5 == 0)  fprintf (f, "\n#tot c ref- m a ---action--- -label- § ---before----------------------------------------- § ---after------------------------------------------ §\n");
       fprintf (f, "%-4d %c %-4d %c %c %-12.12s %-7.7s § %-50s § %-50s §\n",
             myMAP.h_count, (myMAP.h_index == c) ? '>' : '·', c,
             x_curr->mode, x_curr->act, ymap_mundo_action (x_curr->mode, x_curr->act),

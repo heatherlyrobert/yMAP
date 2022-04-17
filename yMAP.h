@@ -146,6 +146,7 @@ typedef  unsigned short       ushort;
 #define     YMAP_DEXACT       (uchar) 'í'
 #define     YMAP_SHAPE        'S'
 #define     YMAP_COLOR        'C'
+#define     YMAP_SYNC         (uchar) 'ù'
 /*---(content changes)-----------*/
 #define     YMAP_OVERWRITE    'o'
 #define     YMAP_CLEAR        'x'
@@ -235,9 +236,11 @@ char*       yMAP_mundo_detail       (int n);
 
 /*===[[ yMAP_mreg.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        yMAP_mreg_config        (void *a_clearer, void *a_copier, void *a_router, void *a_paster, void *a_finisher, void *a_regkill, void *a_exim);
+char        yMAP_mreg_config        (void *a_clearer, void *a_copier, void *a_paster, void *a_finisher, void *a_regkill, void *a_exim);
 char        yMAP_mreg_add           (void *a_thing, char *a_label, char *a_reqs, char *a_pros);
 char*       yMAP_mreg_labels        (char a_abbr);
+char*       yMAP_mreg_pros          (char a_abbr);
+char*       yMAP_mreg_reqs          (char a_abbr);
 
 
 
@@ -263,6 +266,7 @@ char        yMAP_mundo_depth        (char a_mode, char *a_label, char a_before, 
 /*---(string)---------------*/
 char        yMAP_mundo_source       (char a_mode, char *a_label, char* a_before, char* a_after);
 char        yMAP_mundo_volume       (char a_mode, char *a_label, char* a_before, char* a_after);
+char        yMAP_mundo_sync         (char a_mode, char *a_reqs  , char *a_pros);
 /*---(complex)--------------*/
 char        yMAP_mundo_overwrite    (char a_mode, char *a_label, char* a_beforeF, char* a_before, char* a_afterF, char* a_after);
 char        yMAP_mundo_clear        (char a_mode, char *a_label, char* a_beforeF, char* a_before, char *a_afterF);

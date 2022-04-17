@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, complete and tie yVIKEYS back into it"
-#define     P_VERNUM    "2.0g"
-#define     P_VERTXT    "cleared troubles from unit tests (all but universe)"
+#define     P_VERNUM    "2.0h"
+#define     P_VERTXT    "major fixes for gyges mreg-delete unit testing (sweet;)"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -202,10 +202,10 @@ struct cMY {
    char      (*e_regkill)    (void *a_thing);
    void*     (*e_copier)     (char a_type, long a_stamp);
    char      (*e_clearer)    (char a_1st, ushort b, ushort x, ushort y, ushort z);
-   char      (*e_router)     (void *a_thing, char *a_list);
-   char      (*e_paster)     (char a_regs, char a_pros, char a_intg, char a_1st, ushort a_uoff, ushort a_xoff, ushort a_yoff, ushort a_zoff, void *a_thing, char *a_list);
-   char      (*e_finisher)   (ushort a_uoff, ushort a_xoff, ushort a_yoff, ushort a_zoff, void *a_thing);
+   char      (*e_paster)     (char a_regs, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, void *a_thing);
+   char      (*e_finisher)   (char a_pros, char *a_target, char *a_labels, short uo, short xo, short yo, short zo);
    char      (*e_exim)       (char a_dir, char a_style);
+   char        h_1st;
    /*---(mundo/hist)-----------*/
    uchar       h_active;               /* history is active y/-               */
    tHIST      *h_head;
@@ -418,13 +418,14 @@ char        ymap__mreg_by_abbr      (char a_abbr);
 /*---(memory)---------------*/
 char        ymap__mreg_new          (char a_abbr, void *a_item, char *a_label, char *a_reqs, char *a_pros);
 char        ymap__mreg_wipe         (char a_abbr, char a_scope);
+char        ymap_mreg_wipe_curr     (void);
 char        ymap__mreg_set          (char a_abbr);
 char        ymap__mreg_reset        (void);
 char        ymap_mreg_curr          (void);
 /*---(program)--------------*/
 char        ymap_mreg_purge         (char a_scope);
 char        ymap_mreg_init          (void);
-char        yMAP_mreg_config        (void *a_clearer, void *a_copier, void *a_router, void *a_paster, void *a_finisher, void *a_regkill, void *a_exim);
+char        yMAP_mreg_config        (void *a_clearer, void *a_copier, void *a_paster, void *a_finisher, void *a_regkill, void *a_exim);
 char        ymap_mreg_wrap          (void);
 /*---(attach)---------------*/
 char        yMAP_mreg_add           (void *a_thing, char *a_label, char *a_reqs, char *a_pros);
@@ -434,6 +435,7 @@ char*       ymap_mreg_detail        (char a_abbr);
 /*---(actions)--------------*/
 char        ymap_mreg_clear         (void);
 char        ymap_mreg_clear_combo   (void);
+char        ymap__mreg_paste        (char *a_type);
 char        ymap_mreg_paste         (char *a_type);
 char        ymap_mreg_paste_combo   (char *a_type);
 char        ymap_mreg_visual        (void);

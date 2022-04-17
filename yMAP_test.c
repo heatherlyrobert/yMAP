@@ -895,7 +895,16 @@ ymap__unit_locator      (char a_strict, char *a_label, ushort *u, ushort *x, ush
    if (z != NULL)  *z = 0;
    /*---(parse label)--------------------*/
    rc = str2gyges (a_label, &u_pos, &x_pos, &y_pos, &z_pos, NULL, 0, YSTR_CHECK);
-   --rce;  if (rc < 0)           return rce;
+   --rce;  if (rc < 0) {
+      if (a_label == NULL)                            return rce;
+      if (strlen (a_label) != 2)                      return rce;
+      u_pos = 0;
+      x_pos = a_label [0];
+      y_pos = a_label [1];
+      z_pos = 0;
+      if (strchr ("01234567", a_label [0]) == NULL)   return rce;
+      if (strchr ("01234567", a_label [1]) == NULL)   return rce;
+   }
    /*---(strict)-------------------------*/
    if (a_strict == 'y') {
       --rce;  if (u_pos > g_umap.gmax)  return rce;
@@ -1195,7 +1204,7 @@ ymap__unit_dup          (tTHING *p)
    q->x = p->x;
    q->y = p->y;
    q->z = 2;
-   sprintf (t, "%d%d", p->y, p->x);
+   sprintf (t, "0%c%d", p->x + 'a', p->y + 1);
    strlcpy (q->l, t, LEN_LABEL);
    /*---(complete)-----------------------*/
    return q;
@@ -1216,7 +1225,7 @@ ymap__unit_hook         (tTHING *p, int x, int y)
    p->x = x;
    p->y = y;
    p->z = 0;
-   sprintf (t, "%d%d", y, x);
+   sprintf (t, "0%c%d", x + 'a', y + 1);
    strlcpy (p->l, t, LEN_LABEL);
    /*---(complete)-----------------------*/
    return 0;
@@ -1301,6 +1310,7 @@ ymap__unit_orig         (void)
    }
    /*---(finalize)-----------------------*/
    if (strcmp (s, ",") == 0)  strlcpy (s, "n/a", LEN_RECD);
+   else                       ySORT_labels (s);
    sprintf (myMAP.g_print, "%-2d  %s", c, s);
    /*---(complete)-----------------------*/
    return myMAP.g_print;
@@ -1331,6 +1341,7 @@ ymap__unit_regs                 (void)
    }
    /*---(finalize)-----------------------*/
    if (strcmp (s, ",") == 0)  strlcpy (s, "n/a", LEN_RECD);
+   else                       ySORT_labels (s);
    sprintf (myMAP.g_print, "%-2d  %s", c, s);
    /*---(complete)-----------------------*/
    return myMAP.g_print;
@@ -1359,6 +1370,7 @@ ymap__unit_adds                 (void)
    }
    /*---(finalize)-----------------------*/
    if (strcmp (s, ",") == 0)  strlcpy (s, "n/a", LEN_RECD);
+   else                       ySORT_labels (s);
    sprintf (myMAP.g_print, "%-2d  %s", c, s);
    /*---(complete)-----------------------*/
    return myMAP.g_print;
@@ -1439,7 +1451,7 @@ char
 ymap__unit_config       (void)
 {
    char        rc          =    0;
-   rc = yMAP_mreg_config (ymap__unit_clearer, ymap__unit_copier, NULL, ymap__unit_paster, NULL, ymap__unit_regkill, NULL);
+   rc = yMAP_mreg_config (ymap__unit_clearer, ymap__unit_copier, ymap__unit_paster, NULL, ymap__unit_regkill, NULL);
    return rc;
 }
 
