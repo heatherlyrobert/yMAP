@@ -81,9 +81,7 @@ static const struct {
    { YMAP_FORMAT   , '.' , "dots"             },
    { YMAP_FORMAT   , '+' , "dots and pluses"  },
    { YMAP_FORMAT   , '@' , "dots and bigs"    },
-   { YMAP_FORMAT   , 'y' , "ylog style"       },
-   { YMAP_FORMAT   , 'q' , "ruler-at-tens"    },
-   { YMAP_FORMAT   , 'Q' , "full ruler"       },
+   { YMAP_FORMAT   , '~' , "ruler"            },
    /*---(decimals)---------------------------*/
    { YMAP_DECIMALS , '0' , "integer"          },
    { YMAP_DECIMALS , '1' , "exactly one"      },
