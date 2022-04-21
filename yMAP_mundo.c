@@ -31,7 +31,8 @@ static const tACTS s_acts [] = {
    { YMAP_DEPTH    , "depth"        , "change object depth"             },
    { YMAP_SHAPE    , "shape"        , "change object shape"             },
    { YMAP_COLOR    , "color"        , "change object coloration"        },
-   { YMAP_SYNC     , "SYNC-UP"      , "undoing complex changes"         },
+   { YMAP_SYNC     , "UNDO-SYNC"    , "undoing complex changes"         },
+   { YMAP_RECALC   , "REDO-SYNC"    , "recalc any error cells"          },
    /*---(content changes)----------------*/
    { YMAP_OVERWRITE, "overwrite"    , "change contents and formatting"  },
    { YMAP_CLEAR    , "clear"        , "clear object contents"           },
@@ -740,8 +741,9 @@ ymap__mundo_string      (char *a_func, char a_mode, char a_act, char *a_label, c
       break;
    case YMAP_VOLUME :
    case YMAP_TITLE  :
-   case YMAP_SYNC   :
+   case YMAP_SYNC   : case 'ù' :
       break;
+   default          :
       DEBUG_HIST  yLOG_note    ("action not known");
       DEBUG_HIST  yLOG_exitr   (a_func, rce);
       return rce;
@@ -803,6 +805,67 @@ char
 yMAP_mundo_sync         (char a_mode, char *a_reqs, char *a_pros)
 {
    return ymap__mundo_string  (__FUNCTION__, a_mode, YMAP_SYNC     , "n/a", a_reqs, a_pros);
+}
+
+char
+yMAP_mundo_recalc       (char a_mode, char *a_label)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   tHIST      *x_curr      = NULL;
+   ushort      u, x, y, z;
+   char        t           [LEN_RECD]  = "";
+   /*---(header)-------------------------*/
+   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_HIST  yLOG_complex ("args"      , "%c, %p", a_mode, a_label);
+   /*---(get position)-------------------*/
+   DEBUG_HIST  yLOG_info    ("a_label"   , a_label);
+   if (strcmp (a_label, "n/a") != 0) {
+      rc = ymap_locator_strict (a_label, &u, &x, &y, &z);
+      DEBUG_HIST  yLOG_value   ("strict"    , rc);
+      --rce;  if (rc  <  0) {
+         DEBUG_HIST  yLOG_note    ("label not legal or in known space");
+         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      DEBUG_HIST  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
+   }
+   /*---(defense)------------------------*/
+   DEBUG_HIST  yLOG_char    ("active"    , myMAP.h_active);
+   if (myMAP.h_active != 'y') {
+      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      return 0;
+   }
+   if (a_mode      == YMAP_NONE) {
+      DEBUG_HIST  yLOG_note    ("history is not requested on this action");
+      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      return 0;
+   }
+   /*---(add record)---------------------*/
+   --rce;  if (myMAP.h_tail->act != YMAP_RECALC) {
+      DEBUG_HIST  yLOG_note    ("brand new recalc");
+      rc = ymap__mundo_new (a_mode, YMAP_RECALC, "n/a", &x_curr);
+      DEBUG_HIST  yLOG_value   ("new"       , rc);
+      if (rc < 0) {
+         DEBUG_HIST  yLOG_note    ("creating a new mundo failed");
+         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      sprintf (t, ",%s,", a_label);
+      myMAP.h_tail->after  = strdup  (t);
+   } else {
+      DEBUG_HIST  yLOG_note    ("appending to recalc on tail");
+      strlcpy (t, myMAP.h_tail->after , LEN_RECD);
+      free (myMAP.h_tail->after );
+      strlcat (t, a_label, LEN_RECD);
+      strlcat (t, ","    , LEN_RECD);
+      ySORT_labels (t);
+      myMAP.h_tail->after  = strdup  (t);
+   }
+   /*---(complete)--------------------*/
+   DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rc);
+   return rc;
 }
 
 

@@ -1204,7 +1204,8 @@ ymap__mreg_paste        (char *a_type)
    if (strcmp (s_regs [s_reg].pros, "n/a") != 0)  strlcat (x_list, s_regs [s_reg].pros, LEN_RECD);
    if (strcmp (x_list, "") != 0) {
       ySORT_labels (x_list);
-      yMAP_mundo_sync (YMAP_ADD, x_list, "");
+      if (myMAP.h_1st == 'y')  yMAP_mundo_sync (YMAP_BEG, x_list, "");
+      else                     yMAP_mundo_sync (YMAP_ADD, x_list, "");
       myMAP.h_1st = '-';
    }
    /*---(paste in order)-----------------*/
@@ -1235,35 +1236,16 @@ ymap__mreg_paste        (char *a_type)
       }
    }
    /*---(check for retouches)------------*/
-   x_curr = s_regs [s_reg].hbuf;
-   --rce;  while (x_curr != NULL) {
-      rc = myMAP.e_paster ('!', myMAP.h_1st, s_boff, s_xoff, s_yoff, s_zoff, x_curr->data);
+   strlcpy  (x_list, s_regs [s_reg].labels, LEN_RECD);
+   if (s_regs [s_reg].reqs [0] == ',')   strlcat  (x_list, s_regs [s_reg].reqs, LEN_RECD);
+   if (s_regs [s_reg].pros [0] == ',')   strlcat  (x_list, s_regs [s_reg].pros, LEN_RECD);
+   ySORT_labels (x_list);
+   p = strtok_r (x_list, ",", &r);
+   while (p != NULL) {
+      rc = myMAP.e_paster ('?', myMAP.h_1st, s_boff, s_xoff, s_yoff, s_zoff, p);
       if (rc >=  0)  myMAP.h_1st = '-';
-      x_curr = x_curr->b_next;
+      p = strtok_r (NULL  , ",", &r);
    }
-   if (myMAP.e_finisher != NULL) {
-      strlcpy  (x_list, s_regs [s_reg].reqs, LEN_RECD);
-      p = strtok_r (x_list, ",", &r);
-      while (p != NULL) {
-         rc = myMAP.e_paster ('?', myMAP.h_1st, s_boff, s_xoff, s_yoff, s_zoff, p);
-         if (rc >=  0)  myMAP.h_1st = '-';
-         p = strtok_r (NULL  , ",", &r);
-      }
-   }
-   if (myMAP.e_finisher != NULL) {
-      strlcpy  (x_list, s_regs [s_reg].pros, LEN_RECD);
-      p = strtok_r (x_list, ",", &r);
-      while (p != NULL) {
-         rc = myMAP.e_paster ('?', myMAP.h_1st, s_boff, s_xoff, s_yoff, s_zoff, p);
-         if (rc >=  0)  myMAP.h_1st = '-';
-         p = strtok_r (NULL  , ",", &r);
-      }
-   }
-   /*---(update)-------------------------*/
-   /*> yCALC_garbage_collect ();                                                      <*/
-   /*> yCALC_calculate ();                                                            <*/
-   /*> yvikeys_map_reposition  ();                                                    <*/
-   /*> yMAP_refresh ();                                                               <*/
    /*---(complete)-----------------------*/
    DEBUG_REGS   yLOG_exit    (__FUNCTION__);
    return 0;

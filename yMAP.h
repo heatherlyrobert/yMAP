@@ -147,6 +147,7 @@ typedef  unsigned short       ushort;
 #define     YMAP_SHAPE        'S'
 #define     YMAP_COLOR        'C'
 #define     YMAP_SYNC         (uchar) 'ù'
+#define     YMAP_RECALC       (uchar) 'ø'
 /*---(content changes)-----------*/
 #define     YMAP_OVERWRITE    'o'
 #define     YMAP_CLEAR        'x'
@@ -267,6 +268,7 @@ char        yMAP_mundo_depth        (char a_mode, char *a_label, char a_before, 
 char        yMAP_mundo_source       (char a_mode, char *a_label, char* a_before, char* a_after);
 char        yMAP_mundo_volume       (char a_mode, char *a_label, char* a_before, char* a_after);
 char        yMAP_mundo_sync         (char a_mode, char *a_reqs  , char *a_pros);
+char        yMAP_mundo_recalc       (char a_mode, char *a_label);
 /*---(complex)--------------*/
 char        yMAP_mundo_overwrite    (char a_mode, char *a_label, char* a_beforeF, char* a_before, char* a_afterF, char* a_after);
 char        yMAP_mundo_clear        (char a_mode, char *a_label, char* a_beforeF, char* a_before, char *a_afterF);
