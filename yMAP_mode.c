@@ -12,26 +12,26 @@ ymap__biggies           (uchar a_major, uchar a_minor)
    int         i           =    0;
    uchar       x_ch        = '\0';
    /*---(header)-------------------------*/
-   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_enter   (__FUNCTION__);
    switch (a_minor) {
    case G_KEY_ESCAPE :
-      DEBUG_YMAP   yLOG_note    ("escape to clear selection");
+      DEBUG_YMAP_U  yLOG_note    ("escape to clear selection");
       ymap_visu_clear    ();
       yKEYS_repeat_reset ();
       break;
    case G_KEY_SPACE  :
-      DEBUG_YMAP   yLOG_note    ("space, nothing to do");
+      DEBUG_YMAP_U  yLOG_note    ("space, nothing to do");
       break;
    case  '\0'        :
-      DEBUG_YMAP   yLOG_note    ("null, nothing to do");
+      DEBUG_YMAP_U  yLOG_note    ("null, nothing to do");
       break;
    default           :
-      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
       return 0;
       break;
    }
    /*---(complete)-----------------------*/
-   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
    return 1;
 }
 
@@ -41,28 +41,28 @@ ymap__multibeg          (uchar a_major, uchar a_minor)
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    /*---(header)-------------------------*/
-   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_enter   (__FUNCTION__);
    /*---(multikey prefixes)--------------*/
    if (a_major == ' ') {
-      DEBUG_YMAP   yLOG_note    ("checking for multikey prefix");
-      DEBUG_YMAP   yLOG_value   ("multi"     , yKEYS_is_multi_map  (a_minor));
-      DEBUG_YMAP   yLOG_value   ("isdead"    , ymap_visu_isdead ());
+      DEBUG_YMAP_U  yLOG_note    ("checking for multikey prefix");
+      DEBUG_YMAP_U  yLOG_value   ("multi"     , yKEYS_is_multi_map  (a_minor));
+      DEBUG_YMAP_U  yLOG_value   ("isdead"    , ymap_visu_isdead ());
       if (ymap_visu_isdead () && yKEYS_is_multi_map  (a_minor)) {
-         DEBUG_YMAP   yLOG_note    ("prefix of multimap keystring");
-         DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+         DEBUG_YMAP_U  yLOG_note    ("prefix of multimap keystring");
+         DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
          return a_minor;
       }
-      DEBUG_YMAP   yLOG_value   ("islive"    , yMAP_visu_islive ());
-      DEBUG_YMAP   yLOG_value   ("multi"     , yKEYS_is_multi_visu (a_minor));
+      DEBUG_YMAP_U  yLOG_value   ("islive"    , yMAP_visu_islive ());
+      DEBUG_YMAP_U  yLOG_value   ("multi"     , yKEYS_is_multi_visu (a_minor));
       if (yMAP_visu_islive () && yKEYS_is_multi_visu (a_minor)) {
-         DEBUG_YMAP   yLOG_note    ("prefix of visual multimap keystring");
-         DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+         DEBUG_YMAP_U  yLOG_note    ("prefix of visual multimap keystring");
+         DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
          return a_minor;
       }
-      DEBUG_YMAP   yLOG_note    ("done checking");
+      DEBUG_YMAP_U  yLOG_note    ("done checking");
    }
    /*---(complete)-----------------------*/
-   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -116,14 +116,14 @@ ymap__combo_prep        (uchar a_major, uchar a_minor)
       DEBUG_MAP    yLOG_note    ("full column request");
       s_ybs = g_ymap.gmin;
       s_yes = g_ymap.gmax;
-      ymap_visu_exact  (s_b, s_xbs, s_xes, s_ybs, s_yes, s_z, s_z, 'e');
+      yMAP_visu_exact  (s_b, s_xbs, s_xes, s_ybs, s_yes, s_z, s_z, 'e');
       DEBUG_MAP    yLOG_complex ("src update", "%3d, %2db, %3dxbs, %4dybs, %3dxes, %4dyes", rc, s_b, s_xbs, s_ybs, s_xes, s_yes);
       break;
    case OBJ_ROWAFT : case OBJ_ROWBEF :
       DEBUG_MAP    yLOG_note    ("full row request");
       s_xbs = g_xmap.gmin;
       s_xes = g_xmap.gmax;
-      ymap_visu_exact  (s_b, s_xbs, s_xes, s_ybs, s_yes, s_z, s_z, 'e');
+      yMAP_visu_exact  (s_b, s_xbs, s_xes, s_ybs, s_yes, s_z, s_z, 'e');
       DEBUG_MAP    yLOG_complex ("src update", "%3d, %2db, %3dxbs, %4dybs, %3dxes, %4dyes", rc, s_b, s_xbs, s_ybs, s_xes, s_yes);
       break;
    case OBJ_DEPAFT : case OBJ_DEPBEF :
@@ -185,7 +185,7 @@ ymap__combo_wrap        (uchar a_major, uchar a_minor)
    if (s_yec >= g_ymap.gmax)  s_yec = g_ymap.gmax;
    /*---(copy/clear)---------------------*/
    DEBUG_MAP    yLOG_complex ("copy loc"  , "          %3dxb %4dyb, %3dxe %4dye", s_xbc, s_ybc, s_xec, s_yec);
-   rc = ymap_visu_exact  (s_b, s_xbc, s_xec, s_ybc, s_yec, s_z, s_z, 'e');
+   rc = yMAP_visu_exact  (s_b, s_xbc, s_xec, s_ybc, s_yec, s_z, s_z, 'e');
    DEBUG_MAP    yLOG_complex ("paste loc" , "          %3dxp %4dyp", s_xp, s_yp);
    switch (a_major) {
    case ACT_CLEAR  :
@@ -446,13 +446,13 @@ ymap__multilike         (uchar a_major, uchar a_minor)
    /*---(quick out)----------------------*/
    if (a_major != G_KEY_SPACE)  return 0;
    /*---(header)-------------------------*/
-   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_enter   (__FUNCTION__);
    /*---(non-visual)---------------------*/
    if (ymap_visu_isdead ()) {
       switch (a_minor) {
       case 'X' :
          rc = ymap_mreg_clear ();
-         DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+         DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
          return 1;
          break;
       }
@@ -466,13 +466,13 @@ ymap__multilike         (uchar a_major, uchar a_minor)
          rc = ymap_mreg_clear ();
          rc = ymap_visu_clear ();
          rc = yMAP_jump (u, x, y, z);
-         DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+         DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
          return 1;
          break;
       }
    }
    /*---(header)-------------------------*/
-   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -482,7 +482,7 @@ ymap__multiend          (uchar a_major, uchar a_minor)
    /*---(locals)-----------+-----+-----+-*/
    char        rc          =    0;
    /*---(header)-------------------------*/
-   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_enter   (__FUNCTION__);
    /*---(pastes)-------------------------*/
    if (a_major == 'p') {
       yKEYS_repeat_reset ();
@@ -495,33 +495,37 @@ ymap__multiend          (uchar a_major, uchar a_minor)
       case 'd' :  rc = ymap_mreg_paste  ("duplicate"); break;
       case 'm' :  rc = ymap_mreg_paste  ("move");      break;
       case 'f' :  rc = ymap_mreg_paste  ("force");     break;
+      case 'N' :  rc = ymap_mreg_paste  ("NORMAL");    break;
+      case 'D' :  rc = ymap_mreg_paste  ("DUPLICATE"); break;
+      case 'M' :  rc = ymap_mreg_paste  ("MOVE");      break;
+      case 'F' :  rc = ymap_mreg_paste  ("FORCE");     break;
       }
-      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(deletes)------------------------*/
    if (tolower (a_major) == 'd') {
       yKEYS_repeat_reset ();
       rc = ymap__combo_delete     (a_major, a_minor);
-      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(clears)-------------------------*/
    if (a_major == 'x') {
       yKEYS_repeat_reset ();
       rc = ymap__combo_clear      (a_major, a_minor);
-      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(appends)------------------------*/
    if (tolower (a_major) == 'a') {
       yKEYS_repeat_reset ();
       rc = ymap__combo_append     (a_major, a_minor);
-      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(complete)-----------------------*/
-   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -534,80 +538,85 @@ ymap__submodes          (uchar a_major, uchar a_minor)
    /*---(quick out)----------------------*/
    if (a_major != G_KEY_SPACE)  return 0;
    /*---(header)-------------------------*/
-   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_enter   (__FUNCTION__);
    /*---(any time)-----------------------*/
    switch (a_minor) {
    case 'G'      :
-      DEBUG_YMAP   yLOG_note    ("entering god mode");
+      DEBUG_YMAP_U  yLOG_note    ("entering god mode");
       yMODE_enter  (MODE_GOD);
       rc = 0;
       break;
    case ':'      :
-      DEBUG_YMAP   yLOG_note    ("entering command mode");
+      DEBUG_YMAP_U  yLOG_note    ("entering command mode");
       ySRC_start (":");
       rc = 'A';
       break;
    case '/'      :
-      DEBUG_YMAP   yLOG_note    ("entering search mode");
+      DEBUG_YMAP_U  yLOG_note    ("entering search mode");
       ySRC_start ("/");
       rc = ' ';
       break;
    case ';'      :
-      DEBUG_YMAP   yLOG_note    ("entering hint sub-mode");
+      DEBUG_YMAP_U  yLOG_note    ("entering hint sub-mode");
       ySRC_start (";");
       rc = ' ';
       break;
    case '\\'     :
-      DEBUG_YMAP   yLOG_note    ("entering menu sub-mode");
+      DEBUG_YMAP_U  yLOG_note    ("entering menu sub-mode");
       yMODE_enter  (SMOD_MENUS);
       rc = a_minor;
       break;
    case ','      :
-      DEBUG_YMAP   yLOG_note    ("entering universe sub-mode");
+      DEBUG_YMAP_U  yLOG_note    ("entering universe sub-mode");
       yMODE_enter  (UMOD_UNIVERSE);
       rc = a_minor;
       break;
    case '"'      :
-      DEBUG_YMAP   yLOG_note    ("entering mapreg sub-mode");
+      DEBUG_YMAP_U  yLOG_note    ("entering mapreg sub-mode");
       yMODE_enter  (SMOD_MREG);
       rc = a_minor;
       break;
+   case 'm'      : case '\''     :
+      DEBUG_YMAP_U  yLOG_note    ("entering mark sub-mode");
+      yMODE_enter  (UMOD_MARK);
+      rc = a_minor;
+      break;
    case 'E'      :
-      DEBUG_YMAP   yLOG_note    ("entering error sub-mode");
+      DEBUG_YMAP_U  yLOG_note    ("entering error sub-mode");
       yMODE_enter  (SMOD_ERROR);
       rc = a_minor;
       break;
    case 'F'      : case 'f'      :
-      DEBUG_YMAP   yLOG_note    ("entering format external-mode");
+      DEBUG_YMAP_U  yLOG_note    ("entering format external-mode");
       yMODE_enter  (XMOD_FORMAT);
       rc = a_minor;
       break;
    }
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    /*---(non-selection)------------------*/
    if (ymap_visu_isdead ()) {
       switch (a_minor) {
       case  G_KEY_RETURN :      /* edit existing cell               */
-         DEBUG_YMAP   yLOG_note    ("edit existing map location");
+         DEBUG_YMAP_U  yLOG_note    ("edit existing map location");
          ySRC_start ("¦");
          rc = ' ';
          break;
       case  's'  :              /* replace cell entirely            */
-         DEBUG_YMAP   yLOG_note    ("replace existing map location");
+         DEBUG_YMAP_U  yLOG_note    ("replace existing map location");
          ySRC_start ("");
          rc = ' ';
          break;
       case  '='  : case  '#'  : /* replace cell with formula        */
-         DEBUG_YMAP   yLOG_note    ("replace existing map location with formula");
+         DEBUG_YMAP_U  yLOG_note    ("replace existing map location with formula");
          sprintf (t, "%c", a_minor);
          ySRC_start (t);
          rc = ' ';
          break;
       case  '+'  : case  '-'  : /* replace cell with a number       */
-         DEBUG_YMAP   yLOG_note    ("replace existing map location with number");
+         DEBUG_YMAP_U  yLOG_note    ("replace existing map location with number");
          sprintf (t, "%c", a_minor);
          ySRC_start (t);
          rc = ' ';
@@ -615,21 +624,21 @@ ymap__submodes          (uchar a_major, uchar a_minor)
       }
    }
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    /*---(visual selection)---------------*/
    if (yMAP_visu_islive ()) {
       switch (a_minor) {
       case  '+'  : case  '-'  : /* import and export sub-mode       */
-         DEBUG_YMAP   yLOG_note    ("import/export map registers");
+         DEBUG_YMAP_U  yLOG_note    ("import/export map registers");
          /*> yMODE_enter (SMOD_MREG);                                                 <* 
           *> rc = yvikeys_mreg_smode  ('"', a_minor);                                 <*/
          break;
       }
    }
    /*---(complete)-----------------------*/
-   DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+   DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
    return rc;
 }
 
@@ -640,8 +649,8 @@ ymap__submodes          (uchar a_major, uchar a_minor)
  *>    char        rc          =   -1;                                                <* 
  *>    char        t           [5];                                                   <* 
  *>    /+---(common modes)----------------+/                                          <* 
- *>    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);                                      <* 
- *>    DEBUG_YMAP   yLOG_char    ("change"    , a_minor);                             <* 
+ *>    DEBUG_YMAP_U  yLOG_enter   (__FUNCTION__);                                      <* 
+ *>    DEBUG_YMAP_U  yLOG_char    ("change"    , a_minor);                             <* 
  *>    /+---(selecting and marking)-------+/                                          <* 
  *>    switch (a_minor) {                                                             <* 
  *>    case 'v'      :                                                                <* 
@@ -650,19 +659,19 @@ ymap__submodes          (uchar a_major, uchar a_minor)
  *>       rc = 0;                                                                     <* 
  *>       break;                                                                      <* 
  *>    case 'M'      : case 'V'      :                                                <* 
- *>       DEBUG_YMAP   yLOG_note    ("entering visual selection history sub-mode");   <* 
+ *>       DEBUG_YMAP_U  yLOG_note    ("entering visual selection history sub-mode");   <* 
  *>       rc = yMODE_enter  (UMOD_VISUAL  );                                          <* 
  *>       if (rc >= 0)  rc = a_minor;                                                 <* 
  *>       break;                                                                      <* 
  *>    case 'm'      : case '\''     :                                                <* 
- *>       DEBUG_YMAP   yLOG_note    ("entering location mark sub-mode");              <* 
+ *>       DEBUG_YMAP_U  yLOG_note    ("entering location mark sub-mode");              <* 
  *>       rc = yMODE_enter  (UMOD_MARK    );                                          <* 
  *>       if (rc >= 0)  rc = a_minor;                                                 <* 
  *>       break;                                                                      <* 
  *>    }                                                                              <* 
  *>    if (rc >= 0) {                                                                 <* 
- *>       DEBUG_YMAP   yLOG_value   ("rc"        , rc);                               <* 
- *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                   <* 
+ *>       DEBUG_YMAP_U  yLOG_value   ("rc"        , rc);                               <* 
+ *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                   <* 
  *>       return rc;                                                                  <* 
  *>    }                                                                              <* 
  *>    /+---(import/export)---------------+/                                          <* 
@@ -671,12 +680,12 @@ ymap__submodes          (uchar a_major, uchar a_minor)
  *>       rc = yvikeys_mreg_smode  ('"', a_minor);                                    <* 
  *>    }                                                                              <* 
  *>    if (rc >= 0) {                                                                 <* 
- *>       DEBUG_YMAP   yLOG_value   ("rc"        , rc);                               <* 
- *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                   <* 
+ *>       DEBUG_YMAP_U  yLOG_value   ("rc"        , rc);                               <* 
+ *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                   <* 
  *>       return rc;                                                                  <* 
  *>    }                                                                              <* 
  *>    /+---(complete)-----------------------+/                                       <* 
- *>    DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);                                  <* 
+ *>    DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);                                  <* 
  *>    return rc;                                                                     <* 
  *> }                                                                                 <*/
 
@@ -688,148 +697,144 @@ ymap_mode               (uchar a_major, uchar a_minor)
    char        rc          =    0;
    char        x_grid      =    0;
    /*---(header)-------------------------*/
-   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
-   DEBUG_YMAP   yLOG_char    ("a_major"   , a_major);
-   DEBUG_YMAP   yLOG_char    ("a_minor"   , chrvisible (a_minor));
-   DEBUG_YMAP   yLOG_value   ("a_minor"   , a_minor);
+   DEBUG_YMAP_U  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP_U  yLOG_char    ("a_major"   , a_major);
+   DEBUG_YMAP_U  yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_YMAP_U  yLOG_value   ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
-   DEBUG_YMAP   yLOG_char    ("mode"      , yMODE_curr ());
+   DEBUG_YMAP_U  yLOG_char    ("mode"      , yMODE_curr ());
    --rce;  if (yMODE_not (MODE_MAP    )) {
-      DEBUG_YMAP   yLOG_note    ("not the correct mode");
+      DEBUG_YMAP_U  yLOG_note    ("not the correct mode");
       yMODE_exit  ();
-      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
       return rce;
+   }
+   /*---(agrios)-------------------------*/
+   rc = yMACRO_agrios_hmode (a_major, a_minor);
+   DEBUG_YMAP_U  yLOG_value   ("argios"    , rc);
+   if (rc != 0) {
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
+      return rc;
    }
    /*---(universal)----------------------*/
    rc = ymap__biggies    (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("biggies"   , rc);
+   DEBUG_YMAP_U  yLOG_value   ("biggies"   , rc);
    if (rc != 0) {
       if (rc > 0)  rc = 0;
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    /*---(repeat)-------------------------*/
    if (yKEYS_is_repeater (a_minor)) {
-      DEBUG_YMAP   yLOG_note    ("repeating");
+      DEBUG_YMAP_U  yLOG_note    ("repeating");
       yMODE_enter  (PMOD_REPEAT);
-      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
       return a_minor;
    }
    /*---(multikey)-----------------------*/
    rc = ymap__multibeg   (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("multibeg"  , rc);
+   DEBUG_YMAP_U  yLOG_value   ("multibeg"  , rc);
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    rc = ymap__multilike  (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("multiend"  , rc);
+   DEBUG_YMAP_U  yLOG_value   ("multiend"  , rc);
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    rc = ymap__multiend   (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("multiend"  , rc);
+   DEBUG_YMAP_U  yLOG_value   ("multiend"  , rc);
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    /*---(sub-modes)----------------------*/
    rc = ymap__submodes  (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("submodes"  , rc);
+   DEBUG_YMAP_U  yLOG_value   ("submodes"  , rc);
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    /*---(moves)--------------------------*/
    rc = yMAP_move_hmode (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("moves"     , rc);
+   DEBUG_YMAP_U  yLOG_value   ("moves"     , rc);
    if (rc != 0) {  /* also for failed goto, scroll, or end multikeys */
       if (a_minor == 'v')  rc = 0;
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    /*---(visual)-------------------------*/
    rc = ymap_visu_hmode (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("visu"      , rc);
+   DEBUG_YMAP_U  yLOG_value   ("visu"      , rc);
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    /*---(registers)----------------------*/
    rc = yMAP_mreg_hmode  (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("mreg"      , rc);
+   DEBUG_YMAP_U  yLOG_value   ("mreg"      , rc);
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return 0;
    }
    /*---(macros)-------------------------*/
    rc = yMACRO_hmode  (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("macros"    , rc);
+   DEBUG_YMAP_U  yLOG_value   ("macros"    , rc);
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
    /*---(mundo)--------------------------*/
    rc = ymap_mundo_hmode  (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("mundo"     , rc);
+   DEBUG_YMAP_U  yLOG_value   ("mundo"     , rc);
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return 0;
    }
    /*---(search)-------------------------*/
    rc = yMARK_find_hmode  (a_major, a_minor);
-   DEBUG_YMAP   yLOG_value   ("srch"      , rc);
+   DEBUG_YMAP_U  yLOG_value   ("srch"      , rc);
    if (rc != 0) {
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rc);
+      DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return 0;
    }
    /*---(single key)---------------------*/
-   DEBUG_YMAP   yLOG_note    ("review single keys");
+   DEBUG_YMAP_U  yLOG_note    ("review single keys");
+   if (a_minor == '|') {
+      /*> rc = yvikeys__map_move   (yKEYS_repeat_useall (), &g_xmap);                 <* 
+       *> yvikeys__screen (&g_xmap);                                                  <* 
+       *> yvikeys_map_reposition  ();                                                 <*/
+      DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
+      return rc;
+   }
    /*> --rce;                                                                         <* 
     *> if (a_major == ' ') {                                                          <* 
-    *>    DEBUG_YMAP   yLOG_note    ("no or empty major");                            <* 
+    *>    DEBUG_YMAP_U  yLOG_note    ("no or empty major");                            <* 
     *>    /+---(speed)-----------------------+/                                       <* 
     *>    if (a_minor == '\t' || a_minor == 9) {                                      <* 
-    *>       DEBUG_YMAP   yLOG_note    ("MAP MODE BLITZ");                            <* 
+    *>       DEBUG_YMAP_U  yLOG_note    ("MAP MODE BLITZ");                            <* 
     *>       yvikeys_loop_blitz ();                                                   <* 
-    *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+    *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
     *>       return 0;                                                                <* 
     *>    } else if (a_minor == '\b' || a_minor == 127) {                             <* 
-    *>       DEBUG_YMAP   yLOG_note    ("MAP MODE UNBLITZ");                          <* 
+    *>       DEBUG_YMAP_U  yLOG_note    ("MAP MODE UNBLITZ");                          <* 
     *>       yvikeys_loop_unblitz ();                                                 <* 
-    *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+    *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
     *>       return 0;                                                                <* 
-    *>    }                                                                           <* 
-    *>    /+---(repeat)----------------------+/                                       <* 
-    *>    if (strchr (g_repeat, a_minor) != 0) {                                      <* 
-    *>       DEBUG_YMAP   yLOG_note    ("repeating");                                 <* 
-    *>       yMODE_enter  (PMOD_REPEAT);                                              <* 
-    *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
-    *>       return a_minor;                                                          <* 
-    *>    }                                                                           <* 
-    *>    /+---(multikey prefixes)-----------+/                                       <* 
-    *>    if (yvikeys_visu_isdead () && strchr (g_multimap , a_minor) != 0) {         <* 
-    *>       DEBUG_YMAP   yLOG_note    ("prefix of multimap keystring");              <* 
-    *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
-    *>       return a_minor;                                                          <* 
-    *>    }                                                                           <* 
-    *>    if (yvikeys_visu_islive () && strchr (g_multivisu, a_minor) != 0) {         <* 
-    *>       DEBUG_YMAP   yLOG_note    ("prefix of visual multimap keystring");       <* 
-    *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
-    *>       return a_minor;                                                          <* 
     *>    }                                                                           <* 
     *>    /+---(grouping)--------------------+/                                       <* 
     *>    if (a_minor == '(') {                                                       <* 
-    *>       DEBUG_YMAP   yLOG_note    ("begin group");                               <* 
+    *>       DEBUG_YMAP_U  yLOG_note    ("begin group");                               <* 
     *>       yKEYS_group_beg ();                                                      <* 
-    *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+    *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
     *>       return 0;                                                                <* 
     *>    }                                                                           <* 
     *>    if (a_minor == ')') {                                                       <* 
-    *>       DEBUG_YMAP   yLOG_note    ("end group");                                 <* 
+    *>       DEBUG_YMAP_U  yLOG_note    ("end group");                                 <* 
     *>       yKEYS_group_end ();                                                      <* 
-    *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+    *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
     *>       return 0;                                                                <* 
     *>    }                                                                           <* 
     *>    /+---(funky moves)-----------------+/                                       <* 
@@ -839,7 +844,7 @@ ymap_mode               (uchar a_major, uchar a_minor)
     *>          rc = yvikeys__map_move   (x_grid, &g_ymap);                           <* 
     *>          yvikeys__screen (&g_ymap);                                            <* 
     *>          yvikeys_map_reposition  ();                                           <* 
-    *>          DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                             <* 
+    *>          DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                             <* 
     *>          return rc;;                                                           <* 
     *>       }                                                                        <* 
     *>       /+ non-repeat fall thru  +/                                              <* 
@@ -848,39 +853,39 @@ ymap_mode               (uchar a_major, uchar a_minor)
     *>       rc = yvikeys__map_move   (yKEYS_repeat_useall (), &g_xmap);              <* 
     *>       yvikeys__screen (&g_xmap);                                               <* 
     *>       yvikeys_map_reposition  ();                                              <* 
-    *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+    *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
     *>       return rc;                                                               <* 
     *>    }                                                                           <* 
     *>    if (a_minor == '%') {                                                       <* 
     *>       rc = yvikeys__map_move   (yKEYS_repeat_useall (), &g_ymap);              <* 
     *>       yvikeys__screen (&g_ymap);                                               <* 
     *>       yvikeys_map_reposition  ();                                              <* 
-    *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+    *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
     *>       return rc;                                                               <* 
    *>    }                                                                           <* 
       *>    /+---(mode changes)----------------+/                                       <* 
       *>    if (strchr (s_map_modes, a_minor) != 0) {                                   <* 
-         *>       DEBUG_YMAP   yLOG_note    ("mode changes");                              <* 
+         *>       DEBUG_YMAP_U  yLOG_note    ("mode changes");                              <* 
             *>       rc = yvikeys__map_mode_chg (a_minor);                                    <* 
-            *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+            *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
             *>       return rc;                                                               <* 
             *>    }                                                                           <* 
             *>    if (strchr ("yYpPx", a_minor) != 0) {                                       <* 
-               *>       DEBUG_YMAP   yLOG_note    ("switch to a map register mode");             <* 
+               *>       DEBUG_YMAP_U  yLOG_note    ("switch to a map register mode");             <* 
                   *>       yMODE_enter (SMOD_MREG);                                                 <* 
                   *>       rc = yvikeys_mreg_smode  (G_KEY_SPACE, a_minor);                         <* 
-                  *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+                  *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
                   *>       return rc;                                                               <* 
                   *>    }                                                                           <* 
                   *>    /+---(normal)----------------------+/                                       <* 
                   *>    if (strchr (g_hsimple, a_minor) != 0) {                                     <* 
                      *>       rc = yvikeys__map_horz   (a_major, a_minor);                             <* 
-                        *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+                        *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
                         *>       return rc;                                                               <* 
                         *>    }                                                                           <* 
                         *>    if (strchr (g_vsimple, a_minor) != 0) {                                     <* 
                            *>       rc = yvikeys__map_vert   (a_major, a_minor);                             <* 
-                              *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+                              *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
                               *>       return rc;                                                               <* 
                               *>    }                                                                           <* 
                               *>    if (strchr (g_search, a_minor) != 0) {                                      <* 
@@ -891,14 +896,14 @@ ymap_mode               (uchar a_major, uchar a_minor)
                                           *>          yvikeys__screen (&g_zmap);                                            <* 
                                           *>          yvikeys_map_reposition  ();                                           <* 
                                           *>       }                                                                        <* 
-                                          *>       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);                                <* 
+                                          *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
                                           *>       if (rc > 0)  rc = -1;                                                    <* 
                                           *>       return rc;                                                               <* 
                                           *>    }                                                                           <* 
-                                          *>    DEBUG_YMAP   yLOG_note    ("no matches found");                             <* 
+                                          *>    DEBUG_YMAP_U  yLOG_note    ("no matches found");                             <* 
                                           *> }                                                                              <*/
                                           /*---(complete)------------------------------*/
-                                          DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+                                          DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 

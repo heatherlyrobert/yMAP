@@ -1005,6 +1005,10 @@ yMAP_mundo_overwrite    (char a_mode, char *a_label, char* a_beforeF, char* a_be
 char
 yMAP_mundo_clear        (char a_mode, char *a_label, char* a_beforeF, char* a_before, char *a_afterF)
 {
+   char        x_exec      =    0;
+   if (a_before != NULL && a_before [0] != '\0')   x_exec = 1;
+   if (strcmp (a_beforeF, a_afterF) != 0)          x_exec = 1;
+   if (x_exec == 0)  return 0;
    return ymap__mundo_complex (__FUNCTION__, a_mode, YMAP_CLEAR    , a_label, a_beforeF, a_before, a_afterF, "");
 }
 

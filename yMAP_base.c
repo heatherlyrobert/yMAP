@@ -155,7 +155,8 @@ yMAP_init              (void)
    rc = yCMD_add (YCMD_M_FORMAT, "zdef"        , ""    , "si"   , ymap_multi_deep_def        , "change current level thickness to default");
    rc = yCMD_add (YCMD_M_FORMAT, "zreset"      , ""    , "s"    , ymap_multi_deep_reset      , "reset thickness of all levels to default" );
    /*---(update status)------------------*/
-   yMODE_init_set   (MODE_MAP, NULL, ymap_mode);
+   yMODE_init_set   (MODE_MAP     , NULL, ymap_mode);
+   yMODE_init_set   (MODE_GOD     , NULL, ymap_god_mode);
    /*> printf ("yMAP_init       end  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -208,45 +209,51 @@ yMAP_config             (char a_orient, void *a_locator, void *a_addresser, void
    /*---(locator)------------------------*/
    DEBUG_YMAP   yLOG_point   ("locator"   , a_locator);
    --rce;  if (a_locator   == NULL) {
-      DEBUG_YMAP    yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      DEBUG_YMAP    yLOG_note    ("installing false");
+      myMAP.e_locator    = ymap_false_locator;
+   } else {
+      myMAP.e_locator    = a_locator;
    }
-   myMAP.e_locator    = a_locator;
    /*---(addresser)----------------------*/
    DEBUG_YMAP   yLOG_point   ("addresser" , a_addresser);
    --rce;  if (a_addresser == NULL) {
-      DEBUG_YMAP    yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      DEBUG_YMAP    yLOG_note    ("installing false");
+      myMAP.e_addresser  = ymap_false_addresser;
+   } else {
+      myMAP.e_addresser  = a_addresser;
    }
-   myMAP.e_addresser  = a_addresser;
    /*---(sizer)--------------------------*/
    DEBUG_YMAP   yLOG_point   ("sizer"     , a_sizer);
    --rce;  if (a_sizer     == NULL) {
-      DEBUG_YMAP    yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      DEBUG_YMAP    yLOG_note    ("installing false");
+      myMAP.e_sizer      = ymap_false_sizer;
+   } else {
+      myMAP.e_sizer      = a_sizer;
    }
-   myMAP.e_sizer      = a_sizer;
    /*---(entry)--------------------------*/
    DEBUG_YMAP   yLOG_point   ("entry"     , a_entry);
    --rce;  if (a_entry     == NULL) {
-      DEBUG_YMAP    yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      DEBUG_YMAP    yLOG_note    ("installing false");
+      myMAP.e_entry      = ymap_false_entry;
+   } else {
+      myMAP.e_entry      = a_entry;
    }
-   myMAP.e_entry      = a_entry;
    /*---(placer)-------------------------*/
    DEBUG_YMAP   yLOG_point   ("placer"    , a_placer);
    --rce;  if (a_placer    == NULL) {
-      DEBUG_YMAP    yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      DEBUG_YMAP    yLOG_note    ("installing false");
+      myMAP.e_placer     = ymap_false_placer;
+   } else {
+      myMAP.e_placer     = a_placer;
    }
-   myMAP.e_placer     = a_placer;
    /*---(done)---------------------------*/
    DEBUG_YMAP   yLOG_point   ("done"      , a_done);
    --rce;  if (a_done      == NULL) {
-      DEBUG_YMAP    yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      DEBUG_YMAP    yLOG_note    ("installing false");
+      myMAP.e_done       = ymap_false_done;
+   } else {
+      myMAP.e_done       = a_done;
    }
-   myMAP.e_done       = a_done;
    /*---(update status)------------------*/
    yMODE_conf_set   (MODE_MAP, '1');
    /*---(complete)-----------------------*/
@@ -283,6 +290,8 @@ ymap__locator           (char a_strict, char *a_label, ushort *u, ushort *x, ush
 char ymap_locator            (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z) { return ymap__locator ('-', a_label, u, x, y, z); }
 char ymap_locator_strict     (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z) { return ymap__locator ('y', a_label, u, x, y, z); }
 
+char yMAP_locator            (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z) { return ymap__locator ('-', a_label, u, x, y, z); }
+
 char         /*-> turn coordinates into label --------[ ------ [gc.722.112.13]*/ /*-[01.0000.304.#]-*/ /*-[--.---.---.--]-*/
 ymap__addresser         (char a_strict, char *a_label, ushort u, ushort x, ushort y, ushort z)
 {
@@ -318,6 +327,8 @@ ymap__addresser         (char a_strict, char *a_label, ushort u, ushort x, ushor
 
 char ymap_addresser          (char *a_label, ushort u, ushort x, ushort y, ushort z) { return ymap__addresser ('-', a_label, u, x, y, z); }
 char ymap_addresser_strict   (char *a_label, ushort u, ushort x, ushort y, ushort z) { return ymap__addresser ('y', a_label, u, x, y, z); }
+
+char yMAP_addresser          (char *a_label, ushort u, ushort x, ushort y, ushort z) { return ymap__addresser ('-', a_label, u, x, y, z); }
 
 char
 ymap_valid              (ushort u, ushort x, ushort y, ushort z)

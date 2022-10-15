@@ -458,7 +458,7 @@ ymap_visu_clear             (void)
 }
 
 char
-ymap_visu_exact         (ushort u, ushort xb, ushort xe, ushort yb, ushort ye, ushort zb, ushort ze, char c)
+yMAP_visu_exact         (ushort u, ushort xb, ushort xe, ushort yb, ushort ye, ushort zb, ushort ze, char c)
 {  /*---(design notes)--------------------------------------------------------*/
    /* if the two ends of the range are legal, this function will change the   */
    /* current selection to the boundaries passed as arguments.                */
@@ -520,6 +520,23 @@ ymap_visu_exact         (ushort u, ushort xb, ushort xe, ushort yb, ushort ye, u
    myMAP.v_curr->modded = '+';
    /*---(complete)-----------------------*/
    DEBUG_YMAP    yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+yMAP_range              (char *a_beg, char *a_end)
+{
+   char        rce         =  -10;
+   char        rc          =    0;
+   ushort      bu, bx, by, bz;
+   ushort      eu, ex, ey, ez;
+   rc = ymap__locator   ('y', a_beg, &bu, &bx, &by, &bz);
+   --rce;  if (rc < 0)  return rce;
+   rc = ymap__locator   ('y', a_end, &eu, &ex, &ey, &ez);
+   --rce;  if (rc < 0)  return rce;
+   --rce;  if (bu != eu)  return rce;
+   rc = yMAP_visu_exact (bu, bx, ex, by, ey, 0, 0, 'e');
+   --rce;  if (rc < 0)  return rce;
    return 0;
 }
 
@@ -612,7 +629,7 @@ ymap_visu_locking       (char a_type)
       break;
    case '!'  :
       DEBUG_YMAP   yLOG_note    ("! for screen selection");
-      /*> ymap_visu_exact (g_zmap.gcur, g_xmap.gbeg, g_xmap.gend, g_ymap.gbeg, g_ymap.gend, 0, 0);   <*/
+      /*> yMAP_visu_exact (g_zmap.gcur, g_xmap.gbeg, g_xmap.gend, g_ymap.gbeg, g_ymap.gend, 0, 0);   <*/
       DEBUG_YMAP    yLOG_complex ("x-curr"    , "%3db, %3dc, %3de", g_xmap.gbeg, g_xmap.gcur, g_xmap.gend);
       DEBUG_YMAP    yLOG_complex ("x-visu"    , "%3db, %3dr, %3de", myMAP.v_curr->x_beg, myMAP.v_curr->x_root, myMAP.v_curr->x_end);
       DEBUG_YMAP    yLOG_complex ("y-curr"    , "%3db, %3dc, %3de", g_ymap.gbeg, g_ymap.gcur, g_ymap.gend);

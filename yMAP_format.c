@@ -308,9 +308,15 @@ ymap__multisize      (char *a_label, uchar a_type, uchar a_size, uchar a_count)
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    DEBUG_YMAP   yLOG_complex ("args"      , "%-10.10p, %c, %2ds, %2dc", a_label, a_type, a_size, a_count);
+   /*---(defense)------------------------*/
+   --rce;  if (a_label == NULL) {
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_YMAP   yLOG_info    ("a_label"   , a_label);
    /*---(save current)-------------------*/
    rc = yMAP_current  (NULL, &uo, &xo, &yo, &zo);
-   DEBUG_YMAP   yLOG_complex ("current"   , "%4d, %4du, %4dx, %4dy, %4dz", rc, u, x, y, z);
+   DEBUG_YMAP   yLOG_complex ("current"   , "%4d, %4du, %4dx, %4dy, %4dz", rc, uo, xo, yo, zo);
    /*---(defense)------------------------*/
    rc = ymap_locator_strict   (a_label, &u, &x, &y, &z);
    DEBUG_YMAP   yLOG_value   ("locator"   , rc);
@@ -336,15 +342,15 @@ ymap__multisize      (char *a_label, uchar a_type, uchar a_size, uchar a_count)
    /*---(set range)----------------------*/
    switch (a_type) {
    case YMAP_XAXIS :
-      ymap_visu_exact (u, x, x + a_count, 0, g_ymap.gmax, 0, g_zmap.gmax, r);
+      yMAP_visu_exact (u, x, x + a_count, 0, g_ymap.gmax, 0, g_zmap.gmax, r);
       x_type = YMAP_WEXACT;
       break;
    case YMAP_YAXIS :
-      ymap_visu_exact (u, 0, g_xmap.gmax, y, y + a_count, 0, g_zmap.gmax, r);
+      yMAP_visu_exact (u, 0, g_xmap.gmax, y, y + a_count, 0, g_zmap.gmax, r);
       x_type = YMAP_HEXACT;
       break;
    case YMAP_ZAXIS :
-      ymap_visu_exact (u, 0, g_xmap.gmax, 0, g_ymap.gmax, z, z + a_count, r);
+      yMAP_visu_exact (u, 0, g_xmap.gmax, 0, g_ymap.gmax, z, z + a_count, r);
       x_type = YMAP_DEXACT;
       break;
    }
@@ -352,7 +358,7 @@ ymap__multisize      (char *a_label, uchar a_type, uchar a_size, uchar a_count)
    rc = ymap__format_range (x_type, a_size);
    DEBUG_YMAP   yLOG_value   ("format"    , a_count);
    /*---(put range back)-----------------*/
-   if (x_live) ymap_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
+   if (x_live) yMAP_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
    else        { ymap_visu_clear ();  yMAP_jump (uo, xo, yo, zo); }
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
@@ -498,21 +504,21 @@ ymap_format_xmode       (uchar a_major, uchar a_minor)
    /*---(execute)------------------------*/
    switch (s_formats [n].type) {
    case YMAP_WIDTH    :
-      ymap_visu_exact (uo, xb, xe, 0, g_ymap.gmax, 0, g_zmap.gmax, r);
+      yMAP_visu_exact (uo, xb, xe, 0, g_ymap.gmax, 0, g_zmap.gmax, r);
       rc = ymap__format_range (s_formats [n].type, a_minor);
-      if (x_live) ymap_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
+      if (x_live) yMAP_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
       else        { ymap_visu_clear ();  yMAP_jump (uo, xo, yo, zo); }
       break;
    case YMAP_HEIGHT   :
-      ymap_visu_exact (uo, 0, g_xmap.gmax, yb, ye, 0, g_zmap.gmax, r);
+      yMAP_visu_exact (uo, 0, g_xmap.gmax, yb, ye, 0, g_zmap.gmax, r);
       rc = ymap__format_range (s_formats [n].type, a_minor);
-      if (x_live) ymap_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
+      if (x_live) yMAP_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
       else        { ymap_visu_clear ();  yMAP_jump (uo, xo, yo, zo); }
       break;
    case YMAP_DEPTH    :
-      ymap_visu_exact (uo, 0, g_xmap.gmax, 0, g_ymap.gmax, zb, ze, r);
+      yMAP_visu_exact (uo, 0, g_xmap.gmax, 0, g_ymap.gmax, zb, ze, r);
       rc = ymap__format_range (s_formats [n].type, a_minor);
-      if (x_live) ymap_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
+      if (x_live) yMAP_visu_exact (ua, xb, xe, yb, ye, zb, ze, r);
       else        { ymap_visu_clear ();  yMAP_jump (uo, xo, yo, zo); }
       break;
    case YMAP_MULTIPLE :

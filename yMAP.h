@@ -201,6 +201,8 @@ char        yMAP_by_cursor          (uchar a_axis, uchar a_dir, ushort *r_pos, s
 char        yMAP_cmd_loc            (char *a_cmd);
 char        yMAP_jump               (ushort u, ushort x, ushort y, ushort z);
 char        yMAP_beg                (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+char        yMAP_locator            (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
+char        yMAP_addresser          (char *a_label, ushort u, ushort x, ushort y, ushort z);
 char        yMAP_current            (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
 char        yMAP_current_unit       (ushort *u, ushort *x, ushort *y, ushort *z);
 
@@ -213,6 +215,8 @@ char        yMAP_axis_grid          (uchar a_axis, ushort *a_beg, ushort *a_cur,
 /*===[[ yMAP_visual.c ]]======================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 /*---(cursor)---------------*/
+char        yMAP_visu_exact         (ushort u, ushort xb, ushort xe, ushort yb, ushort ye, ushort zb, ushort ze, char c);
+char        yMAP_range              (char *a_beg, char *a_end);
 char        yMAP_visu_range         (ushort *u, ushort *xb, ushort *xe, ushort *yb, ushort *ye, ushort *zb, ushort *ze, char *c);
 char        yMAP_visu_first         (ushort *u, ushort *x, ushort *y, ushort *z);
 char        yMAP_visu_next          (ushort *u, ushort *x, ushort *y, ushort *z);
@@ -289,6 +293,13 @@ char        yMAP_formatter          (void *a_formatter);
 char        yMAP_inside             (ushort u, ushort x, ushort y, ushort z);
 char        yMAP_move_hmode         (uchar a_major, uchar a_minor);
 char        yMAP__unit_wander       (void);
+
+
+char        yMAP_god_axis           (char a_txt, double a_min, double a_max, double a_start, double a_step, double a_minor, double a_major);
+char        yMAP_god_move           (int a_index, char a_dir);
+char        yMAP_god_key            (uchar a_key);
+
+
 
 #endif
 /*============================----end-of-source---============================*/

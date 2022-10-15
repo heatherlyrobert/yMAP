@@ -664,6 +664,7 @@ ymap__unit_loud          (void)
    yURG_name  ("ysrc"         , YURG_ON);
    yURG_name  ("ycmd"         , YURG_ON);
    yURG_name  ("ymap"         , YURG_ON);
+   yURG_name  ("ymacro"       , YURG_ON);
    yURG_name  ("ykeys"        , YURG_ON);
    yURG_name  ("regs"         , YURG_ON);
    yURG_name  ("hist"         , YURG_ON);

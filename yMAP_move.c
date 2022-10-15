@@ -47,6 +47,14 @@ ymap_office              (uchar a_axis, uchar *r_minor)
    case 'b' :  *r_minor = 't';  break;
    case 'B' :  *r_minor = 'T';  break;
    case '~' :  *r_minor = '_';  break;
+   case 'a' :  *r_minor = 'd';  break;
+   case 'd' :  *r_minor = 'a';  break;
+   case 'u' :  *r_minor = 'z';  break;
+   case 'z' :  *r_minor = 'u';  break;
+   case 'A' :  *r_minor = 'D';  break;
+   case 'D' :  *r_minor = 'A';  break;
+   case 'U' :  *r_minor = 'Z';  break;
+   case 'Z' :  *r_minor = 'U';  break;
    default  :
                DEBUG_YMAP   yLOG_snote   ("not a recognized key");
                DEBUG_YMAP   yLOG_sexitr  (__FUNCTION__, rce);
@@ -82,20 +90,20 @@ ymap_corners            (uchar a_src, uchar a_axis, char *r_minor)
       case YMAP_XAXIS :
          DEBUG_YMAP   yLOG_snote   ("x-axis");
          switch (*r_minor) {
-         case 'a'   : *r_minor = 'S';  break;
-         case 'u'   : *r_minor = 'E';  break;
-         case 'd'   : *r_minor = 'S';  break;
-         case 'z'   : *r_minor = 'E';  break;
+         case 'a'   : case 'A'   : *r_minor = 'S';  break;
+         case 'u'   : case 'U'   : *r_minor = 'E';  break;
+         case 'd'   : case 'D'   : *r_minor = 'S';  break;
+         case 'z'   : case 'Z'   : *r_minor = 'E';  break;
          }
          DEBUG_YMAP   yLOG_schar   (*r_minor);
          break;
       case YMAP_YAXIS :
          DEBUG_YMAP   yLOG_snote   ("y-axis");
          switch (*r_minor) {
-         case 'a'   : *r_minor = 'T';  break;
-         case 'u'   : *r_minor = 'T';  break;
-         case 'd'   : *r_minor = 'B';  break;
-         case 'z'   : *r_minor = 'B';  break;
+         case 'a'   : case 'A'   : *r_minor = 'T';  break;
+         case 'u'   : case 'U'   : *r_minor = 'T';  break;
+         case 'd'   : case 'D'   : *r_minor = 'B';  break;
+         case 'z'   : case 'Z'   : *r_minor = 'B';  break;
          }
          DEBUG_YMAP   yLOG_schar   (*r_minor);
          break;
@@ -530,6 +538,14 @@ ymap_simple              (tyMAP *a_map, uchar a_minor)
       break;
    case '$' : case '_' :
       rc = ymap__grid_at   (a_map, 65535, '-');
+      break;
+   case '|' : case '%' :
+      /*> DEBUG_YMAP   yLOG_value   ("repeats"   , yKEYS_repeats     ());             <*/
+      /*> DEBUG_YMAP   yLOG_value   ("original"  , yKEYS_repeat_orig ());             <*/
+      x_grid = yKEYS_repeat_useall ();
+      DEBUG_YMAP   yLOG_value   ("useall"    , x_grid);
+      /*> DEBUG_YMAP   yLOG_value   ("repeats"   , yKEYS_repeats     ());             <*/
+      rc = ymap_grid_dest (a_map, x_grid);
       break;
    default  :
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);

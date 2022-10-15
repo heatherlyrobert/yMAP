@@ -434,8 +434,8 @@ yMAP_entry              (uchar a_axis, ushort n, short a_ref, uchar a_wide, ucha
    return 0;
 }
 
-static uchar s_axis = '-';
-static uchar s_unit = 0;
+static uchar  s_axis = '-';
+static ushort s_unit = 0;
 
 char
 yMAP_start              (uchar a_axis, ushort a_len)
