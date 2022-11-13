@@ -96,54 +96,54 @@ ymap__mundo_new         (char a_mode, char a_act, char *a_label, tHIST **r_curr)
    char        x_tries     =    0;
    int         x_len       =    0;
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
-   DEBUG_HIST  yLOG_complex ("a_mode"    , "%c, %c, %s", a_mode, a_act, a_label);
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP  yLOG_complex ("a_mode"    , "%c, %c, %s", a_mode, a_act, a_label);
    /*---(default)------------------------*/
    if (r_curr != NULL)  *r_curr = NULL;
    /*---(internal)-----------------------*/
-   DEBUG_HIST  yLOG_char    ("active"    , myMAP.h_active);
+   DEBUG_YMAP  yLOG_char    ("active"    , myMAP.h_active);
    if (myMAP.h_active != 'y') {
-      DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
       return 0;
    }
    if (a_mode      == YMAP_NONE) {
-      DEBUG_HIST  yLOG_note    ("history is not requested on this action");
-      DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP  yLOG_note    ("history is not requested on this action");
+      DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
       return 0;
    }
    --rce;  if (a_mode == 0 || strchr (YMAP_MODES, a_mode) == NULL) {
-      DEBUG_HIST  yLOG_note    ("a_mode not legal");
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_note    ("a_mode not legal");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (!ymap__mundo_valid_act (a_act)) {
-      DEBUG_HIST  yLOG_note    ("a_act not legal");
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_note    ("a_act not legal");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (a_label == NULL || a_label [0] == '\0') {
-      DEBUG_HIST  yLOG_note    ("a_label is null/empty");
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_note    ("a_label is null/empty");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(prune future)-------------------*/
    rc = ymap__mundo_prune ('-');
    /*---(allocate)-----------------------*/
-   DEBUG_HIST   yLOG_note    ("allocating");
+   DEBUG_YMAP   yLOG_note    ("allocating");
    while (x_new == NULL && x_tries < 10)  {
-      DEBUG_HIST   yLOG_value   ("x_tries"   , x_tries);
+      DEBUG_YMAP   yLOG_value   ("x_tries"   , x_tries);
       ++x_tries;
       x_new = (tHIST *) malloc (sizeof (tHIST));
    }
-   DEBUG_HIST   yLOG_value   ("x_tries"   , x_tries);
-   DEBUG_HIST   yLOG_point   ("x_new"     , x_new);
+   DEBUG_YMAP   yLOG_value   ("x_tries"   , x_tries);
+   DEBUG_YMAP   yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL) {
-      DEBUG_HIST   yLOG_note    ("FAILED");
-      DEBUG_HIST   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP   yLOG_note    ("FAILED");
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(populate)-----------------------*/
-   DEBUG_HIST   yLOG_note    ("populate");
+   DEBUG_YMAP   yLOG_note    ("populate");
    x_new->mode    = a_mode;
    x_new->act     = a_act;
    x_new->label   = strdup (a_label);
@@ -153,26 +153,26 @@ ymap__mundo_new         (char a_mode, char a_act, char *a_label, tHIST **r_curr)
    x_new->h_next  = NULL;
    /*---(tie to master list)-------------*/
    if (myMAP.h_head == NULL) {
-      DEBUG_HIST   yLOG_note    ("nothing in list, make first");
+      DEBUG_YMAP   yLOG_note    ("nothing in list, make first");
       myMAP.h_head         = x_new;
    } else  {
-      DEBUG_HIST   yLOG_note    ("append to list");
+      DEBUG_YMAP   yLOG_note    ("append to list");
       myMAP.h_tail->h_next = x_new;
       x_new->h_prev  = myMAP.h_tail;
    }
    myMAP.h_tail        = x_new;
    /*---(update counts)------------------*/
    ++myMAP.h_count;
-   DEBUG_HIST   yLOG_value   ("h_count"   , myMAP.h_count);
+   DEBUG_YMAP   yLOG_value   ("h_count"   , myMAP.h_count);
    /*---(update current)-----------------*/
    myMAP.h_curr   = myMAP.h_tail;
    myMAP.h_index  = myMAP.h_count - 1;
-   DEBUG_HIST   yLOG_point   ("h_curr"    , myMAP.h_curr);
-   DEBUG_HIST   yLOG_value   ("h_index"   , myMAP.h_index);
+   DEBUG_YMAP   yLOG_point   ("h_curr"    , myMAP.h_curr);
+   DEBUG_YMAP   yLOG_value   ("h_index"   , myMAP.h_index);
    /*---(save-back)----------------------*/
    if (r_curr != NULL)  *r_curr = x_new;
    /*---(complete)-----------------------*/
-   DEBUG_HIST   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -183,13 +183,13 @@ ymap__mundo_free        (tHIST **r_curr)
    char        rce         =  -10;
    tHIST      *x_curr      = NULL;          /* simplifier only                */
    /*---(locals)-----------+-----+-----+-*/
-   DEBUG_HIST   yLOG_senter  (__FUNCTION__);
-   DEBUG_HIST   yLOG_spoint  (*r_curr);
+   DEBUG_YMAP   yLOG_senter  (__FUNCTION__);
+   DEBUG_YMAP   yLOG_spoint  (*r_curr);
    --rce;  if (*r_curr == NULL) {
-      DEBUG_HIST   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YMAP   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_HIST   yLOG_sint    (myMAP.h_count);
+   DEBUG_YMAP   yLOG_sint    (myMAP.h_count);
    x_curr = *r_curr;
    /*---(free content)-------------------*/
    if (x_curr->label  != s_nada)   free (x_curr->label);
@@ -204,7 +204,7 @@ ymap__mundo_free        (tHIST **r_curr)
    if (x_curr->h_prev != NULL)   x_curr->h_prev->h_next = x_curr->h_next;
    else                          myMAP.h_head           = x_curr->h_next;
    --myMAP.h_count;
-   DEBUG_HIST   yLOG_sint    (myMAP.h_count);
+   DEBUG_YMAP   yLOG_sint    (myMAP.h_count);
    /*---(clear links)--------------------*/
    x_curr->h_prev = NULL;
    x_curr->h_next = NULL;
@@ -217,7 +217,7 @@ ymap__mundo_free        (tHIST **r_curr)
    free (x_curr);
    *r_curr = NULL;
    /*---(complete)-----------------------*/
-   DEBUG_HIST   yLOG_sexit   (__FUNCTION__);
+   DEBUG_YMAP   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 
@@ -235,11 +235,11 @@ ymap_mundo_init         (void)
    char        rce         =  -10;
    int         i           = 0;
    /*---(header)-------------------------*/
-   DEBUG_HIST   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    --rce;  if (!yMODE_check_prep  (UMOD_MUNDO)) {
-      DEBUG_HIST   yLOG_note    ("status is not ready for init");
-      DEBUG_HIST   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP   yLOG_note    ("status is not ready for init");
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(clear vars)---------------------*/
@@ -261,7 +261,7 @@ ymap_mundo_init         (void)
    yFILE_dump_add ("maps"      , "map", "details of all axis maps"      , ymap_map_dump);
    /*---(update status)------------------*/
    yMODE_init_set   (UMOD_MUNDO, NULL, ymap_mode);
-   DEBUG_HIST   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -272,32 +272,32 @@ yMAP_mundo_config       (char a_len, void *a_mundo)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    --rce;  if (!yMODE_check_needs  (UMOD_MUNDO)) {
-      DEBUG_HIST   yLOG_note    ("init must complete before config");
-      DEBUG_HIST   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP   yLOG_note    ("init must complete before config");
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(format length)------------------*/
-   DEBUG_HIST   yLOG_value   ("a_len"     , a_len);
+   DEBUG_YMAP   yLOG_value   ("a_len"     , a_len);
    --rce;  if (a_len < 0 || a_len > 10) {
-      DEBUG_HIST   yLOG_note    ("format lenght must be 0 to 10");
-      DEBUG_HIST   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP   yLOG_note    ("format lenght must be 0 to 10");
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    myMAP.h_len    = a_len;
    /*---(undo pointer)-------------------*/
-   DEBUG_HIST   yLOG_point   ("a_mundo"   , a_mundo);
+   DEBUG_YMAP   yLOG_point   ("a_mundo"   , a_mundo);
    --rce;  if (a_mundo == NULL) {
-      DEBUG_HIST   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    myMAP.e_mundo  = a_mundo;
    /*---(update status)------------------*/
    yMODE_conf_set   (UMOD_MUNDO, '1');
    /*---(complete)-----------------------*/
-   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -319,22 +319,22 @@ ymap__mundo_prune       (char a_type)
    tHIST      *x_curr      = NULL;
    tHIST      *x_next      = NULL;
    tHIST      *x_stop      = NULL;
-   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
-   DEBUG_HIST  yLOG_char    ("a_type"    , a_type);
-   DEBUG_HIST  yLOG_point   ("h_curr"    , myMAP.h_curr);
-   DEBUG_HIST  yLOG_point   ("h_tail"    , myMAP.h_tail);
+   DEBUG_YMAP  yLOG_char    ("a_type"    , a_type);
+   DEBUG_YMAP  yLOG_point   ("h_curr"    , myMAP.h_curr);
+   DEBUG_YMAP  yLOG_point   ("h_tail"    , myMAP.h_tail);
    x_curr = myMAP.h_tail;
    if (a_type == '*')  x_stop = NULL;
    else                x_stop = myMAP.h_curr;
-   DEBUG_HIST  yLOG_point   ("x_stop"    , x_stop);
+   DEBUG_YMAP  yLOG_point   ("x_stop"    , x_stop);
    /*---(walk)---------------------------*/
-   DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
+   DEBUG_YMAP  yLOG_point   ("x_curr"    , x_curr);
    while (x_curr != NULL && x_curr != x_stop) {
       x_next = x_curr->h_prev;
       ymap__mundo_free (&x_curr);
       x_curr = x_next;
-      DEBUG_HIST  yLOG_point   ("x_curr"    , x_curr);
+      DEBUG_YMAP  yLOG_point   ("x_curr"    , x_curr);
    }
    /*---(clean up)-----------------------*/
    if (a_type == '*') {
@@ -348,7 +348,7 @@ ymap__mundo_prune       (char a_type)
       myMAP.h_tail = myMAP.h_curr;
    }
    /*---(complete)-----------------------*/
-   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -375,25 +375,25 @@ ymap__mundo_by_cursor   (char a_move)
    char        rce         =  -10;
    char        rc          =    0;
    /*---(header)-------------------------*/
-   DEBUG_HIST   yLOG_enter   (__FUNCTION__);
-   DEBUG_HIST   yLOG_char    ("a_move"    , a_move);
+   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP   yLOG_char    ("a_move"    , a_move);
    /*---(defenses)-----------------------*/
-   DEBUG_HIST   yLOG_point   ("h_head"    , myMAP.h_head);
+   DEBUG_YMAP   yLOG_point   ("h_head"    , myMAP.h_head);
    --rce;  if (myMAP.h_head == NULL) {
       myMAP.h_curr  = NULL;
       myMAP.h_index = -1;
-      DEBUG_HIST   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_HIST   yLOG_point   ("myMAP.h_curr"    , myMAP.h_curr);
+   DEBUG_YMAP   yLOG_point   ("myMAP.h_curr"    , myMAP.h_curr);
    --rce;  if (myMAP.h_curr == NULL && strchr ("<>", a_move) != NULL) {
       myMAP.h_index = -1;
-      DEBUG_HIST   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_HIST   yLOG_value   ("h_index"   , myMAP.h_index);
+   DEBUG_YMAP   yLOG_value   ("h_index"   , myMAP.h_index);
    /*---(handle move)--------------------*/
-   DEBUG_HIST   yLOG_note    ("check special shortcuts");
+   DEBUG_YMAP   yLOG_note    ("check special shortcuts");
    switch (a_move) {
    case YDLST_HEAD :
       myMAP.h_curr  = myMAP.h_head;
@@ -413,17 +413,17 @@ ymap__mundo_by_cursor   (char a_move)
       break;
    }
    /*---(safeties)-----------------------*/
-   DEBUG_HIST   yLOG_point   ("h_curr"    , myMAP.h_curr);
+   DEBUG_YMAP   yLOG_point   ("h_curr"    , myMAP.h_curr);
    --rce;  if (myMAP.h_curr == NULL) {
       myMAP.h_index = -1;
-      DEBUG_HIST   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(output)-------------------------*/
-   DEBUG_HIST   yLOG_point   ("h_curr"    , myMAP.h_curr);
-   DEBUG_HIST   yLOG_value   ("h_index"   , myMAP.h_index);
+   DEBUG_YMAP   yLOG_point   ("h_curr"    , myMAP.h_curr);
+   DEBUG_YMAP   yLOG_value   ("h_index"   , myMAP.h_index);
    /*---(complete)-----------------------*/
-   DEBUG_HIST   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -498,29 +498,29 @@ ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char *a_label, c
    tHIST      *x_curr      = NULL;
    ushort      u, x, y, z;
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (a_func);
-   DEBUG_HIST  yLOG_complex ("args"      , "%c, %c, %p, %c, %c", a_mode, a_act, a_label, a_before, a_after);
+   DEBUG_YMAP  yLOG_enter   (a_func);
+   DEBUG_YMAP  yLOG_complex ("args"      , "%c, %c, %p, %c, %c", a_mode, a_act, a_label, a_before, a_after);
    /*---(early-defense)------------------*/
    --rce;  if (a_before != chrvisible (a_before)) {
-      DEBUG_HIST  yLOG_note    ("a_before is non-visible char");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("a_before is non-visible char");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
    --rce;  if (a_after  != chrvisible (a_after )) {
-      DEBUG_HIST  yLOG_note    ("a_after is non-visible char");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("a_after is non-visible char");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
    /*---(get location)-------------------*/
-   DEBUG_HIST  yLOG_info    ("a_label"   , a_label);
+   DEBUG_YMAP  yLOG_info    ("a_label"   , a_label);
    rc = ymap_locator_strict (a_label, &u, &x, &y, &z);
-   DEBUG_HIST  yLOG_value   ("strict"    , rc);
+   DEBUG_YMAP  yLOG_value   ("strict"    , rc);
    --rce;  if (rc  <  0) {
-      DEBUG_HIST  yLOG_note    ("label not legal or in known space");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("label not legal or in known space");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
-   DEBUG_HIST  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
+   DEBUG_YMAP  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
    /*---(mark changes)-------------------*/
    --rce;  switch (a_act) {
    case YMAP_ALIGN    :
@@ -529,28 +529,28 @@ ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char *a_label, c
    case YMAP_UNITS    :
       break;
    default :
-      DEBUG_HIST  yLOG_note    ("action not known");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("action not known");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
       break;
    }
    /*---(late-defense)-------------------*/
-   DEBUG_HIST  yLOG_char    ("active"    , myMAP.h_active);
+   DEBUG_YMAP  yLOG_char    ("active"    , myMAP.h_active);
    if (myMAP.h_active != 'y') {
-      DEBUG_HIST  yLOG_exit    (a_func);
+      DEBUG_YMAP  yLOG_exit    (a_func);
       return 0;
    }
    if (a_mode      == YMAP_NONE) {
-      DEBUG_HIST  yLOG_note    ("history is not requested on this action");
-      DEBUG_HIST  yLOG_exit    (a_func);
+      DEBUG_YMAP  yLOG_note    ("history is not requested on this action");
+      DEBUG_YMAP  yLOG_exit    (a_func);
       return 0;
    }
    /*---(add record)---------------------*/
    rc = ymap__mundo_new (a_mode, a_act, a_label, &x_curr);
-   DEBUG_HIST  yLOG_value   ("new"       , rc);
+   DEBUG_YMAP  yLOG_value   ("new"       , rc);
    --rce;  if (rc < 0) {
-      DEBUG_HIST  yLOG_note    ("creating a new mundo failed");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("creating a new mundo failed");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
    /*---(add detail)------------------*/
@@ -561,7 +561,7 @@ ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char *a_label, c
       x_curr->after  = strdup  (s);
    }
    /*---(complete)--------------------*/
-   DEBUG_HIST  yLOG_exitr   (a_func, rc);
+   DEBUG_YMAP  yLOG_exitr   (a_func, rc);
    return rc;
 }
 
@@ -606,29 +606,29 @@ ymap__mundo_ints        (char *a_func, char a_mode, char a_act, char *a_label, c
    tHIST      *x_curr      = NULL;
    ushort      u, x, y, z;
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (a_func);
-   DEBUG_HIST  yLOG_complex ("args"      , "%c, %c, %p, %3d, %3d", a_mode, a_act, a_label, a_before, a_after);
+   DEBUG_YMAP  yLOG_enter   (a_func);
+   DEBUG_YMAP  yLOG_complex ("args"      , "%c, %c, %p, %3d, %3d", a_mode, a_act, a_label, a_before, a_after);
    /*---(early-defense)------------------*/
    --rce;  if (a_before <  0) {
-      DEBUG_HIST  yLOG_note    ("a_before is negative");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("a_before is negative");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
    --rce;  if (a_after  <  0) {
-      DEBUG_HIST  yLOG_note    ("a_after is negative");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("a_after is negative");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
    /*---(get position)-------------------*/
-   DEBUG_HIST  yLOG_info    ("a_label"   , a_label);
+   DEBUG_YMAP  yLOG_info    ("a_label"   , a_label);
    rc = ymap_locator_strict (a_label, &u, &x, &y, &z);
-   DEBUG_HIST  yLOG_value   ("strict"    , rc);
+   DEBUG_YMAP  yLOG_value   ("strict"    , rc);
    --rce;  if (rc  <  0) {
-      DEBUG_HIST  yLOG_note    ("label not legal or in known space");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("label not legal or in known space");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
-   DEBUG_HIST  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
+   DEBUG_YMAP  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
    /*---(mark changes)-------------------*/
    --rce;  switch (a_act) {
    case YMAP_WIDTH  :
@@ -641,29 +641,29 @@ ymap__mundo_ints        (char *a_func, char a_mode, char a_act, char *a_label, c
       rc = ymap_deep (z, a_after);
       break;
    default :
-      DEBUG_HIST  yLOG_note    ("action not known");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("action not known");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
       break;
    }
-   DEBUG_HIST  yLOG_value   ("update"    , rc);
+   DEBUG_YMAP  yLOG_value   ("update"    , rc);
    /*---(late-defense)-------------------*/
-   DEBUG_HIST  yLOG_char    ("active"    , myMAP.h_active);
+   DEBUG_YMAP  yLOG_char    ("active"    , myMAP.h_active);
    if (myMAP.h_active != 'y') {
-      DEBUG_HIST  yLOG_exit    (a_func);
+      DEBUG_YMAP  yLOG_exit    (a_func);
       return 0;
    }
    if (a_mode      == YMAP_NONE) {
-      DEBUG_HIST  yLOG_note    ("history is not requested on this action");
-      DEBUG_HIST  yLOG_exit    (a_func);
+      DEBUG_YMAP  yLOG_note    ("history is not requested on this action");
+      DEBUG_YMAP  yLOG_exit    (a_func);
       return 0;
    }
    /*---(add record)---------------------*/
    rc = ymap__mundo_new (a_mode, a_act, a_label, &x_curr);
-   DEBUG_HIST  yLOG_value   ("new"       , rc);
+   DEBUG_YMAP  yLOG_value   ("new"       , rc);
    --rce;  if (rc < 0) {
-      DEBUG_HIST  yLOG_note    ("creating a new mundo failed");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("creating a new mundo failed");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
    /*---(add detail)------------------*/
@@ -674,7 +674,7 @@ ymap__mundo_ints        (char *a_func, char a_mode, char a_act, char *a_label, c
       x_curr->after  = strdup  (s);
    }
    /*---(complete)--------------------*/
-   DEBUG_HIST  yLOG_exitr   (a_func, rc);
+   DEBUG_YMAP  yLOG_exitr   (a_func, rc);
    return rc;
 }
 
@@ -714,58 +714,58 @@ ymap__mundo_string      (char *a_func, char a_mode, char a_act, char *a_label, c
    tHIST      *x_curr      = NULL;
    ushort      u, x, y, z;
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (a_func);
-   DEBUG_HIST  yLOG_complex ("args"      , "%c, %c, %p, %p, %p", a_mode, a_act, a_label, a_before, a_after);
+   DEBUG_YMAP  yLOG_enter   (a_func);
+   DEBUG_YMAP  yLOG_complex ("args"      , "%c, %c, %p, %p, %p", a_mode, a_act, a_label, a_before, a_after);
    /*---(prepare)------------------------*/
    if (a_before == NULL)  b = s_nada;
    else                   b = a_before;
    if (a_after  == NULL)  a = s_nada;
    else                   a = a_after;
    /*---(get position)-------------------*/
-   DEBUG_HIST  yLOG_info    ("a_label"   , a_label);
+   DEBUG_YMAP  yLOG_info    ("a_label"   , a_label);
    if (strcmp (a_label, "n/a") != 0) {
       rc = ymap_locator_strict (a_label, &u, &x, &y, &z);
-      DEBUG_HIST  yLOG_value   ("strict"    , rc);
+      DEBUG_YMAP  yLOG_value   ("strict"    , rc);
       --rce;  if (rc  <  0) {
-         DEBUG_HIST  yLOG_note    ("label not legal or in known space");
-         DEBUG_HIST  yLOG_exitr   (a_func, rce);
+         DEBUG_YMAP  yLOG_note    ("label not legal or in known space");
+         DEBUG_YMAP  yLOG_exitr   (a_func, rce);
          return rce;
       }
-      DEBUG_HIST  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
+      DEBUG_YMAP  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
    }
    /*---(mark changes)-------------------*/
    --rce;  switch (a_act) {
    case YMAP_SOURCE :
       ymap_used (x, y, z);
-      DEBUG_HIST  yLOG_value   ("update"    , rc);
+      DEBUG_YMAP  yLOG_value   ("update"    , rc);
       break;
    case YMAP_VOLUME :
    case YMAP_TITLE  :
    case YMAP_SYNC   : case 'ù' :
       break;
    default          :
-      DEBUG_HIST  yLOG_note    ("action not known");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("action not known");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
       break;
    }
    /*---(defense)------------------------*/
-   DEBUG_HIST  yLOG_char    ("active"    , myMAP.h_active);
+   DEBUG_YMAP  yLOG_char    ("active"    , myMAP.h_active);
    if (myMAP.h_active != 'y') {
-      DEBUG_HIST  yLOG_exit    (a_func);
+      DEBUG_YMAP  yLOG_exit    (a_func);
       return 0;
    }
    if (a_mode      == YMAP_NONE) {
-      DEBUG_HIST  yLOG_note    ("history is not requested on this action");
-      DEBUG_HIST  yLOG_exit    (a_func);
+      DEBUG_YMAP  yLOG_note    ("history is not requested on this action");
+      DEBUG_YMAP  yLOG_exit    (a_func);
       return 0;
    }
    /*---(add record)---------------------*/
    rc = ymap__mundo_new (a_mode, a_act, a_label, &x_curr);
-   DEBUG_HIST  yLOG_value   ("new"       , rc);
+   DEBUG_YMAP  yLOG_value   ("new"       , rc);
    --rce;  if (rc < 0) {
-      DEBUG_HIST  yLOG_note    ("creating a new mundo failed");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("creating a new mundo failed");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
    /*---(add detail)------------------*/
@@ -774,7 +774,7 @@ ymap__mundo_string      (char *a_func, char a_mode, char a_act, char *a_label, c
       x_curr->after  = strdup  (a);
    }
    /*---(complete)--------------------*/
-   DEBUG_HIST  yLOG_exitr   (a_func, rc);
+   DEBUG_YMAP  yLOG_exitr   (a_func, rc);
    return rc;
 }
 
@@ -817,45 +817,45 @@ yMAP_mundo_recalc       (char a_mode, char *a_label)
    ushort      u, x, y, z;
    char        t           [LEN_RECD]  = "";
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
-   DEBUG_HIST  yLOG_complex ("args"      , "%c, %p", a_mode, a_label);
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP  yLOG_complex ("args"      , "%c, %p", a_mode, a_label);
    /*---(get position)-------------------*/
-   DEBUG_HIST  yLOG_info    ("a_label"   , a_label);
+   DEBUG_YMAP  yLOG_info    ("a_label"   , a_label);
    if (strcmp (a_label, "n/a") != 0) {
       rc = ymap_locator_strict (a_label, &u, &x, &y, &z);
-      DEBUG_HIST  yLOG_value   ("strict"    , rc);
+      DEBUG_YMAP  yLOG_value   ("strict"    , rc);
       --rce;  if (rc  <  0) {
-         DEBUG_HIST  yLOG_note    ("label not legal or in known space");
-         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMAP  yLOG_note    ("label not legal or in known space");
+         DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      DEBUG_HIST  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
+      DEBUG_YMAP  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
    }
    /*---(defense)------------------------*/
-   DEBUG_HIST  yLOG_char    ("active"    , myMAP.h_active);
+   DEBUG_YMAP  yLOG_char    ("active"    , myMAP.h_active);
    if (myMAP.h_active != 'y') {
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return 0;
    }
    if (a_mode      == YMAP_NONE) {
-      DEBUG_HIST  yLOG_note    ("history is not requested on this action");
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_note    ("history is not requested on this action");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return 0;
    }
    /*---(add record)---------------------*/
    --rce;  if (myMAP.h_tail->act != YMAP_RECALC) {
-      DEBUG_HIST  yLOG_note    ("brand new recalc");
+      DEBUG_YMAP  yLOG_note    ("brand new recalc");
       rc = ymap__mundo_new (a_mode, YMAP_RECALC, "n/a", &x_curr);
-      DEBUG_HIST  yLOG_value   ("new"       , rc);
+      DEBUG_YMAP  yLOG_value   ("new"       , rc);
       if (rc < 0) {
-         DEBUG_HIST  yLOG_note    ("creating a new mundo failed");
-         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMAP  yLOG_note    ("creating a new mundo failed");
+         DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
       sprintf (t, ",%s,", a_label);
       myMAP.h_tail->after  = strdup  (t);
    } else {
-      DEBUG_HIST  yLOG_note    ("appending to recalc on tail");
+      DEBUG_YMAP  yLOG_note    ("appending to recalc on tail");
       strlcpy (t, myMAP.h_tail->after , LEN_RECD);
       free (myMAP.h_tail->after );
       strlcat (t, a_label, LEN_RECD);
@@ -864,7 +864,7 @@ yMAP_mundo_recalc       (char a_mode, char *a_label)
       myMAP.h_tail->after  = strdup  (t);
    }
    /*---(complete)--------------------*/
-   DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rc);
+   DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rc);
    return rc;
 }
 
@@ -883,20 +883,20 @@ ymap__mundo_concat      (char *a_format, char *a_content, char **a_final)
    char       *q           = NULL;
    char        t           [LEN_RECD];
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(format)----------------------*/
-   DEBUG_HIST  yLOG_point   ("a_format"  , a_format);
+   DEBUG_YMAP  yLOG_point   ("a_format"  , a_format);
    if (a_format == NULL)         p = s_nada;
    else {
-      DEBUG_HIST  yLOG_info    ("a_format"  , a_format);
+      DEBUG_YMAP  yLOG_info    ("a_format"  , a_format);
       p = a_format;
    }
-   DEBUG_HIST  yLOG_complex ("format"    , "%-10.10s, %-10.10s, %10.10s", s_nothing, a_format, p);
+   DEBUG_YMAP  yLOG_complex ("format"    , "%-10.10s, %-10.10s, %10.10s", s_nothing, a_format, p);
    /*---(content)---------------------*/
-   DEBUG_HIST  yLOG_point   ("a_content" , a_content);
+   DEBUG_YMAP  yLOG_point   ("a_content" , a_content);
    if      (a_content  == NULL)  q = s_nada;
    else {
-      DEBUG_HIST  yLOG_info    ("a_content" , a_content);
+      DEBUG_YMAP  yLOG_info    ("a_content" , a_content);
       q = a_content;
    }
    /*---(concatenate)-----------------*/
@@ -905,11 +905,11 @@ ymap__mundo_concat      (char *a_format, char *a_content, char **a_final)
       sprintf (t, "%-*.*s··%s", myMAP.h_len, myMAP.h_len, p, q);
       *a_final = strdup (t);
    }
-   DEBUG_HIST  yLOG_complex ("before"    , "%-10.10s, %-10.10s, %10.10s", s_nada, a_content, *a_final);
+   DEBUG_YMAP  yLOG_complex ("before"    , "%-10.10s, %-10.10s, %10.10s", s_nada, a_content, *a_final);
    /*---(show)------------------------*/
-   DEBUG_HIST  yLOG_info    ("*a_final"  , *a_final);
+   DEBUG_YMAP  yLOG_info    ("*a_final"  , *a_final);
    /*---(complete)--------------------*/
-   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -924,55 +924,55 @@ ymap__mundo_complex     (char *a_func, char a_mode, char a_act, char *a_label, c
    char       *a           = NULL;
    ushort      u, x, y, z;
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (a_func);
-   DEBUG_HIST  yLOG_complex ("args"      , "%c, %c, %p, %c, %c", a_mode, a_act, a_label, a_before, a_after);
+   DEBUG_YMAP  yLOG_enter   (a_func);
+   DEBUG_YMAP  yLOG_complex ("args"      , "%c, %c, %p, %c, %c", a_mode, a_act, a_label, a_before, a_after);
    /*---(early-defense)------------------*/
    --rce;  if (a_beforeF == NULL || a_beforeF [0] == '\0') {
-      DEBUG_HIST  yLOG_note    ("before format is null/empty");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("before format is null/empty");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
    --rce;  if (a_afterF  == NULL || a_afterF  [0] == '\0') {
       if (a_act != YMAP_DELETE) {
-         DEBUG_HIST  yLOG_note    ("after format is null/empty");
-         DEBUG_HIST  yLOG_exitr   (a_func, rce);
+         DEBUG_YMAP  yLOG_note    ("after format is null/empty");
+         DEBUG_YMAP  yLOG_exitr   (a_func, rce);
          return rce;
       }
    }
    /*---(get position)-------------------*/
-   DEBUG_HIST  yLOG_info    ("a_label"   , a_label);
+   DEBUG_YMAP  yLOG_info    ("a_label"   , a_label);
    rc = ymap_locator_strict (a_label, &u, &x, &y, &z);
-   DEBUG_HIST  yLOG_value   ("strict"    , rc);
+   DEBUG_YMAP  yLOG_value   ("strict"    , rc);
    --rce;  if (rc  <  0) {
-      DEBUG_HIST  yLOG_note    ("label not legal or in known space");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("label not legal or in known space");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
-   DEBUG_HIST  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
+   DEBUG_YMAP  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
    /*---(mark changes)-------------------*/
    --rce;  switch (a_act) {
    case YMAP_CLEAR  :
       ymap_empty (x, y, z);
-      DEBUG_HIST  yLOG_value   ("update"    , rc);
+      DEBUG_YMAP  yLOG_value   ("update"    , rc);
       break;
    case YMAP_OVERWRITE :
    case YMAP_DELETE    :
       break;
    default :
-      DEBUG_HIST  yLOG_note    ("action not known");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("action not known");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
       break;
    }
    /*---(late-defense)-------------------*/
-   DEBUG_HIST  yLOG_char    ("active"    , myMAP.h_active);
+   DEBUG_YMAP  yLOG_char    ("active"    , myMAP.h_active);
    if (myMAP.h_active != 'y') {
-      DEBUG_HIST  yLOG_exit    (a_func);
+      DEBUG_YMAP  yLOG_exit    (a_func);
       return 0;
    }
    if (a_mode      == YMAP_NONE) {
-      DEBUG_HIST  yLOG_note    ("history is not requested on this action");
-      DEBUG_HIST  yLOG_exit    (a_func);
+      DEBUG_YMAP  yLOG_note    ("history is not requested on this action");
+      DEBUG_YMAP  yLOG_exit    (a_func);
       return 0;
    }
    /*---(concatinate)--------------------*/
@@ -980,10 +980,10 @@ ymap__mundo_complex     (char *a_func, char a_mode, char a_act, char *a_label, c
    ymap__mundo_concat  (a_afterF , a_after , &a);
    /*---(add record)---------------------*/
    rc = ymap__mundo_new (a_mode, a_act, a_label, &x_curr);
-   DEBUG_HIST  yLOG_value   ("new"       , rc);
+   DEBUG_YMAP  yLOG_value   ("new"       , rc);
    --rce;  if (rc < 0) {
-      DEBUG_HIST  yLOG_note    ("creating a new mundo failed");
-      DEBUG_HIST  yLOG_exitr   (a_func, rce);
+      DEBUG_YMAP  yLOG_note    ("creating a new mundo failed");
+      DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
    /*---(add detail)------------------*/
@@ -992,7 +992,7 @@ ymap__mundo_complex     (char *a_func, char a_mode, char a_act, char *a_label, c
       x_curr->after  = a;
    }
    /*---(complete)--------------------*/
-   DEBUG_HIST  yLOG_exitr   (a_func, rc);
+   DEBUG_YMAP  yLOG_exitr   (a_func, rc);
    return rc;
 }
 
@@ -1069,42 +1069,42 @@ ymap__mundo_undo_one    (void)
    int         l           =    0;
    ushort      u, x, y, z;
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(identify location)--------------*/
-   DEBUG_HIST  yLOG_info    ("label"     , myMAP.h_curr->label);
+   DEBUG_YMAP  yLOG_info    ("label"     , myMAP.h_curr->label);
    if (strcmp (myMAP.h_curr->label, "n/a") != 0) {
       /*---(parse location)--------------*/
       rc = ymap_locator (myMAP.h_curr->label, &u, &x, &y, &z);
-      DEBUG_HIST  yLOG_value   ("locator"     , rc);
+      DEBUG_YMAP  yLOG_value   ("locator"     , rc);
       --rce;  if (rc < 0) {
-         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      DEBUG_HIST  yLOG_complex ("jump to"   , "%4du, %4dx, %4dy, %4dz", u, x, y, z);
+      DEBUG_YMAP  yLOG_complex ("jump to"   , "%4du, %4dx, %4dy, %4dz", u, x, y, z);
       /*---(get to right location)-------*/
       rc = yMAP_jump  (u, x, y, z);
-      DEBUG_HIST  yLOG_value   ("jump"        , rc);
+      DEBUG_YMAP  yLOG_value   ("jump"        , rc);
       --rce;  if (rc < 0) {
-         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
    }
    /*---(parse data)---------------------*/
    ymap__mundo_parse (myMAP.h_curr->act, myMAP.h_curr->before, x_format, x_content);
    /*---(handle request)-----------------*/
-   DEBUG_HIST  yLOG_point   ("e_mundo"     , myMAP.e_mundo);
+   DEBUG_YMAP  yLOG_point   ("e_mundo"     , myMAP.e_mundo);
    --rce;  if (myMAP.e_mundo == NULL) {
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    rc = myMAP.e_mundo ('<', myMAP.h_curr->act, myMAP.h_curr->label, x_format, x_content);
-   DEBUG_HIST  yLOG_value   ("undo"        , rc);
+   DEBUG_YMAP  yLOG_value   ("undo"        , rc);
    --rce;  if (rc < 0) {
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1116,57 +1116,57 @@ ymap_mundo_undo         (void)
    char        rc          =    0;
    char        x_mode      =  '-';
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_HIST  yLOG_value   ("h_count"     , myMAP.h_count);
+   DEBUG_YMAP  yLOG_value   ("h_count"     , myMAP.h_count);
    --rce;  if (myMAP.h_count <  0) {
-      DEBUG_HIST  yLOG_note    ("no history to undo");
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_note    ("no history to undo");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_HIST  yLOG_point   ("h_curr"      , myMAP.h_curr);
+   DEBUG_YMAP  yLOG_point   ("h_curr"      , myMAP.h_curr);
    --rce;  if (myMAP.h_curr == NULL) {
-      DEBUG_HIST  yLOG_note    ("current is not set");
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_note    ("current is not set");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_HIST  yLOG_value   ("h_index"     , myMAP.h_index);
+   DEBUG_YMAP  yLOG_value   ("h_index"     , myMAP.h_index);
    --rce;  if (myMAP.h_index <  0) {
-      DEBUG_HIST  yLOG_note    ("current is already at beginning");
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_note    ("current is already at beginning");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(prepare)------------------------*/
    myMAP.h_active = '-';
-   DEBUG_HIST  yLOG_char    ("h_active"    , myMAP.h_active);
+   DEBUG_YMAP  yLOG_char    ("h_active"    , myMAP.h_active);
    /*> HIST_debug ();                                                                 <*/
    /*---(process)------------------------*/
    while (rc == 0) {
       /*---(save mode)-------------------*/
       x_mode = myMAP.h_curr->mode;
-      DEBUG_HIST  yLOG_char    ("curr mode" , x_mode);
+      DEBUG_YMAP  yLOG_char    ("curr mode" , x_mode);
       /*---(process current)-------------*/
       rc = ymap__mundo_undo_one ();
       if (rc <  0) {
-         DEBUG_HIST  yLOG_note    ("error in undo processing");
+         DEBUG_YMAP  yLOG_note    ("error in undo processing");
          myMAP.h_active = 'y';
-         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rc);
+         DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rc);
          return rc;
       }
       /*---(update position)-------------*/
       rc = ymap__mundo_by_cursor (YDLST_PREV);
       /*---(check for breakpoint)--------*/
       if (x_mode == YMAP_BEG) {
-         DEBUG_HIST  yLOG_note    ("hit start of undo chain, done");
+         DEBUG_YMAP  yLOG_note    ("hit start of undo chain, done");
          break;
       }
       /*---(next)------------------------*/
    }
    /*---(reset)--------------------------*/
-   DEBUG_HIST  yLOG_char    ("h_active"    , myMAP.h_active);
+   DEBUG_YMAP  yLOG_char    ("h_active"    , myMAP.h_active);
    myMAP.h_active = 'y';
    /*---(complete)-----------------------*/
-   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1181,42 +1181,42 @@ ymap__mundo_redo_one    (void)
    int         l           =    0;
    ushort      u, x, y, z;
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(identify location)--------------*/
-   DEBUG_HIST  yLOG_info    ("label"     , myMAP.h_curr->label);
+   DEBUG_YMAP  yLOG_info    ("label"     , myMAP.h_curr->label);
    if (strcmp (myMAP.h_curr->label, "n/a") != 0) {
       /*---(parse location)--------------*/
       rc = ymap_locator (myMAP.h_curr->label, &u, &x, &y, &z);
-      DEBUG_HIST  yLOG_value   ("locator"     , rc);
+      DEBUG_YMAP  yLOG_value   ("locator"     , rc);
       --rce;  if (rc < 0) {
-         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      DEBUG_HIST  yLOG_complex ("jump to"   , "%4du, %4dx, %4dy, %4dz", u, x, y, z);
+      DEBUG_YMAP  yLOG_complex ("jump to"   , "%4du, %4dx, %4dy, %4dz", u, x, y, z);
       /*---(get to right location)-------*/
       rc = yMAP_jump  (u, x, y, z);
-      DEBUG_HIST  yLOG_value   ("jump"        , rc);
+      DEBUG_YMAP  yLOG_value   ("jump"        , rc);
       --rce;  if (rc < 0) {
-         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
    }
    /*---(parse data)---------------------*/
    ymap__mundo_parse (myMAP.h_curr->act, myMAP.h_curr->after, x_format, x_content);
    /*---(handle request)-----------------*/
-   DEBUG_HIST  yLOG_point   ("e_mundo"     , myMAP.e_mundo);
+   DEBUG_YMAP  yLOG_point   ("e_mundo"     , myMAP.e_mundo);
    --rce;  if (myMAP.e_mundo == NULL) {
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    rc = myMAP.e_mundo ('>', myMAP.h_curr->act, myMAP.h_curr->label, x_format, x_content);
-   DEBUG_HIST  yLOG_value   ("undo"        , rc);
+   DEBUG_YMAP  yLOG_value   ("undo"        , rc);
    --rce;  if (rc < 0) {
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1228,18 +1228,18 @@ ymap_mundo_redo        (void)
    char        rc          =    0;
    char        x_mode      =  '-';
    /*---(header)-------------------------*/
-   DEBUG_HIST  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_HIST  yLOG_value   ("h_count"     , myMAP.h_count);
+   DEBUG_YMAP  yLOG_value   ("h_count"     , myMAP.h_count);
    --rce;  if (myMAP.h_count <  0) {
-      DEBUG_HIST  yLOG_note    ("no history to undo");
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_note    ("no history to undo");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_HIST  yLOG_value   ("h_index"     , myMAP.h_index);
+   DEBUG_YMAP  yLOG_value   ("h_index"     , myMAP.h_index);
    --rce;  if (myMAP.h_index >= myMAP.h_count - 1) {
-      DEBUG_HIST  yLOG_note    ("current is already at maximum");
-      DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMAP  yLOG_note    ("current is already at maximum");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(prepare)------------------------*/
@@ -1252,21 +1252,21 @@ ymap_mundo_redo        (void)
       /*---(process current)-------------*/
       rc = ymap__mundo_redo_one ();
       if (rc <  0) {
-         DEBUG_HIST  yLOG_note    ("error in redo processing");
-         DEBUG_HIST  yLOG_exitr   (__FUNCTION__, rc);
+         DEBUG_YMAP  yLOG_note    ("error in redo processing");
+         DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rc);
          return rc;
       }
       /*---(update position)-------------*/
-      DEBUG_HIST  yLOG_value   ("h_index"     , myMAP.h_index);
+      DEBUG_YMAP  yLOG_value   ("h_index"     , myMAP.h_index);
       if (myMAP.h_curr == NULL) {
-         DEBUG_HIST  yLOG_note    ("hit end of of history, done");
+         DEBUG_YMAP  yLOG_note    ("hit end of of history, done");
          ymap__mundo_by_cursor (YDLST_TAIL);
          myMAP.h_index = myMAP.h_count - 1;
          break;
       }
       /*---(check for breakpoint)--------*/
       if (myMAP.h_curr->h_next == NULL || myMAP.h_curr->h_next->mode == YMAP_BEG) {
-         DEBUG_HIST  yLOG_note    ("hit end of undo chain, done");
+         DEBUG_YMAP  yLOG_note    ("hit end of undo chain, done");
          break;
       }
       /*---(next)------------------------*/
@@ -1275,7 +1275,7 @@ ymap_mundo_redo        (void)
    /*---(reset)--------------------------*/
    myMAP.h_active = 'y';
    /*---(complete)-----------------------*/
-   DEBUG_HIST  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -1294,24 +1294,24 @@ ymap_mundo_hmode        (uchar a_major, uchar a_minor)
    /*---(quick out)----------------------*/
    if (a_major != G_KEY_SPACE)  return 0;
    /*---(header)-------------------------*/
-   DEBUG_HIST   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    /*---(macros modes)-------------------*/
    switch (a_minor) {
    case 'u'      :
-      DEBUG_HIST   yLOG_note    ("undo reqested");
+      DEBUG_YMAP   yLOG_note    ("undo reqested");
       ymap_mundo_undo ();
-      DEBUG_HIST   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
       return 1;
       break;
    case 'U'      :
-      DEBUG_HIST   yLOG_note    ("redo reqested");
+      DEBUG_YMAP   yLOG_note    ("redo reqested");
       ymap_mundo_redo ();
-      DEBUG_HIST   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
       return 1;
       break;
    }
    /*---(complete)-----------------------*/
-   DEBUG_HIST   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
