@@ -636,9 +636,10 @@ ymap__unit_quiet         (void)
    int         x_narg       = 1;
    char       *x_args [20]  = {"yMAP_unit" };
    yMODE_init (MODE_MAP);
-   yMODE_handler_setup ();
+   yMODE_unit_handlers ();
+   yKEYS_init ();
    /*> printf ("yMODE_handler   aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
-   yMACRO_global_init ();
+   /*> yMACRO_global_init ();                                                         <*/
    /*> printf ("yMACRO_...      aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    yMAP_init ();
    /*> printf ("yMAP_init       aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
@@ -670,8 +671,9 @@ ymap__unit_loud          (void)
    yURG_name  ("hist"         , YURG_ON);
    DEBUG_YMAP  yLOG_info     ("yMAP"     , yMAP_version   ());
    yMODE_init (MODE_MAP);
-   yMODE_handler_setup ();
-   yMACRO_global_init ();
+   yMODE_unit_handlers ();
+   yKEYS_init ();
+   /*> yMACRO_global_init ();                                                         <*/
    yMAP_init ();
    yMAP_config (YMAP_OFFICE, ymap__unit_locator, ymap__unit_addresser, ymap__unit_sizer, ymap__unit_entry, ymap__unit_placer, ymap__unit_done);
    ymap__unit_init ();

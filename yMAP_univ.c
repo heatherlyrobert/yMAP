@@ -358,7 +358,7 @@ ymap_univ_umode         (uchar a_major, uchar a_minor)
       break;
    case '!'          :
       DEBUG_YMAP   yLOG_note    ("request universe status line");
-      yCMD_direct (":status universe");
+      yVIHUB_yCMD_direct (":status universe");
       break;
    default  :
       DEBUG_YMAP   yLOG_note    ("unknown, nothing to do");

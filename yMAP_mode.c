@@ -548,17 +548,17 @@ ymap__submodes          (uchar a_major, uchar a_minor)
       break;
    case ':'      :
       DEBUG_YMAP_U  yLOG_note    ("entering command mode");
-      ySRC_start (":");
+      yVIHUB_ySRC_start (":");
       rc = 'A';
       break;
    case '/'      :
       DEBUG_YMAP_U  yLOG_note    ("entering search mode");
-      ySRC_start ("/");
+      yVIHUB_ySRC_start ("/");
       rc = ' ';
       break;
    case ';'      :
       DEBUG_YMAP_U  yLOG_note    ("entering hint sub-mode");
-      ySRC_start (";");
+      yVIHUB_ySRC_start (";");
       rc = ' ';
       break;
    case '\\'     :
@@ -601,24 +601,24 @@ ymap__submodes          (uchar a_major, uchar a_minor)
       switch (a_minor) {
       case  G_KEY_RETURN :      /* edit existing cell               */
          DEBUG_YMAP_U  yLOG_note    ("edit existing map location");
-         ySRC_start ("¦");
+         yVIHUB_ySRC_start ("¦");
          rc = ' ';
          break;
       case  's'  :              /* replace cell entirely            */
          DEBUG_YMAP_U  yLOG_note    ("replace existing map location");
-         ySRC_start ("");
+         yVIHUB_ySRC_start ("");
          rc = ' ';
          break;
       case  '='  : case  '#'  : /* replace cell with formula        */
          DEBUG_YMAP_U  yLOG_note    ("replace existing map location with formula");
          sprintf (t, "%c", a_minor);
-         ySRC_start (t);
+         yVIHUB_ySRC_start (t);
          rc = ' ';
          break;
       case  '+'  : case  '-'  : /* replace cell with a number       */
          DEBUG_YMAP_U  yLOG_note    ("replace existing map location with number");
          sprintf (t, "%c", a_minor);
-         ySRC_start (t);
+         yVIHUB_ySRC_start (t);
          rc = ' ';
          break;
       }
@@ -710,7 +710,7 @@ ymap_mode               (uchar a_major, uchar a_minor)
       return rce;
    }
    /*---(agrios)-------------------------*/
-   rc = yMACRO_agrios_hmode (a_major, a_minor);
+   rc = yVIHUB_yMACRO_agrios (a_major, a_minor);
    DEBUG_YMAP_U  yLOG_value   ("argios"    , rc);
    if (rc != 0) {
       DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
@@ -780,7 +780,7 @@ ymap_mode               (uchar a_major, uchar a_minor)
       return 0;
    }
    /*---(macros)-------------------------*/
-   rc = yMACRO_hmode  (a_major, a_minor);
+   rc = yVIHUB_yMACRO_hmode  (a_major, a_minor);
    DEBUG_YMAP_U  yLOG_value   ("macros"    , rc);
    if (rc != 0) {
       DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
@@ -794,7 +794,7 @@ ymap_mode               (uchar a_major, uchar a_minor)
       return 0;
    }
    /*---(search)-------------------------*/
-   rc = yMARK_find_hmode  (a_major, a_minor);
+   rc = yVIHUB_yMARK_hmode  (a_major, a_minor);
    DEBUG_YMAP_U  yLOG_value   ("srch"      , rc);
    if (rc != 0) {
       DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);

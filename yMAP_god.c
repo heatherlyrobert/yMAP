@@ -342,12 +342,12 @@ ymap_god_mode           (uchar a_major, uchar a_minor)
          return a_minor;
          break;
       case ':' :
-         ySRC_start   (":");
+         yVIHUB_ySRC_start   (":");
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          rc = 'a';
          break;
       case ';' :
-         ySRC_start   (";");
+         yVIHUB_ySRC_start   (";");
          DEBUG_USER   yLOG_exit    (__FUNCTION__);
          rc = 'a';
          break;

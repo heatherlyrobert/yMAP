@@ -257,8 +257,8 @@ ymap_mundo_init         (void)
       if (s_acts [i].act == 0)  break;
       ++s_nact;
    }
-   yFILE_dump_add ("mundo"     , "mun", "inventory of undo/redo chain"  , ymap_mundo_dump);
-   yFILE_dump_add ("maps"      , "map", "details of all axis maps"      , ymap_map_dump);
+   /*> yFILE_dump_add ("mundo"     , "mun", "inventory of undo/redo chain"  , ymap_mundo_dump);   <*/
+   /*> yFILE_dump_add ("maps"      , "map", "details of all axis maps"      , ymap_map_dump);   <*/
    /*---(update status)------------------*/
    yMODE_init_set   (UMOD_MUNDO, NULL, ymap_mode);
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);

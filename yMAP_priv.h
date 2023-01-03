@@ -35,9 +35,9 @@
 #define     P_CREATED   ""
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
-#define     P_VERMINOR  "2.0-, complete and tie yVIKEYS back into it"
-#define     P_VERNUM    "2.0l"
-#define     P_VERTXT    "tweaked scrolling for more reliable results"
+#define     P_VERMINOR  "2.1-, clean up dependencies, better integration"
+#define     P_VERNUM    "2.1a"
+#define     P_VERTXT    "tied into yVIHUB and removed vikeys library dependencies"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -58,12 +58,7 @@
 /*---(custom vi-keys)--------------------*/
 #include    <yKEYS.h>             /* heatherly vikeys key handling           */
 #include    <yMODE.h>             /* heatherly vikeys mode tracking          */
-#include    <yVIEW.h>             /* heatherly vikeys view management        */
-#include    <yMACRO.h>            /* heatherly vikeys macro processing       */
-#include    <ySRC.h>              /* heatherly vikeys source editing         */
-#include    <yFILE.h>             /* heatherly vikeys content file handling  */
-#include    <yMARK.h>             /* heatherly vikeys search and marking      */
-#include    <yCMD.h>              /* heatherly vikeys command processing     */
+#include    <yVIHUB.h>
 /*---(custom other)----------------------*/
 #include    <ySORT.h>        /* heatherly sorting library               */
 #include    <yDLST_solo.h>        /* heatherly double-double-list             */
@@ -78,11 +73,11 @@ struct cGRID {
    uchar       used;                   /* content classification              */
    ushort      unit;                   /* tie to map                          */
 };
-tGRID       *g_ugrid;   /* universe/buffer  */
-tGRID       *g_xgrid;   /* x-axis           */
-tGRID       *g_ygrid;   /* y-axis           */
-tGRID       *g_zgrid;   /* z-axis           */
-tGRID       *g_wgrid;   /* when/time        */
+extern tGRID       *g_ugrid;   /* universe/buffer  */
+extern tGRID       *g_xgrid;   /* x-axis           */
+extern tGRID       *g_ygrid;   /* y-axis           */
+extern tGRID       *g_zgrid;   /* z-axis           */
+extern tGRID       *g_wgrid;   /* when/time        */
 
 typedef  struct cyMAP  tyMAP;
 struct cyMAP {
@@ -126,11 +121,11 @@ struct cyMAP {
    short       gend;                        /* grid at end of screen          */
    /*---(done)-----------------*/
 };
-tyMAP        g_umap;
-tyMAP        g_xmap;
-tyMAP        g_ymap;
-tyMAP        g_zmap;
-tyMAP        g_wmap;
+extern tyMAP        g_umap;
+extern tyMAP        g_xmap;
+extern tyMAP        g_ymap;
+extern tyMAP        g_zmap;
+extern tyMAP        g_wmap;
 
 
 
