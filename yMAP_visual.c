@@ -28,13 +28,18 @@ ymap_visu_valid         (uchar a_abbr)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
+   char       *p           =    0;
    /*---(header)-------------------------*/
    DEBUG_YMAP    yLOG_senter  (__FUNCTION__);
-   /*---(check)--------------------------*/
-   DEBUG_YMAP    yLOG_snote   ("check");
-   rc = strlchr (myMAP.v_list, a_abbr, S_VISU_MAX);
-   DEBUG_YMAP    yLOG_sint    (rc);
-   --rce;  if (a_abbr == 0 || rc < 0) {
+   /*---(defense)------------------------*/
+   DEBUG_YMAP    yLOG_sint    (a_abbr);
+   --rce;  if (a_abbr == 0) {
+      DEBUG_YMAP    yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   p  = strchr (myMAP.v_list, a_abbr);
+   DEBUG_YMAP    yLOG_spoint  (p);
+   --rce;  if (p == NULL) {
       DEBUG_YMAP    yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
@@ -48,12 +53,25 @@ ymap_visu_index         (uchar a_abbr)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
+   char       *p           =    0;
    int         n           =   -1;
    /*---(header)-------------------------*/
    DEBUG_YMAP    yLOG_senter  (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_YMAP    yLOG_sint    (a_abbr);
+   --rce;  if (a_abbr == 0) {
+      DEBUG_YMAP    yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
+   p  = strchr (myMAP.v_list, a_abbr);
+   DEBUG_YMAP    yLOG_spoint  (p);
+   --rce;  if (p == NULL) {
+      DEBUG_YMAP    yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(check)--------------------------*/
    DEBUG_YMAP    yLOG_snote   ("check");
-   n  = strchr (myMAP.v_list, a_abbr) - myMAP.v_list;
+   n  = p - myMAP.v_list;
    DEBUG_YMAP    yLOG_sint    (n);
    --rce;  if (a_abbr == 0 || n  < 0) {
       DEBUG_YMAP    yLOG_sexitr  (__FUNCTION__, rce);
@@ -419,7 +437,6 @@ ymap_visu_init          (void)
    ymap_visu_purge  (YSTR_IFULL);
    myMAP.v_curr->abbr   = myMAP.v_prev->abbr   = '-';
    /*> yVIKEYS_view_optionX (YVIKEYS_STATUS, "visual" , yvikeys_visu_status , "details of visual selection"                );   <*/
-   /*> yFILE_dump_add ("visuals"   , "vis", "current and saved visual selections", ymap_visu_dump);   <*/
    /*---(update status)------------------*/
    yMODE_init_set   (UMOD_VISUAL, NULL, ymap_visu_umode);
    /*---(complete)-----------------------*/

@@ -173,6 +173,7 @@ typedef  unsigned short       ushort;
 /*---(base)-----------------*/
 char*       yMAP_version            (void);
 char        yMAP_init               (void);
+char        yMAP_init_after         (void);
 char        yMAP_config             (char a_orient, void *a_locator, void *a_addresser, void *a_sizer, void *a_entry, void *a_placer, void *a_done);
 char        yMAP_wrap               (void);
 char*       yMAP__unit              (char *a_question, char a_index);

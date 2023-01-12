@@ -636,19 +636,15 @@ ymap__unit_quiet         (void)
    int         x_narg       = 1;
    char       *x_args [20]  = {"yMAP_unit" };
    yMODE_init (MODE_MAP);
-   yMODE_unit_handlers ();
-   yKEYS_init ();
-   /*> printf ("yMODE_handler   aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
-   /*> yMACRO_global_init ();                                                         <*/
-   /*> printf ("yMACRO_...      aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
+   yMODE_init_after ();
+   yKEYS_unit_handlers ();
+   yKEYS_init  ();
+   yKEYS_init_after ();
    yMAP_init ();
-   /*> printf ("yMAP_init       aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
+   yMAP_init_after ();
    yMAP_config (YMAP_OFFICE, ymap__unit_locator, ymap__unit_addresser, ymap__unit_sizer, ymap__unit_entry, ymap__unit_placer, ymap__unit_done);
-   /*> printf ("yMAP_init       aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    ymap__unit_init ();
-   /*> printf ("ymap_unit_init  aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    ymap__unit_format_init ();
-   /*> printf ("ymap_unit_for   aft  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
    return 0;
 }
 
@@ -661,20 +657,20 @@ ymap__unit_loud          (void)
    yURG_urgs     (x_narg, x_args);
    yURG_name  ("kitchen"      , YURG_ON);
    yURG_name  ("ystr"         , YURG_ON);
+   yURG_name  ("yvihub"       , YURG_ON);
    yURG_name  ("ymode"        , YURG_ON);
-   yURG_name  ("ysrc"         , YURG_ON);
-   yURG_name  ("ycmd"         , YURG_ON);
-   yURG_name  ("ymap"         , YURG_ON);
-   yURG_name  ("ymacro"       , YURG_ON);
    yURG_name  ("ykeys"        , YURG_ON);
+   yURG_name  ("ymap"         , YURG_ON);
    yURG_name  ("regs"         , YURG_ON);
    yURG_name  ("hist"         , YURG_ON);
    DEBUG_YMAP  yLOG_info     ("yMAP"     , yMAP_version   ());
    yMODE_init (MODE_MAP);
-   yMODE_unit_handlers ();
-   yKEYS_init ();
-   /*> yMACRO_global_init ();                                                         <*/
+   yMODE_init_after ();
+   yKEYS_unit_handlers ();
+   yKEYS_init  ();
+   yKEYS_init_after ();
    yMAP_init ();
+   yMAP_init_after ();
    yMAP_config (YMAP_OFFICE, ymap__unit_locator, ymap__unit_addresser, ymap__unit_sizer, ymap__unit_entry, ymap__unit_placer, ymap__unit_done);
    ymap__unit_init ();
    ymap__unit_format_init ();

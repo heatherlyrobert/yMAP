@@ -565,9 +565,11 @@ ymap_goto               (tyMAP *a_map, uchar a_minor)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
+   float       a           =  0.0;
    int         x_beg       =    0;
    int         x_qtr       =    0;
    int         x_haf       =    0;
+   int         x_thr       =    0;
    int         x_ful       =    0;
    int         x_end       =    0;
    int         x_pos       =    0;
@@ -609,10 +611,11 @@ ymap_goto               (tyMAP *a_map, uchar a_minor)
    ymap_office  (a_map->axis, &a_minor);
    DEBUG_YMAP   yLOG_char    ("a_minor"   , a_minor);
    /*---(distances)----------------------*/
-   x_beg  = a_map->ubeg;
-   x_qtr  = a_map->uavail / 4;
-   x_haf  = a_map->uavail / 2;
    x_ful  = a_map->uavail;
+   x_beg  = a_map->ubeg;
+   x_qtr  = trunc (a_map->uavail / 4);
+   x_haf  = trunc (a_map->uavail / 2);
+   x_thr  = (x_ful - 1) - x_qtr;
    x_end  = a_map->uend;
    x_pos  = a_map->ucur - a_map->ubeg;
    DEBUG_YMAP   yLOG_complex ("spacing"   , "%4db, %4dq, %4dh, %4df, %4de, %4dp", x_beg, x_qtr, x_haf, x_ful, x_end, x_pos);
@@ -623,22 +626,22 @@ ymap_goto               (tyMAP *a_map, uchar a_minor)
       rc = ymap__grid_at (a_map, x_beg - x_ful + 1, '-');
       break;
    case 'H' : case 'J' :
-      rc = ymap__grid_at (a_map, x_beg - x_haf + 1, '-');
+      rc = ymap__grid_at (a_map, x_beg - x_haf    , '-');
       break;
    case 's' : case 'b' :
-      rc = ymap__grid_at (a_map, x_beg        , 'y');
+      rc = ymap__grid_at (a_map, x_beg            , 'y');
       break;
    case 'h' : case 'j' :
-      rc = ymap__grid_at (a_map, x_beg + x_qtr, 'y');
+      rc = ymap__grid_at (a_map, x_beg + x_qtr    , 'y');
       break;
    case 'c' : case 'm' :
-      rc = ymap__grid_at (a_map, x_beg + x_haf, 'y');
+      rc = ymap__grid_at (a_map, x_beg + x_haf    , 'y');
       break;
    case 'l' : case 'k' :
-      rc = ymap__grid_at (a_map, x_end - x_qtr + 1, 'y');
+      rc = ymap__grid_at (a_map, x_beg + x_thr    , 'y');
       break;
    case 'e' : case 't' :
-      rc = ymap__grid_at (a_map, x_end        , 'y');
+      rc = ymap__grid_at (a_map, x_end            , 'y');
       break;
    case 'L' : case 'K' :
       rc = ymap__grid_at (a_map, x_end + x_haf - 1, '-');

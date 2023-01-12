@@ -123,6 +123,8 @@ yMAP_init              (void)
       return rce;
    }
    /*> printf ("yMAP_init       beg  %7du %7dx %7dy %7dz\n", g_umap.gcur, g_xmap.gcur, g_ymap.gcur, g_zmap.gcur);   <*/
+   /*---(yVIHUB)-------------------------*/
+   yVIHUB_from_yMAP (yMAP_refresh, yMAP_refresh_disponly, yMAP_refresh_full, yMAP_visu_islive, yMAP_range, yMAP_jump, yMAP_beg, yMAP_current, yMAP_locator, yMAP_addresser, yMAP_move_hmode);
    /*---(globals)------------------------*/
    DEBUG_YMAP   yLOG_note    ("default globals");
    myMAP.orient = YMAP_OFFICE;
@@ -173,6 +175,31 @@ yMAP_init              (void)
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+char
+yMAP_init_after         (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   rc = yVIHUB_yFILE_dump_add ("mundo"     , "mun", "inventory of undo/redo chain"  , ymap_mundo_dump);
+   DEBUG_YMODE   yLOG_value   ("dump_add"  , rc);
+   rc = yVIHUB_yFILE_dump_add ("maps"      , "map", "details of all axis maps"      , ymap_map_dump);
+   DEBUG_YMODE   yLOG_value   ("dump_add"  , rc);
+   rc = yVIHUB_yFILE_dump_add ("visuals"   , "vis", "current and saved visual selections", ymap_visu_dump);
+   DEBUG_YMODE   yLOG_value   ("dump_add"  , rc);
+   rc = yVIHUB_yVIEW_switch_add ('s', "visual"       , "vis"   , yMAP_visu_status       , "details of current visual selection"      );
+   DEBUG_YMODE   yLOG_value   ("switch_add", rc);
+   rc = yVIHUB_yVIEW_switch_add ('s', "current"      , "cur"   , yMAP_current_status    , "current map position"                     );
+   DEBUG_YMODE   yLOG_value   ("switch_add", rc);
+   yMODE_after_set  (MODE_MAP);
+   /*---(complete)-----------------------*/
+   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 
 char
 yMAP_config_OLD         (char a_orient, void *a_umapper, void *a_xmapper, void *a_ymapper, void *a_zmapper, void *a_mapdone, void *a_locator, void *a_addresser)
