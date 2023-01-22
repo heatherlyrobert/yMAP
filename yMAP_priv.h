@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.1-, clean up dependencies, better integration"
-#define     P_VERNUM    "2.1b"
-#define     P_VERTXT    "fully compliant with unit testing again (except universe)"
+#define     P_VERNUM    "2.1c"
+#define     P_VERTXT    "udated to yURG_by_name after yURG change"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
