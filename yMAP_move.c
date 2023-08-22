@@ -715,8 +715,8 @@ ymap_scroll             (tyMAP *a_map, uchar a_minor)
       return rce;
    }
    /*---(prepare)------------------------*/
-   ymap_office  (a_map->axis, &a_minor);
    ymap_corners ('z', a_map->axis, &a_minor);
+   ymap_office  (a_map->axis, &a_minor);
    DEBUG_YMAP   yLOG_char    ("a_minor"   , a_minor);
    /*---(distances)----------------------*/
    x_wid  = a_map->grid [a_map->gcur].wide;
@@ -729,19 +729,19 @@ ymap_scroll             (tyMAP *a_map, uchar a_minor)
    DEBUG_YMAP   yLOG_complex ("incs"      , "%3da, %3dc, %3db, %3dq, %3dh, %3df, %3de", a_map->uavail, a_map->ucur, x_beg, x_qtr, x_haf, x_ful, x_end);
    /*---(handle)-------------------------*/
    --rce;  switch (a_minor) {
-   case 's' : case 't' :
+   case 's' : case 'b' :
       x_pos = a_map->ucur;
       break;
-   case 'h' : case 'k' :
+   case 'h' : case 'j' :
       x_pos = a_map->ucur - x_qtr;
       break;
    case 'c' : case 'm' :
       x_pos = a_map->ucur - x_haf;
       break;
-   case 'l' : case 'j' :
+   case 'l' : case 'k' :
       x_pos = a_map->ucur - x_haf - x_qtr;
       break;
-   case 'e' : case 'b' :
+   case 'e' : case 't' :
       x_pos = a_map->ucur - x_ful;
       break;
    default  :

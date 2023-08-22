@@ -7,9 +7,8 @@
 typedef  unsigned char        uchar;
 typedef  unsigned short       ushort;
 
+#include    <ySTR_solo.h>
 
-#define     LEN_HUGE       10000
-#define     LEN_RECD        2000
 #define     YMAP_EMPTY    -32000
 #define     YMAP_LEAVE    -32000
 #define     YMAP_IGNORE    64000

@@ -58,6 +58,8 @@ static const struct {
    { YMAP_FORMAT   , 'p' , "point"            },
    { YMAP_FORMAT   , 'P' , "point+"           },
    /*---(bases)------------------------------*/
+   { YMAP_FORMAT   , 'y' , "boolean/yes"      },
+   { YMAP_FORMAT   , 'Y' , "boolean/yes"      },
    { YMAP_FORMAT   , 'r' , "roman lower"      },
    { YMAP_FORMAT   , 'R' , "roman upper"      },
    { YMAP_FORMAT   , 'o' , "octal"            },

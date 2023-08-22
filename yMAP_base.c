@@ -159,15 +159,6 @@ yMAP_init              (void)
    /*---(prepare external modes)---------*/
    yMODE_init_set   (XMOD_FORMAT , ymap_format_prepper, ymap_format_xmode);
    yMODE_init_set   (XMOD_UNITS  , NULL, ymap_units_xmode);
-   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "xwide"       , ""    , "sii"  , yMAP_multi_wide            , "change the width of columns"              );
-   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "xdef"        , ""    , "si"   , ymap_multi_wide_def        , "change current column widht to default"   );
-   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "xreset"      , ""    , "s"    , ymap_multi_wide_reset      , "reset width of call columns to default"   );
-   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "ytall"       , ""    , "sii"  , yMAP_multi_tall            , "change the height of rows"                );
-   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "ydef"        , ""    , "si"   , ymap_multi_tall_def        , "change current row height to default"     );
-   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "yreset"      , ""    , "s"    , ymap_multi_tall_reset      , "reset height of all rows to default"      );
-   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "zdeep"       , ""    , "sii"  , yMAP_multi_deep            , "change the thickness of levels"           );
-   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "zdef"        , ""    , "si"   , ymap_multi_deep_def        , "change current level thickness to default");
-   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "zreset"      , ""    , "s"    , ymap_multi_deep_reset      , "reset thickness of all levels to default" );
    /*---(update status)------------------*/
    yMODE_init_set   (MODE_MAP     , NULL, ymap_mode);
    yMODE_init_set   (MODE_GOD     , NULL, ymap_god_mode);
@@ -185,16 +176,29 @@ yMAP_init_after         (void)
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    rc = yVIHUB_yFILE_dump_add ("mundo"     , "mun", "inventory of undo/redo chain"  , ymap_mundo_dump);
-   DEBUG_YMODE   yLOG_value   ("dump_add"  , rc);
+   DEBUG_YMAP   yLOG_value   ("dump_add"  , rc);
    rc = yVIHUB_yFILE_dump_add ("maps"      , "map", "details of all axis maps"      , ymap_map_dump);
-   DEBUG_YMODE   yLOG_value   ("dump_add"  , rc);
+   DEBUG_YMAP   yLOG_value   ("dump_add"  , rc);
    rc = yVIHUB_yFILE_dump_add ("visuals"   , "vis", "current and saved visual selections", ymap_visu_dump);
-   DEBUG_YMODE   yLOG_value   ("dump_add"  , rc);
+   DEBUG_YMAP   yLOG_value   ("dump_add"  , rc);
    rc = yVIHUB_yVIEW_switch_add ('s', "visual"       , "vis"   , yMAP_visu_status       , "details of current visual selection"      );
-   DEBUG_YMODE   yLOG_value   ("switch_add", rc);
+   DEBUG_YMAP   yLOG_value   ("switch_add", rc);
    rc = yVIHUB_yVIEW_switch_add ('s', "current"      , "cur"   , yMAP_current_status    , "current map position"                     );
-   DEBUG_YMODE   yLOG_value   ("switch_add", rc);
+   DEBUG_YMAP   yLOG_value   ("switch_add", rc);
    yMODE_after_set  (MODE_MAP);
+   /*---(commands)-----------------------*/
+   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "xwide"       , ""    , "sii"  , yMAP_multi_wide            , "change the width of columns"              );
+   DEBUG_YMAP   yLOG_value   ("xwide"     , rc);
+   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "xdef"        , ""    , "si"   , ymap_multi_wide_def        , "change current column widht to default"   );
+   DEBUG_YMAP   yLOG_value   ("xdef"      , rc);
+   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "xreset"      , ""    , "s"    , ymap_multi_wide_reset      , "reset width of call columns to default"   );
+   DEBUG_YMAP   yLOG_value   ("xreset"    , rc);
+   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "ytall"       , ""    , "sii"  , yMAP_multi_tall            , "change the height of rows"                );
+   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "ydef"        , ""    , "si"   , ymap_multi_tall_def        , "change current row height to default"     );
+   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "yreset"      , ""    , "s"    , ymap_multi_tall_reset      , "reset height of all rows to default"      );
+   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "zdeep"       , ""    , "sii"  , yMAP_multi_deep            , "change the thickness of levels"           );
+   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "zdef"        , ""    , "si"   , ymap_multi_deep_def        , "change current level thickness to default");
+   rc = yVIHUB_yCMD_add (YVIHUB_M_FORMAT, "zreset"      , ""    , "s"    , ymap_multi_deep_reset      , "reset thickness of all levels to default" );
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
