@@ -560,17 +560,31 @@ ymap_simple              (tyMAP *a_map, uchar a_minor)
 }
 
 char
+ymap__partition         (tyMAP *a_map, int *r_ful, int *r_beg, int *r_qtr, int *r_haf, int *r_thr, int *r_end, int *r_pos)
+{
+   *r_ful  = a_map->uavail;
+   *r_beg  = a_map->ubeg;
+   *r_qtr  = trunc (*r_ful / 4);
+   *r_haf  = trunc (*r_ful / 2);
+   *r_thr  = (*r_ful - 1) - *r_qtr;
+   *r_end  = a_map->uend;
+   *r_pos  = a_map->ucur - *r_beg;
+   DEBUG_YMAP   yLOG_complex ("spacing"   , "%4df, %4db, %4dq, %4dh, %4dt, %4de, %4dp", *r_ful, *r_beg, *r_qtr, *r_haf, *r_thr, *r_end, *r_pos);
+   return 0;
+}
+
+char
 ymap_goto               (tyMAP *a_map, uchar a_minor)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
    float       a           =  0.0;
+   int         x_ful       =    0;
    int         x_beg       =    0;
    int         x_qtr       =    0;
    int         x_haf       =    0;
    int         x_thr       =    0;
-   int         x_ful       =    0;
    int         x_end       =    0;
    int         x_pos       =    0;
    /*---(header)-------------------------*/
@@ -611,22 +625,46 @@ ymap_goto               (tyMAP *a_map, uchar a_minor)
    ymap_office  (a_map->axis, &a_minor);
    DEBUG_YMAP   yLOG_char    ("a_minor"   , a_minor);
    /*---(distances)----------------------*/
-   x_ful  = a_map->uavail;
-   x_beg  = a_map->ubeg;
-   x_qtr  = trunc (a_map->uavail / 4);
-   x_haf  = trunc (a_map->uavail / 2);
-   x_thr  = (x_ful - 1) - x_qtr;
-   x_end  = a_map->uend;
-   x_pos  = a_map->ucur - a_map->ubeg;
-   DEBUG_YMAP   yLOG_complex ("spacing"   , "%4db, %4dq, %4dh, %4df, %4de, %4dp", x_beg, x_qtr, x_haf, x_ful, x_end, x_pos);
-   DEBUG_YMAP   yLOG_complex ("before"    , "%4dg, %4du", a_map->gcur, a_map->ucur);
+   ymap__partition (a_map, &x_ful, &x_beg, &x_qtr, &x_haf, &x_thr, &x_end, &x_pos);
    /*---(handle)-------------------------*/
+   /*> --rce;  switch (a_minor) {                                                     <* 
+    *> case 'S' : case 'B' :                                                          <* 
+    *>    rc = ymap__grid_at (a_map, x_beg - x_ful + 1, '-');                         <* 
+    *>    break;                                                                      <* 
+    *> case 'H' : case 'J' :                                                          <* 
+    *>    rc = ymap__grid_at (a_map, x_beg - x_haf + 1, '-');                         <* 
+    *>    break;                                                                      <* 
+    *> case 's' : case 'b' :                                                          <* 
+    *>    rc = ymap__grid_at (a_map, x_beg            , 'y');                         <* 
+    *>    break;                                                                      <* 
+    *> case 'h' : case 'j' :                                                          <* 
+    *>    rc = ymap__grid_at (a_map, x_beg + x_qtr    , 'y');                         <* 
+    *>    break;                                                                      <* 
+    *> case 'c' : case 'm' :                                                          <* 
+    *>    rc = ymap__grid_at (a_map, x_beg + x_haf    , 'y');                         <* 
+    *>    break;                                                                      <* 
+    *> case 'l' : case 'k' :                                                          <* 
+    *>    rc = ymap__grid_at (a_map, x_beg + x_thr    , 'y');                         <* 
+    *>    break;                                                                      <* 
+    *> case 'e' : case 't' :                                                          <* 
+    *>    rc = ymap__grid_at (a_map, x_end            , 'y');                         <* 
+    *>    break;                                                                      <* 
+    *> case 'L' : case 'K' :                                                          <* 
+    *>    rc = ymap__grid_at (a_map, x_end + x_haf - 1, '-');                         <* 
+    *>    break;                                                                      <* 
+    *> case 'E' : case 'T' :                                                          <* 
+    *>    rc = ymap__grid_at (a_map, x_end + x_ful - 1, '-');                         <* 
+    *>    break;                                                                      <* 
+    *> default  :                                                                     <* 
+    *>    DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);                              <* 
+    *>    return rce;                                                                 <* 
+    *> }                                                                              <*/
    --rce;  switch (a_minor) {
    case 'S' : case 'B' :
       rc = ymap__grid_at (a_map, x_beg - x_ful + 1, '-');
       break;
    case 'H' : case 'J' :
-      rc = ymap__grid_at (a_map, x_beg - x_haf    , '-');
+      rc = ymap__grid_at (a_map, x_beg - x_haf + 1, '-');
       break;
    case 's' : case 'b' :
       rc = ymap__grid_at (a_map, x_beg            , 'y');
@@ -644,10 +682,10 @@ ymap_goto               (tyMAP *a_map, uchar a_minor)
       rc = ymap__grid_at (a_map, x_end            , 'y');
       break;
    case 'L' : case 'K' :
-      rc = ymap__grid_at (a_map, x_end + x_haf - 1, '-');
+      rc = ymap__grid_at (a_map, x_beg + x_ful + x_haf - 1, '-');
       break;
    case 'E' : case 'T' :
-      rc = ymap__grid_at (a_map, x_end + x_ful - 1, '-');
+      rc = ymap__grid_at (a_map, x_beg + x_ful + x_ful - 1, '-');
       break;
    default  :
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
@@ -656,7 +694,7 @@ ymap_goto               (tyMAP *a_map, uchar a_minor)
    DEBUG_YMAP   yLOG_value   ("result"    , rc);
    DEBUG_YMAP   yLOG_complex ("after"     , "%4dg, %4du", a_map->gcur, a_map->ucur);
    /*---(adjust)-------------------------*/
-   if (strchr ("SHLE", a_minor) != NULL) {
+   if (strchr ("SHLEBJKT", a_minor) != NULL) {
       DEBUG_YMAP   yLOG_note    ("maintain relative position on page moves");
       ymap_display (a_map);  /* ¡¡ special case of early processing !! */
       ymap__grid_at (a_map, a_map->ubeg + x_pos, '-');
@@ -672,10 +710,11 @@ ymap_scroll             (tyMAP *a_map, uchar a_minor)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
+   int         x_ful       =    0;
    int         x_beg       =    0;
    int         x_qtr       =    0;
    int         x_haf       =    0;
-   int         x_ful       =    0;
+   int         x_thr       =    0;
    int         x_end       =    0;
    int         x_pos       =    0;
    int         x_wid       =    0;
@@ -721,12 +760,7 @@ ymap_scroll             (tyMAP *a_map, uchar a_minor)
    /*---(distances)----------------------*/
    x_wid  = a_map->grid [a_map->gcur].wide;
    DEBUG_YMAP   yLOG_complex ("char"      , "%3dc, %3du, %3dw", a_map->gcur, a_map->grid [a_map->gcur].unit, x_wid);
-   x_beg  = a_map->ubeg;
-   x_qtr  = (a_map->uavail / 4) - x_wid / 4;
-   x_haf  = (a_map->uavail / 2) - x_wid / 2;
-   x_ful  = a_map->uavail - x_wid;
-   x_end  = a_map->uend;
-   DEBUG_YMAP   yLOG_complex ("incs"      , "%3da, %3dc, %3db, %3dq, %3dh, %3df, %3de", a_map->uavail, a_map->ucur, x_beg, x_qtr, x_haf, x_ful, x_end);
+   ymap__partition (a_map, &x_ful, &x_beg, &x_qtr, &x_haf, &x_thr, &x_end, &x_pos);
    /*---(handle)-------------------------*/
    --rce;  switch (a_minor) {
    case 's' : case 'b' :
@@ -739,7 +773,7 @@ ymap_scroll             (tyMAP *a_map, uchar a_minor)
       x_pos = a_map->ucur - x_haf;
       break;
    case 'l' : case 'k' :
-      x_pos = a_map->ucur - x_haf - x_qtr;
+      x_pos = a_map->ucur - x_thr;
       break;
    case 'e' : case 't' :
       x_pos = a_map->ucur - x_ful;
