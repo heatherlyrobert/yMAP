@@ -183,6 +183,8 @@ yMAP_init_after         (void)
    DEBUG_YMAP   yLOG_value   ("dump_add"  , rc);
    rc = yVIHUB_yVIEW_switch_add ('s', "visual"       , "vis"   , yMAP_visu_status       , "details of current visual selection"      );
    DEBUG_YMAP   yLOG_value   ("switch_add", rc);
+   rc = yVIHUB_yVIEW_switch_add ('s', "mundo"        , ""      , yMAP_mundo_status      , "current mundo contents"                   );
+   DEBUG_YMAP   yLOG_value   ("switch_add", rc);
    rc = yVIHUB_yVIEW_switch_add ('s', "current"      , "cur"   , yMAP_current_status    , "current map position"                     );
    DEBUG_YMAP   yLOG_value   ("switch_add", rc);
    yMODE_after_set  (MODE_MAP);

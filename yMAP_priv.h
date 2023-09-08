@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.1-, clean up dependencies, better integration"
-#define     P_VERNUM    "2.1e"
-#define     P_VERTXT    "matched goto and scroll logic so small issues are gone"
+#define     P_VERNUM    "2.1f"
+#define     P_VERTXT    "improvements found by vikeys_content.script demo"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -168,7 +168,7 @@ struct cVISU {
 
 
 typedef   struct cHIST  tHIST;
-#define     MAX_HIST    100000
+#define     MAX_HIST    1000000
 struct cHIST {
    uchar       mode;
    uchar       act;
@@ -196,7 +196,8 @@ struct cMY {
    /*---(mreg)-----------------*/
    char      (*e_regkill)    (void *a_thing);
    void*     (*e_copier)     (char a_type, long a_stamp);
-   char      (*e_clearer)    (char a_1st, ushort b, ushort x, ushort y, ushort z);
+   void*     (*e_clearer)    (char a_type, long a_stamp);
+   /*> char      (*e_clearer)    (char a_1st, ushort b, ushort x, ushort y, ushort z);   <*/
    char      (*e_paster)     (char a_regs, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, void *a_thing);
    char      (*e_finisher)   (char a_pros, char *a_target, char *a_labels, short uo, short xo, short yo, short zo);
    char      (*e_exim)       (char a_dir, char a_style);

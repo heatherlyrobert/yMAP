@@ -236,6 +236,7 @@ char        yMAP_yunit_status       (char a_size, short a_wide, char *a_list);
 char        yMAP_xgrid_status       (char a_size, short a_wide, char *a_list);
 char        yMAP_ygrid_status       (char a_size, short a_wide, char *a_list);
 char        yMAP_visu_status        (char a_size, short a_wide, char *a_list);
+char        yMAP_mundo_status       (char a_size, short a_wide, char *a_list);
 char*       yMAP_mundo_detail       (int n);
 
 
@@ -243,6 +244,7 @@ char*       yMAP_mundo_detail       (int n);
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        yMAP_mreg_config        (void *a_clearer, void *a_copier, void *a_paster, void *a_finisher, void *a_regkill, void *a_exim);
 char        yMAP_mreg_add           (void *a_thing, char *a_label, char *a_reqs, char *a_pros);
+char        yMAP_mreg_list          (char *r_abbr, int *r_count, char r_list [LEN_HUGE]);
 char*       yMAP_mreg_labels        (char a_abbr);
 char*       yMAP_mreg_pros          (char a_abbr);
 char*       yMAP_mreg_reqs          (char a_abbr);

@@ -185,6 +185,57 @@ yMAP_visu_status        (char a_size, short a_wide, char *a_list)
    return 0;
 }
 
+/*> struct cHIST {                                                                    <* 
+ *>    uchar       mode;                                                              <* 
+ *>    uchar       act;                                                               <* 
+ *>    uchar      *label;                                                             <* 
+ *>    uchar      *before;                                                            <* 
+ *>    uchar      *after;                                                             <* 
+ *>    tHIST      *h_prev;                                                            <* 
+ *>    tHIST      *h_next;                                                            <* 
+ *> };                                                                                <*/
+
+
+/*> typedef    struct    cMY    tMY;                                                                                                 <* 
+ *> struct cMY {                                                                                                                     <* 
+ *>    /+---(universe)-------------+/                                                                                                <* 
+ *>    char      (*e_switcher)   (char u);                                                                                           <* 
+ *>    char       u_last;                                                                                                            <* 
+ *>    /+---(map)------------------+/                                                                                                <* 
+ *>    char        orient;            /+ normal (down = neg) office (down = pos)  +/                                                 <* 
+ *>    char      (*e_locator)    (char a_strict, char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);                         <* 
+ *>    char      (*e_addresser)  (char a_strict, char *a_label, ushort  u, ushort  x, ushort  y, ushort  z);                         <* 
+ *>    char      (*e_sizer)      (char a_axis, ushort *n, ushort *a, ushort *b, ushort *c, ushort *e, ushort *m, ushort *x);         <* 
+ *>    char      (*e_entry)      (char a_axis, ushort a_pos, short *r_ref, uchar *r_wide, uchar *r_used);                            <* 
+ *>    char      (*e_placer)     (char a_axis, ushort b, ushort c, ushort e);                                                        <* 
+ *>    char      (*e_done)       (void);                                                                                             <* 
+ *>    /+---(mreg)-----------------+/                                                                                                <* 
+ *>    char      (*e_regkill)    (void *a_thing);                                                                                    <* 
+ *>    void*     (*e_copier)     (char a_type, long a_stamp);                                                                        <* 
+ *>    void*     (*e_clearer)    (char a_type, long a_stamp);                                                                        <* 
+ *>    /+> char      (*e_clearer)    (char a_1st, ushort b, ushort x, ushort y, ushort z);   <+/                                     <* 
+ *>    char      (*e_paster)     (char a_regs, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, void *a_thing);   <* 
+ *>    char      (*e_finisher)   (char a_pros, char *a_target, char *a_labels, short uo, short xo, short yo, short zo);              <* 
+ *>    char      (*e_exim)       (char a_dir, char a_style);                                                                         <* 
+ *>    char        h_1st;                                                                                                            <* 
+ *>    /+---(mundo/hist)-----------+/                                                                                                <* 
+ *>    uchar       h_active;               /+ history is active y/-               +/                                                 <* 
+ *>    tHIST      *h_head;                                                                                                           <* 
+ *>    tHIST      *h_curr;                                                                                                           <* 
+ *>    tHIST      *h_tail;                                                                                                           <* 
+ *>    int         h_count;                                                                                                          <* 
+ *>    int         h_index;                                                                                                          <* 
+ *>    char        h_len;                                                                                                            <* 
+ *>    char      (*e_mundo)      (char a_dir, char a_act, char *a_label, char *a_format, char *a_content);                           <*/
+
+
+char
+yMAP_mundo_status       (char a_size, short a_wide, char *a_list)
+{
+   sprintf (a_list, "mundo   %c %4d %4d  ", myMAP.h_active, myMAP.h_count, myMAP.h_index);
+   return 0;
+}
+
 char         /*-> list history -----------------------[ leaf   [ge.740.042.20]*/ /*-[03.0000.103.!]-*/ /*-[--.---.---.--]-*/
 ymap_visu_dump          (FILE *f)
 {
