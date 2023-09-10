@@ -854,10 +854,10 @@ yMAP_mundo_recalc       (char a_mode, char *a_label)
       myMAP.h_tail->after  = strdup  (t);
    } else {
       DEBUG_YMAP  yLOG_note    ("appending to recalc on tail");
-      strlcpy (t, myMAP.h_tail->after , LEN_RECD);
+      ystrlcpy (t, myMAP.h_tail->after , LEN_RECD);
       free (myMAP.h_tail->after );
-      strlcat (t, a_label, LEN_RECD);
-      strlcat (t, ","    , LEN_RECD);
+      ystrlcat (t, a_label, LEN_RECD);
+      ystrlcat (t, ","    , LEN_RECD);
       ySORT_labels (t);
       myMAP.h_tail->after  = strdup  (t);
    }
@@ -1031,14 +1031,14 @@ ymap__mundo_parse       (char a_act, char *a_field, char *a_format, char *a_cont
    char        x_len       =    0;
    char        x_off       =    0;
    /*---(defaults)-----------------------*/
-   if (a_format  != NULL)  strlcpy (a_format , "", LEN_LABEL);
-   if (a_content != NULL)  strlcpy (a_content, "", LEN_RECD);
+   if (a_format  != NULL)  ystrlcpy (a_format , "", LEN_LABEL);
+   if (a_content != NULL)  ystrlcpy (a_content, "", LEN_RECD);
    /*---(quick-out)----------------------*/
    if (a_field == NULL)  return 0;
    x_len = myMAP.h_len;
    /*---(handle simples)-----------------*/
    if (strchr ("oxD", a_act) == NULL) {
-      strlcpy (a_content, a_field, LEN_RECD);
+      ystrlcpy (a_content, a_field, LEN_RECD);
       return 0;
    }
    /*---(format)-------------------------*/

@@ -133,8 +133,8 @@ ymap__visu_wipe         (uchar a_abbr)
    x_visu->z_end  = 0;
    /*---(labels)-------------------------*/
    DEBUG_YMAP    yLOG_snote   ("labels");
-   strlcpy (x_visu->b_label, ""   , LEN_LABEL);
-   strlcpy (x_visu->e_label, ""   , LEN_LABEL);
+   ystrlcpy (x_visu->b_label, ""   , LEN_LABEL);
+   ystrlcpy (x_visu->e_label, ""   , LEN_LABEL);
    /*---(locks)--------------------------*/
    DEBUG_YMAP    yLOG_snote   ("locks");
    x_visu->x_lock = '-';
@@ -211,8 +211,8 @@ ymap__visu_copy         (uchar a_dst, uchar a_src)
    x_dst->z_end  = x_src->z_end;
    /*---(labels)-------------------------*/
    DEBUG_YMAP    yLOG_note    ("labels");
-   strlcpy (x_dst->b_label, x_src->b_label, LEN_LABEL);
-   strlcpy (x_dst->e_label, x_src->e_label, LEN_LABEL);
+   ystrlcpy (x_dst->b_label, x_src->b_label, LEN_LABEL);
+   ystrlcpy (x_dst->e_label, x_src->e_label, LEN_LABEL);
    /*---(locks)--------------------------*/
    DEBUG_YMAP    yLOG_note    ("locks");
    x_dst->x_lock = x_src->x_lock;
@@ -263,7 +263,7 @@ ymap_visu_update          (void)
          return rce;
       }
       DEBUG_YMAP    yLOG_note    ("ending label");
-      strlcpy  (myMAP.v_curr->e_label, myMAP.v_curr->b_label, LEN_LABEL);
+      ystrlcpy  (myMAP.v_curr->e_label, myMAP.v_curr->b_label, LEN_LABEL);
       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
       return 0;
    }
@@ -418,13 +418,13 @@ ymap_visu_init          (void)
       return rce;
    }
    /*---(visu abbrev list)---------------*/
-   strlcpy (myMAP.v_list, "'"        , S_VISU_MAX);
-   strlcat (myMAP.v_list, ";"        , S_VISU_MAX);
-   strlcat (myMAP.v_list, YSTR_LOWER , S_VISU_MAX);
-   strlcat (myMAP.v_list, YSTR_UPPER , S_VISU_MAX);
-   strlcat (myMAP.v_list, YSTR_NUMBER, S_VISU_MAX);
-   strlcat (myMAP.v_list, YSTR_GREEK , S_VISU_MAX);
-   strlcat (myMAP.v_list, "?,"       , S_VISU_MAX);
+   ystrlcpy (myMAP.v_list, "'"        , S_VISU_MAX);
+   ystrlcat (myMAP.v_list, ";"        , S_VISU_MAX);
+   ystrlcat (myMAP.v_list, YSTR_LOWER , S_VISU_MAX);
+   ystrlcat (myMAP.v_list, YSTR_UPPER , S_VISU_MAX);
+   ystrlcat (myMAP.v_list, YSTR_NUMBER, S_VISU_MAX);
+   ystrlcat (myMAP.v_list, YSTR_GREEK , S_VISU_MAX);
+   ystrlcat (myMAP.v_list, "?,"       , S_VISU_MAX);
    DEBUG_YMAP   yLOG_info    ("LIST"      , myMAP.v_list);
    myMAP.v_nvisu  = strlen (myMAP.v_list);
    DEBUG_YMAP    yLOG_value   ("nvisu"     , myMAP.v_nvisu);
@@ -529,8 +529,8 @@ yMAP_visu_exact         (ushort u, ushort xb, ushort xe, ushort yb, ushort ye, u
    myMAP.v_curr->y_end  = ye;
    myMAP.v_curr->z_beg  = zb;
    myMAP.v_curr->z_end  = ze;
-   strlcpy (myMAP.v_curr->b_label, x_beg, LEN_LABEL);
-   strlcpy (myMAP.v_curr->e_label, x_end, LEN_LABEL);
+   ystrlcpy (myMAP.v_curr->b_label, x_beg, LEN_LABEL);
+   ystrlcpy (myMAP.v_curr->e_label, x_end, LEN_LABEL);
    /*---(last settings)------------------*/
    myMAP.v_curr->active  = VISU_YES;
    myMAP.v_curr->abbr   = '-';

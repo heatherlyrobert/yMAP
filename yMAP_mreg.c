@@ -249,7 +249,7 @@ ymap__mreg_valid        (char a_abbr)
    DEBUG_YMAP   yLOG_senter  (__FUNCTION__);
    /*---(check)--------------------------*/
    DEBUG_YMAP   yLOG_snote   ("check");
-   rc = strlchr (S_REG_LIST, a_abbr, S_REG_MAX);
+   rc = ystrlchr (S_REG_LIST, a_abbr, S_REG_MAX);
    DEBUG_YMAP   yLOG_sint    (rc);
    --rce;  if (rc < 0) {
       DEBUG_YMAP   yLOG_sexitr  (__FUNCTION__, rce);
@@ -271,7 +271,7 @@ ymap__mreg_by_abbr      (char a_abbr)
    /*---(check)--------------------------*/
    DEBUG_YMAP   yLOG_snote   ("check");
    DEBUG_YMAP   yLOG_snote   (S_REG_LIST);
-   n  = strlchr (S_REG_LIST, a_abbr, S_REG_MAX);
+   n  = ystrlchr (S_REG_LIST, a_abbr, S_REG_MAX);
    DEBUG_YMAP   yLOG_sint    (n);
    --rce;  if (n  < 0) {
       DEBUG_YMAP   yLOG_sexitr  (__FUNCTION__, n);
@@ -443,12 +443,12 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label, char *a_reqs,
       DEBUG_YMAP   yLOG_note    ("load requirements");
       x_new->reqs     = strdup (a_reqs);
       DEBUG_YMAP   yLOG_info    ("->reqs"    , x_new->reqs);
-      strlcpy (x_labels, "", LEN_RECD);
+      ystrlcpy (x_labels, "", LEN_RECD);
       if (s_regs [x_reg].reqs != s_stubby) {
-         strlcat (x_labels, s_regs [x_reg].reqs, LEN_RECD);
+         ystrlcat (x_labels, s_regs [x_reg].reqs, LEN_RECD);
          free (s_regs [x_reg].reqs);
       }
-      strlcat (x_labels, a_reqs, LEN_RECD);
+      ystrlcat (x_labels, a_reqs, LEN_RECD);
       ySORT_labels (x_labels);
       s_regs [x_reg].reqs = strdup (x_labels);
       DEBUG_YMAP   yLOG_info    (".reqs"     , s_regs [x_reg].reqs);
@@ -463,12 +463,12 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label, char *a_reqs,
       DEBUG_YMAP   yLOG_note    ("load providers");
       x_new->pros     = strdup (a_pros);
       DEBUG_YMAP   yLOG_info    ("->pros"    , x_new->pros);
-      strlcpy (x_labels, "", LEN_RECD);
+      ystrlcpy (x_labels, "", LEN_RECD);
       if (s_regs [x_reg].pros != s_stubby) {
-         strlcat (x_labels, s_regs [x_reg].pros, LEN_RECD);
+         ystrlcat (x_labels, s_regs [x_reg].pros, LEN_RECD);
          free (s_regs [x_reg].pros);
       }
-      strlcat (x_labels, a_pros, LEN_RECD);
+      ystrlcat (x_labels, a_pros, LEN_RECD);
       ySORT_labels (x_labels);
       s_regs [x_reg].pros = strdup (x_labels);
       DEBUG_YMAP   yLOG_info    (".pros"     , s_regs [x_reg].pros);
@@ -489,17 +489,17 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label, char *a_reqs,
    if (s_regs [x_reg].labels != s_stubby)  {
       DEBUG_YMAP   yLOG_note    ("append to labels");
       DEBUG_YMAP   yLOG_info    ("labels"    , s_regs [x_reg].labels);
-      strlcpy (x_labels, s_regs [x_reg].labels, LEN_RECD);
+      ystrlcpy (x_labels, s_regs [x_reg].labels, LEN_RECD);
       free (s_regs [x_reg].labels);
       sprintf (t, "%s,", a_label);
    } else {
       DEBUG_YMAP   yLOG_note    ("first label");
-      strlcpy (x_labels, "", LEN_RECD);
+      ystrlcpy (x_labels, "", LEN_RECD);
       sprintf (t, ",%s,", a_label);
    }
    DEBUG_YMAP   yLOG_info    ("x_labels"  , x_labels);
    DEBUG_YMAP   yLOG_info    ("label"     , t);
-   strlcat (x_labels, t, LEN_RECD);
+   ystrlcat (x_labels, t, LEN_RECD);
    /*> ySORT_labels (x_labels);                                                       <*/
    s_regs [x_reg].labels = strdup (x_labels);
    DEBUG_YMAP   yLOG_info    ("labels"    , s_regs [x_reg].labels);
@@ -514,7 +514,7 @@ ymap__mreg_new          (char a_abbr, void *a_item, char *a_label, char *a_reqs,
    DEBUG_YMAP   yLOG_value   ("nbuf"      , s_regs [x_reg].nbuf);
    /*---(update bounds)------------------*/
    if (a_reqs != NULL && a_reqs [0] == ',') {
-      strlcpy (x_labels, a_reqs, LEN_RECD);
+      ystrlcpy (x_labels, a_reqs, LEN_RECD);
       p = strtok_r (x_labels, ",", &r);
       while (p != NULL) {
          /*---(get coords)---------------*/
@@ -560,7 +560,7 @@ yMAP_mreg_list          (char *r_abbr, int *r_count, char r_list [LEN_HUGE])
    /*---(copy)---------------------------*/
    if (s_regs [x_reg].nbuf > 0) {
       if (r_count != NULL)   *r_count = s_regs [x_reg].nbuf;
-      if (r_list  != NULL)   strlcpy (r_list, s_regs [x_reg].labels, LEN_HUGE);
+      if (r_list  != NULL)   ystrlcpy (r_list, s_regs [x_reg].labels, LEN_HUGE);
    }
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
@@ -698,12 +698,12 @@ ymap_mreg_init                  (void)
       return rce;
    }
    /*---(macro abbrev list)--------------*/
-   strlcpy (S_REG_LIST, "\""       , S_REG_MAX);
-   strlcat (S_REG_LIST, YSTR_LOWER , S_REG_MAX);
-   strlcat (S_REG_LIST, YSTR_UPPER , S_REG_MAX);
-   strlcat (S_REG_LIST, YSTR_NUMBER, S_REG_MAX);
-   strlcat (S_REG_LIST, YSTR_GREEK , S_REG_MAX);
-   strlcat (S_REG_LIST, "-+¤"      , S_REG_MAX);
+   ystrlcpy (S_REG_LIST, "\""       , S_REG_MAX);
+   ystrlcat (S_REG_LIST, YSTR_LOWER , S_REG_MAX);
+   ystrlcat (S_REG_LIST, YSTR_UPPER , S_REG_MAX);
+   ystrlcat (S_REG_LIST, YSTR_NUMBER, S_REG_MAX);
+   ystrlcat (S_REG_LIST, YSTR_GREEK , S_REG_MAX);
+   ystrlcat (S_REG_LIST, "-+¤"      , S_REG_MAX);
    DEBUG_YMAP   yLOG_info    ("S_REG_LIST", S_REG_LIST);
    s_nreg   = strlen (S_REG_LIST);
    DEBUG_YMAP   yLOG_value   ("s_nreg"    , s_nreg);
@@ -963,7 +963,7 @@ yMAP_mreg_labels        (char a_abbr)
       return  "n/a";
    }
    DEBUG_YMAP   yLOG_info    ("labels"    , s_regs [x_reg].labels);
-   strlcpy (s_print, s_regs [x_reg].labels, LEN_RECD);
+   ystrlcpy (s_print, s_regs [x_reg].labels, LEN_RECD);
    ySORT_labels (s_print);
    DEBUG_YMAP   yLOG_info    ("s_print"   , s_print);
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
@@ -1166,7 +1166,7 @@ ymap__mreg_paste_set    (char *a_type)
       return rce;
    }
    DEBUG_YMAP   yLOG_info    ("a_type"    , a_type);
-   x_len = strllen (a_type, LEN_LABEL);
+   x_len = ystrllen (a_type, LEN_LABEL);
    DEBUG_YMAP   yLOG_value   ("x_len"     , x_len);
    --rce;  if (x_len <  4) {
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
@@ -1289,9 +1289,9 @@ ymap__mreg_paste        (char *a_type)
       return 0;
    }
    /*---(sync point)---------------------*/
-   strlcpy (x_list, "", LEN_RECD);
-   if (strcmp (s_regs [s_reg].reqs, "n/a") != 0)  strlcat (x_list, s_regs [s_reg].reqs, LEN_RECD);
-   if (strcmp (s_regs [s_reg].pros, "n/a") != 0)  strlcat (x_list, s_regs [s_reg].pros, LEN_RECD);
+   ystrlcpy (x_list, "", LEN_RECD);
+   if (strcmp (s_regs [s_reg].reqs, "n/a") != 0)  ystrlcat (x_list, s_regs [s_reg].reqs, LEN_RECD);
+   if (strcmp (s_regs [s_reg].pros, "n/a") != 0)  ystrlcat (x_list, s_regs [s_reg].pros, LEN_RECD);
    if (strcmp (x_list, "") != 0) {
       ySORT_labels (x_list);
       if (myMAP.h_1st == 'y')  yMAP_mundo_sync (YMAP_BEG, x_list, "");
@@ -1315,7 +1315,7 @@ ymap__mreg_paste        (char *a_type)
    /*---(finish)-------------------------*/
    DEBUG_YMAP   yLOG_point   ("e_finisher", myMAP.e_finisher);
    if (myMAP.e_finisher != NULL) {
-      strlcpy  (x_list, s_regs [s_reg].pros, LEN_RECD);
+      ystrlcpy  (x_list, s_regs [s_reg].pros, LEN_RECD);
       DEBUG_YMAP   yLOG_info    ("pros"      , s_regs [s_reg].pros);
       DEBUG_YMAP   yLOG_info    ("x_list"    , x_list);
       p = strtok_r (x_list, ",", &r);
@@ -1326,9 +1326,9 @@ ymap__mreg_paste        (char *a_type)
       }
    }
    /*---(check for retouches)------------*/
-   strlcpy  (x_list, s_regs [s_reg].labels, LEN_RECD);
-   if (s_regs [s_reg].reqs [0] == ',')   strlcat  (x_list, s_regs [s_reg].reqs, LEN_RECD);
-   if (s_regs [s_reg].pros [0] == ',')   strlcat  (x_list, s_regs [s_reg].pros, LEN_RECD);
+   ystrlcpy  (x_list, s_regs [s_reg].labels, LEN_RECD);
+   if (s_regs [s_reg].reqs [0] == ',')   ystrlcat  (x_list, s_regs [s_reg].reqs, LEN_RECD);
+   if (s_regs [s_reg].pros [0] == ',')   ystrlcat  (x_list, s_regs [s_reg].pros, LEN_RECD);
    ySORT_labels (x_list);
    p = strtok_r (x_list, ",", &r);
    while (p != NULL) {

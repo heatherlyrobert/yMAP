@@ -42,17 +42,17 @@ yMAP_current_status     (char a_size, short a_wide, char *a_list)
    uchar       x_unit      [LEN_HUND]  = "";
    snprintf (x_pre , LEN_LABEL, " current");
    yMAP_current (t, &u, &x, &y, &z);
-   strlpad  (t, tt, '.', '<', 12);
-   strlpadn (u, uu, '.', '>', 4);
-   strlpadn (x, xx, '.', '>', 4);
-   strlpadn (y, yy, '.', '>', 4);
-   strlpadn (z, zz, '.', '>', 4);
+   ystrlpad  (t, tt, '.', '<', 12);
+   ystrlpadn (u, uu, '.', '>', 4);
+   ystrlpadn (x, xx, '.', '>', 4);
+   ystrlpadn (y, yy, '.', '>', 4);
+   ystrlpadn (z, zz, '.', '>', 4);
    snprintf (x_grid, LEN_HUND, "§ G %su %sx %sy %sz", uu, xx, yy, zz);
    yMAP_current_unit (&u, &x, &y, &z);
-   strlpadn (u, uu, '.', '>', 4);
-   strlpadn (x, xx, '.', '>', 4);
-   strlpadn (y, yy, '.', '>', 4);
-   strlpadn (z, zz, '.', '>', 4);
+   ystrlpadn (u, uu, '.', '>', 4);
+   ystrlpadn (x, xx, '.', '>', 4);
+   ystrlpadn (y, yy, '.', '>', 4);
+   ystrlpadn (z, zz, '.', '>', 4);
    snprintf (x_unit, LEN_HUND, "§ U %su %sx %sy %sz", uu, xx, yy, zz);
    snprintf (a_list, LEN_RECD, "%s %s %s § %s ´", x_pre, x_grid, x_unit, tt);
    return 0;
@@ -82,7 +82,7 @@ ymap__visu_entry      (char a_abbr, char *a_entry)
     *> char        x_end       [LEN_LABEL] = "n/a";                                                          <* 
     *> /+---(defense)------------------------+/                                                              <* 
     *> --rce; if (a_entry == NULL)   return rce;                                                             <* 
-    *> strlcpy (a_entry, "", LEN_RECD);                                                                      <* 
+    *> ystrlcpy (a_entry, "", LEN_RECD);                                                                      <* 
     *> --rce;  if (a_abbr != ':') {                                                                          <* 
     *>    n = ymap_visu_index (a_abbr);                                                                      <* 
     *>    if (n  < 0)   return rce;                                                                          <* 
@@ -95,8 +95,8 @@ ymap__visu_entry      (char a_abbr, char *a_entry)
     *>    yvikeys_map_addresser (x_root, x_visu->b_all, x_visu->x_root, x_visu->y_root, x_visu->z_all);      <* 
     *>    --rce;  if (rc < 0) return rce;                                                                    <* 
     *>    sprintf (x_size, "%dx%d", x_visu->x_end - x_visu->x_beg + 1, x_visu->y_end - x_visu->y_beg + 1);   <* 
-    *>    strlcpy (x_beg, x_visu->b_label, LEN_LABEL);                                                       <* 
-    *>    strlcpy (x_end, x_visu->e_label, LEN_LABEL);                                                       <* 
+    *>    ystrlcpy (x_beg, x_visu->b_label, LEN_LABEL);                                                       <* 
+    *>    ystrlcpy (x_end, x_visu->e_label, LEN_LABEL);                                                       <* 
     *> }                                                                                                     <* 
     *> sprintf (a_entry, "%c %c %-10.10s %-10.10s %-10.10s %-10.10s %c %c %c",                               <* 
     *>       a_abbr, x_visu->active,                                                                         <* 
@@ -135,23 +135,23 @@ ymap_visu_line          (tVISU *a_visu, char a_size, short a_wide, char *a_list)
       break;
    }
    /*---(middle)-------------------------*/
-   strlpadn (a_visu->u_all , b, '.', '>', 2);
+   ystrlpadn (a_visu->u_all , b, '.', '>', 2);
    sprintf (u, "%su", b);
-   strlpadn (a_visu->x_beg , b, '.', '>', 4);
-   strlpadn (a_visu->x_end , e, '.', '>', 4);
-   strlpadn (a_visu->x_root, r, '.', '>', 4);
+   ystrlpadn (a_visu->x_beg , b, '.', '>', 4);
+   ystrlpadn (a_visu->x_end , e, '.', '>', 4);
+   ystrlpadn (a_visu->x_root, r, '.', '>', 4);
    sprintf (x, "%c %sb %se %sr", a_visu->x_lock, b, e, r);
-   strlpadn (a_visu->y_beg , b, '.', '>', 4);
-   strlpadn (a_visu->y_end , e, '.', '>', 4);
-   strlpadn (a_visu->y_root, r, '.', '>', 4);
+   ystrlpadn (a_visu->y_beg , b, '.', '>', 4);
+   ystrlpadn (a_visu->y_end , e, '.', '>', 4);
+   ystrlpadn (a_visu->y_root, r, '.', '>', 4);
    sprintf (y, "%c %sb %se %sr", a_visu->y_lock, b, e, r);
-   strlpadn (a_visu->z_beg , b, '.', '>', 4);
-   strlpadn (a_visu->z_end , e, '.', '>', 4);
-   strlpadn (a_visu->z_root, r, '.', '>', 4);
+   ystrlpadn (a_visu->z_beg , b, '.', '>', 4);
+   ystrlpadn (a_visu->z_end , e, '.', '>', 4);
+   ystrlpadn (a_visu->z_root, r, '.', '>', 4);
    sprintf (z, "%c %sb %se %sr", a_visu->z_lock, b, e, r);
    sprintf (t, "%dx%d", a_visu->x_end -  a_visu->x_beg + 1, a_visu->y_end -  a_visu->y_beg + 1);
-   strlpad  (a_visu->b_label, b, '.', '<', 7);
-   strlpad  (a_visu->e_label, e, '.', '<', 7);
+   ystrlpad  (a_visu->b_label, b, '.', '<', 7);
+   ystrlpad  (a_visu->e_label, e, '.', '<', 7);
    /*---(concatenate)--------------------*/
    switch (a_size) {
    case 'u'  :
@@ -277,7 +277,7 @@ yMAP_mundo_detail       (int n)
       if (c == n) {
          sprintf (s, "%2då%-.30sæ", strlen (x_curr->before), x_curr->before);
          sprintf (t, "%2då%-.30sæ", strlen (x_curr->after ), x_curr->after );
-         strlcpy (r, ymap_mundo_action (x_curr->mode, x_curr->act), LEN_LABEL);
+         ystrlcpy (r, ymap_mundo_action (x_curr->mode, x_curr->act), LEN_LABEL);
          sprintf (myMAP.g_print, "%-4d %c %-4d %c %c %-12.12s %-7.7s %-34.34s  %s",
                myMAP.h_count, (myMAP.h_index == c) ? '>' : '·', c,
                x_curr->mode, x_curr->act, r, x_curr->label, s, t);

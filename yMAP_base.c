@@ -349,7 +349,7 @@ ymap__addresser         (char a_strict, char *a_label, ushort u, ushort x, ushor
    DEBUG_YMAP   yLOG_char    ("a_strict"  , a_strict);
    DEBUG_YMAP   yLOG_point   ("a_label"   , a_label);
    /*---(default)------------------------*/
-   if (a_label != NULL)  strlcpy (a_label, "n/a", LEN_LABEL);
+   if (a_label != NULL)  ystrlcpy (a_label, "n/a", LEN_LABEL);
    /*---(check addresser)----------------*/
    DEBUG_YMAP   yLOG_point   ("addresser" , myMAP.e_addresser);
    --rce;  if (myMAP.e_addresser == NULL)  {
@@ -364,7 +364,7 @@ ymap__addresser         (char a_strict, char *a_label, ushort u, ushort x, ushor
       return rce;
    }
    /*---(save-back)----------------------*/
-   if (a_label != NULL)  strlcpy (a_label, x_label, LEN_LABEL);
+   if (a_label != NULL)  ystrlcpy (a_label, x_label, LEN_LABEL);
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return rc;

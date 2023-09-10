@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.1-, clean up dependencies, better integration"
-#define     P_VERNUM    "2.1f"
-#define     P_VERTXT    "improvements found by vikeys_content.script demo"
+#define     P_VERNUM    "2.1g"
+#define     P_VERTXT    "updated ySTR functions to ¶ystr¶ prefix"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"

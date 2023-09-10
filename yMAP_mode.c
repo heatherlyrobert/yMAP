@@ -196,7 +196,7 @@ ymap__combo_wrap        (uchar a_major, uchar a_minor)
       rc = ymap_visu_clear ();
       break;
    case ACT_DELCPY :
-      strlcpy (x_method, "normal", LEN_LABEL);
+      ystrlcpy (x_method, "normal", LEN_LABEL);
    case ACT_DELMOV :
       DEBUG_MAP    yLOG_note ("ACT_DELCPY/ACT_DELMOV");
       /*> case 'y' :                                                                     <*/
@@ -211,7 +211,7 @@ ymap__combo_wrap        (uchar a_major, uchar a_minor)
       }
       break;
    case ACT_APPCPY :
-      strlcpy (x_method, "normal", LEN_LABEL);
+      ystrlcpy (x_method, "normal", LEN_LABEL);
    case ACT_APPMOV :
       DEBUG_MAP    yLOG_note ("ACT_APPCPY/ACT_APPMOV");
       /*> case '-' :                                                                     <*/

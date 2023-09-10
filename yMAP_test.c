@@ -470,7 +470,7 @@ ymap_print              (uchar a_axis)
       if (c != s || i == x_map->mlen) {
          if (n > 0) {
             sprintf (t, "%2d%c%-2d ", s, x_map->grid [s].used, n);
-            strlcat (g_print, t, LEN_RECD);
+            ystrlcat (g_print, t, LEN_RECD);
             ++x_spot;
          }
          s = c;
@@ -539,14 +539,14 @@ ymap_display_show       (tyMAP *a_map, char *a_disp)
    x_cur  = a_map->map [a_map->ubeg];
    for (i = x_beg; i <= a_map->uend; ++i) {
       if (x_cur != a_map->map [i]) {
-         strlpad ("+", t, '.', '>', c);
-         strlcat (a_disp, t, LEN_RECD);
+         ystrlpad ("+", t, '.', '>', c);
+         ystrlcat (a_disp, t, LEN_RECD);
          ++n;
          c = 0;
       } else if (i == a_map->uend) {
          ++c;
-         strlpad ("|", t, '.', '>', c);
-         strlcat (a_disp, t, LEN_RECD);
+         ystrlpad ("|", t, '.', '>', c);
+         ystrlcat (a_disp, t, LEN_RECD);
       }
       x_cur = a_map->map [i];
       ++c;
@@ -554,14 +554,14 @@ ymap_display_show       (tyMAP *a_map, char *a_disp)
    /*---(extra at end)-------------------*/
    c     = a_map->utend - a_map->uend;
    if (c > 0) {
-      strlpad ("", t, '-', '<', c);
-      strlcat (a_disp, t, LEN_RECD);
+      ystrlpad ("", t, '-', '<', c);
+      ystrlcat (a_disp, t, LEN_RECD);
    }
    /*---(left-over avail)----------------*/
    c     = (a_map->ubeg + a_map->uavail - 1) - a_map->utend;
    if (c > 0) {
-      strlcpy (t, "///////////////////////////////////////", c + 1);
-      strlcat (a_disp, t, LEN_RECD);
+      ystrlcpy (t, "///////////////////////////////////////", c + 1);
+      ystrlcat (a_disp, t, LEN_RECD);
    }
    /*---(current position)---------------*/
    if (a_map->ucur >= a_map->ubeg && a_map->ucur <= a_map->utend) {
@@ -593,8 +593,8 @@ ymap_display_map        (tyMAP *a_map, char *a_disp)
    x_cur  = a_map->map [a_map->ubeg];
    for (i = 0; i <= a_map->mlen; ++i) {
       if (x_cur != a_map->map [i] || i == a_map->mlen) {
-         strlpad ("+", t, '.', '>', c);
-         strlcat (a_disp, t, LEN_RECD);
+         ystrlpad ("+", t, '.', '>', c);
+         ystrlcat (a_disp, t, LEN_RECD);
          ++n;
          c = 0;
       }
@@ -928,7 +928,7 @@ ymap__unit_addresser    (char a_strict, char *a_label, ushort u, ushort x, ushor
    char        rc          =    0;
    char        x_label     [LEN_LABEL] = "";
    /*---(default)------------------------*/
-   if (a_label != NULL)  strlcpy (a_label, "", LEN_LABEL);
+   if (a_label != NULL)  ystrlcpy (a_label, "", LEN_LABEL);
    /*---(strict)-------------------------*/
    if (a_strict == 'y') {
       --rce;  if (u > g_umap.gmax)  return rce;
@@ -940,7 +940,7 @@ ymap__unit_addresser    (char a_strict, char *a_label, ushort u, ushort x, ushor
    rc = str4gyges (u, x, y, 0, 0, x_label, YSTR_CHECK);
    --rce;  if (rc < 0)           return rce;
    /*---(save-back)----------------------*/
-   if (a_label != NULL)  strlcpy (a_label, x_label, LEN_LABEL);
+   if (a_label != NULL)  ystrlcpy (a_label, x_label, LEN_LABEL);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1071,7 +1071,7 @@ ymap__unit_formatted    (ushort y)
             s_grid [x][y].width + '0', s_grid [x][y].height + '0',
             s_grid [x][y].align, s_grid [x][y].format, 
             s_grid [x][y].decs, s_grid [x][y].units);
-      strlcat (myMAP.g_print, t, LEN_RECD);
+      ystrlcat (myMAP.g_print, t, LEN_RECD);
    }
    return myMAP.g_print;
 }
@@ -1204,7 +1204,7 @@ ymap__unit_dup          (tTHING *p)
    q->y = p->y;
    q->z = 2;
    sprintf (t, "0%c%d", p->x + 'a', p->y + 1);
-   strlcpy (q->l, t, LEN_LABEL);
+   ystrlcpy (q->l, t, LEN_LABEL);
    /*---(complete)-----------------------*/
    return q;
 }
@@ -1225,7 +1225,7 @@ ymap__unit_hook         (tTHING *p, int x, int y)
    p->y = y;
    p->z = 0;
    sprintf (t, "0%c%d", x + 'a', y + 1);
-   strlcpy (p->l, t, LEN_LABEL);
+   ystrlcpy (p->l, t, LEN_LABEL);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -1294,21 +1294,21 @@ ymap__unit_orig         (void)
    char        t           [LEN_LABEL] = "";
    char        c           =    0;
    /*---(prepare)------------------------*/
-   strlcpy (s, ",", LEN_RECD);
+   ystrlcpy (s, ",", LEN_RECD);
    s_nbase = 0;
    /*---(prepare)------------------------*/
    p = s_head;
    for (i = 0; i < s_nthing; ++i) {
       if (p->z == 1) {
          sprintf (t, "%s,", p->l);
-         strlcat (s, t, LEN_RECD);
+         ystrlcat (s, t, LEN_RECD);
          ++s_nbase;
          ++c;
       }
       p = p->n;
    }
    /*---(finalize)-----------------------*/
-   if (strcmp (s, ",") == 0)  strlcpy (s, "n/a", LEN_RECD);
+   if (strcmp (s, ",") == 0)  ystrlcpy (s, "n/a", LEN_RECD);
    else                       ySORT_labels (s);
    sprintf (myMAP.g_print, "%-2d  %s", c, s);
    /*---(complete)-----------------------*/
@@ -1325,21 +1325,21 @@ ymap__unit_regs                 (void)
    char        t           [LEN_LABEL] = "";
    char        c           =    0;
    /*---(prepare)------------------------*/
-   strlcpy (s, ",", LEN_RECD);
+   ystrlcpy (s, ",", LEN_RECD);
    s_nfree = 0;
    /*---(prepare)------------------------*/
    p = s_head;
    for (i = 0; i < s_nthing; ++i) {
       if (p->z == 2) {
          sprintf (t, "%s,", p->l);
-         strlcat (s, t, LEN_RECD);
+         ystrlcat (s, t, LEN_RECD);
          ++s_nfree;
          ++c;
       }
       p = p->n;
    }
    /*---(finalize)-----------------------*/
-   if (strcmp (s, ",") == 0)  strlcpy (s, "n/a", LEN_RECD);
+   if (strcmp (s, ",") == 0)  ystrlcpy (s, "n/a", LEN_RECD);
    else                       ySORT_labels (s);
    sprintf (myMAP.g_print, "%-2d  %s", c, s);
    /*---(complete)-----------------------*/
@@ -1356,19 +1356,19 @@ ymap__unit_adds                 (void)
    char        t           [LEN_LABEL] = "";
    char        c           =    0;
    /*---(prepare)------------------------*/
-   strlcpy (s, ",", LEN_RECD);
+   ystrlcpy (s, ",", LEN_RECD);
    /*---(walk)---------------------------*/
    p = s_head;
    for (i = 0; i < s_nthing; ++i) {
       if (p->z == 0) {
          sprintf (t, "%s,", p->l);
-         strlcat (s, t, LEN_RECD);
+         ystrlcat (s, t, LEN_RECD);
          ++c;
       }
       p = p->n;
    }
    /*---(finalize)-----------------------*/
-   if (strcmp (s, ",") == 0)  strlcpy (s, "n/a", LEN_RECD);
+   if (strcmp (s, ",") == 0)  ystrlcpy (s, "n/a", LEN_RECD);
    else                       ySORT_labels (s);
    sprintf (myMAP.g_print, "%-2d  %s", c, s);
    /*---(complete)-----------------------*/
@@ -1379,17 +1379,17 @@ char*
 ymap__unit_mreg         (void)
 {
    int    x, y;
-   strlcpy (myMAP.g_print, "", LEN_RECD);
+   ystrlcpy (myMAP.g_print, "", LEN_RECD);
    for (y = 0; y < 8; ++y) {
-      if (y > 0)  strlcat (myMAP.g_print, "  ", LEN_RECD);
+      if (y > 0)  ystrlcat (myMAP.g_print, "  ", LEN_RECD);
       for (x = 0; x < 10; ++x) {
          if      (s_things [x][y] == NULL) {
-            if (yMAP_visual (0, x, y, 0))    strlcat (myMAP.g_print, "`", LEN_RECD);
-            else                             strlcat (myMAP.g_print, "·", LEN_RECD);
+            if (yMAP_visual (0, x, y, 0))    ystrlcat (myMAP.g_print, "`", LEN_RECD);
+            else                             ystrlcat (myMAP.g_print, "·", LEN_RECD);
          }
-         else if (s_things [x][y]->z == 1)   strlcat (myMAP.g_print, "Ï", LEN_RECD);
-         else if (s_things [x][y]->z == 0)   strlcat (myMAP.g_print, "+", LEN_RECD);
-         else                                strlcat (myMAP.g_print, "·", LEN_RECD);
+         else if (s_things [x][y]->z == 1)   ystrlcat (myMAP.g_print, "Ï", LEN_RECD);
+         else if (s_things [x][y]->z == 0)   ystrlcat (myMAP.g_print, "+", LEN_RECD);
+         else                                ystrlcat (myMAP.g_print, "·", LEN_RECD);
       }
    }
    return myMAP.g_print;
@@ -1506,7 +1506,7 @@ yMAP__unit              (char *a_question, char a_index)
    char        t           [LEN_RECD]  = "";
    char        s           [LEN_LABEL] = "";
    /*---(preprare)-----------------------*/
-   strlcpy  (unit_answer, "MAP unit         : question not understood", LEN_FULL);
+   ystrlcpy  (unit_answer, "MAP unit         : question not understood", LEN_FULL);
    /*---(dependency list)----------------*/
    if      (strcmp (a_question, "pos"            )   == 0) {
       rc = ymap_pick_map (a_index, &x_map, NULL);

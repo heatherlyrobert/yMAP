@@ -376,7 +376,7 @@ ymap_multi_wide_def     (char *a_label, uchar a_count)
 {
    char        x_label     [LEN_LABEL] = "";
    if (a_label == NULL || a_label [0] == '\0')  yMAP_current (x_label, NULL, NULL, NULL, NULL);
-   else                                        strlcpy (x_label, a_label, LEN_LABEL);
+   else                                        ystrlcpy (x_label, a_label, LEN_LABEL);
    yMAP_multi_wide (x_label, '-', a_count);
    return 0;
 }
@@ -399,7 +399,7 @@ ymap_multi_tall_def     (char *a_label, uchar a_count)
 {
    char        x_label     [LEN_LABEL] = "";
    if (a_label == NULL || a_label [0] == '\0')  yMAP_current (x_label, NULL, NULL, NULL, NULL);
-   else                                        strlcpy (x_label, a_label, LEN_LABEL);
+   else                                        ystrlcpy (x_label, a_label, LEN_LABEL);
    yMAP_multi_tall (x_label, '-', a_count);
    return 0;
 }
@@ -422,7 +422,7 @@ ymap_multi_deep_def     (char *a_label, uchar a_count)
 {
    char        x_label     [LEN_LABEL] = "";
    if (a_label == NULL || a_label [0] == '\0')  yMAP_current (x_label, NULL, NULL, NULL, NULL);
-   else                                        strlcpy (x_label, a_label, LEN_LABEL);
+   else                                        ystrlcpy (x_label, a_label, LEN_LABEL);
    yMAP_multi_deep (x_label, '-', a_count);
    return 0;
 }
