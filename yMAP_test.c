@@ -893,7 +893,7 @@ ymap__unit_locator      (char a_strict, char *a_label, ushort *u, ushort *x, ush
    if (y != NULL)  *y = 0;
    if (z != NULL)  *z = 0;
    /*---(parse label)--------------------*/
-   rc = str2gyges (a_label, &u_pos, &x_pos, &y_pos, &z_pos, NULL, 0, YSTR_CHECK);
+   rc = ystr2gyges (a_label, &u_pos, &x_pos, &y_pos, &z_pos, NULL, 0, YSTR_CHECK);
    --rce;  if (rc < 0) {
       if (a_label == NULL)                            return rce;
       if (strlen (a_label) != 2)                      return rce;
@@ -937,7 +937,7 @@ ymap__unit_addresser    (char a_strict, char *a_label, ushort u, ushort x, ushor
       --rce;  if (z > g_zmap.gmax)  return rce;
    }
    /*---(get label)----------------------*/
-   rc = str4gyges (u, x, y, 0, 0, x_label, YSTR_CHECK);
+   rc = ystr4gyges (u, x, y, 0, 0, x_label, YSTR_CHECK);
    --rce;  if (rc < 0)           return rce;
    /*---(save-back)----------------------*/
    if (a_label != NULL)  ystrlcpy (a_label, x_label, LEN_LABEL);
