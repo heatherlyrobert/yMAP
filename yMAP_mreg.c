@@ -1438,7 +1438,7 @@ ymap_mreg_smode         (uchar a_major, uchar a_minor)
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    DEBUG_YMAP   yLOG_char    ("a_major"   , a_major);
-   DEBUG_YMAP   yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_YMAP   yLOG_char    ("a_minor"   , ychrvisible (a_minor));
    DEBUG_YMAP   yLOG_char    ("x_prev"    , x_prev);
    /*> myVIKEYS.info_win = '-';                                                       <*/
    /*---(defenses)-----------------------*/

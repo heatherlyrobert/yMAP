@@ -499,12 +499,12 @@ ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char *a_label, c
    DEBUG_YMAP  yLOG_enter   (a_func);
    DEBUG_YMAP  yLOG_complex ("args"      , "%c, %c, %p, %c, %c", a_mode, a_act, a_label, a_before, a_after);
    /*---(early-defense)------------------*/
-   --rce;  if (a_before != chrvisible (a_before)) {
+   --rce;  if (a_before != ychrvisible (a_before)) {
       DEBUG_YMAP  yLOG_note    ("a_before is non-visible char");
       DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;
    }
-   --rce;  if (a_after  != chrvisible (a_after )) {
+   --rce;  if (a_after  != ychrvisible (a_after )) {
       DEBUG_YMAP  yLOG_note    ("a_after is non-visible char");
       DEBUG_YMAP  yLOG_exitr   (a_func, rce);
       return rce;

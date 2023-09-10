@@ -461,7 +461,7 @@ ymap_format_xmode       (uchar a_major, uchar a_minor)
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_USER   yLOG_char    ("a_minor"   , ychrvisible (a_minor));
    /*---(defenses)-----------------------*/
    DEBUG_USER   yLOG_char    ("mode"      , yMODE_curr ());
    --rce;  if (yMODE_not (XMOD_FORMAT )) {
@@ -562,7 +562,7 @@ ymap_units_xmode        (uchar a_major, uchar a_minor)
    /*---(header)-------------------------*/
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
-   DEBUG_USER   yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_USER   yLOG_char    ("a_minor"   , ychrvisible (a_minor));
    /*---(defenses)-----------------------*/
    DEBUG_USER   yLOG_char    ("mode"      , yMODE_curr ());
    --rce;  if (yMODE_not (XMOD_UNITS)) {

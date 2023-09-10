@@ -252,12 +252,12 @@ ymap__combo_clear       (char a_major, char a_minor)
       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_MAP    yLOG_char    ("a_major"   , chrvisible (a_major));
+   DEBUG_MAP    yLOG_char    ("a_major"   , ychrvisible (a_major));
    --rce;  if (a_major != ACT_CLEAR) {
       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_MAP    yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_MAP    yLOG_char    ("a_minor"   , ychrvisible (a_minor));
    DEBUG_MAP    yLOG_info    ("valid"     , x_minors);
    --rce;  if (a_minor == 0 || strchr (x_minors, a_minor) == NULL) {
       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
@@ -293,12 +293,12 @@ ymap__combo_delete      (char a_major, char a_minor)
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    DEBUG_MAP    yLOG_char    ("visu live" , yMAP_visu_islive ());
-   DEBUG_MAP    yLOG_char    ("a_major"   , chrvisible (a_major));
+   DEBUG_MAP    yLOG_char    ("a_major"   , ychrvisible (a_major));
    --rce;  if (a_major == 0 || strchr (ACT_DELETES, a_major) == NULL) {
       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_MAP    yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_MAP    yLOG_char    ("a_minor"   , ychrvisible (a_minor));
    DEBUG_MAP    yLOG_info    ("valid"     , x_minors);
    --rce;  if (a_minor == 0 || strchr (x_minors, a_minor) == NULL) {
       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
@@ -376,12 +376,12 @@ ymap__combo_append      (char a_major, char a_minor)
    DEBUG_MAP    yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    DEBUG_MAP    yLOG_char    ("visu live" , yMAP_visu_islive ());
-   DEBUG_MAP    yLOG_char    ("a_major"   , chrvisible (a_major));
+   DEBUG_MAP    yLOG_char    ("a_major"   , ychrvisible (a_major));
    --rce;  if (a_major == 0 || strchr (ACT_APPENDS, a_major) == NULL) {
       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_MAP    yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_MAP    yLOG_char    ("a_minor"   , ychrvisible (a_minor));
    DEBUG_MAP    yLOG_info    ("valid"     , x_minors);
    --rce;  if (a_minor == 0 || strchr (x_minors, a_minor) == NULL) {
       DEBUG_MAP    yLOG_exitr   (__FUNCTION__, rce);
@@ -699,7 +699,7 @@ ymap_mode               (uchar a_major, uchar a_minor)
    /*---(header)-------------------------*/
    DEBUG_YMAP_U  yLOG_enter   (__FUNCTION__);
    DEBUG_YMAP_U  yLOG_char    ("a_major"   , a_major);
-   DEBUG_YMAP_U  yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_YMAP_U  yLOG_char    ("a_minor"   , ychrvisible (a_minor));
    DEBUG_YMAP_U  yLOG_value   ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
    DEBUG_YMAP_U  yLOG_char    ("mode"      , yMODE_curr ());
