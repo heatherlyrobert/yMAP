@@ -1490,6 +1490,7 @@ ymap_mreg_smode         (uchar a_major, uchar a_minor)
       case 'p'  :
          DEBUG_YMAP   yLOG_note    ("p for paste normal");
          ymap_mreg_paste ("normal");
+         ymap_visu_clear ();
          yMODE_exit ();
          DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
          return 0;
