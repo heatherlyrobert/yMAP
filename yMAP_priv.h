@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.1-, clean up dependencies, better integration"
-#define     P_VERNUM    "2.1j"
-#define     P_VERTXT    "caught a tweak made when fixing copy/paste, fixed"
+#define     P_VERNUM    "2.1k"
+#define     P_VERTXT    "simple fix for accidental wrap-around in axis moves"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -288,7 +288,7 @@ char        ymap_set_by_grid        (tyMAP *a_map, ushort b, ushort c, ushort e)
 /*---(placement)------------*/
 char        ymap__grid_up           (tyMAP *a_map, short a_count);
 char        ymap__grid_down         (tyMAP *a_map, short a_count);
-char        ymap__grid_at           (tyMAP *a_map, ushort a_unit, char a_limit);
+char        ymap__grid_at           (tyMAP *a_map, short a_unit, char a_limit);
 /*---(general)--------------*/
 char        ymap_simple             (tyMAP *a_map, uchar a_minor);
 char        ymap_goto               (tyMAP *a_map, uchar a_minor);

@@ -392,7 +392,7 @@ ymap__grid_down         (tyMAP *a_map, short a_count)
 }
 
 char
-ymap__grid_at           (tyMAP *a_map, ushort a_unit, char a_limit)
+ymap__grid_at           (tyMAP *a_map, short a_unit, char a_limit)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -421,7 +421,7 @@ ymap__grid_at           (tyMAP *a_map, ushort a_unit, char a_limit)
       if (a_unit < a_map->ubeg)  a_unit = a_map->ubeg;
       if (a_unit > a_map->uend)  a_unit = a_map->uend;
    } else {
-      DEBUG_YMAP   yLOG_snote   ("unlimited");
+      DEBUG_YMAP   yLOG_snote   ("screen unlimited");
    }
    if (a_unit < a_map->umin)  a_unit = a_map->umin;
    if (a_unit > a_map->umax)  a_unit = a_map->umax;
@@ -627,38 +627,6 @@ ymap_goto               (tyMAP *a_map, uchar a_minor)
    /*---(distances)----------------------*/
    ymap__partition (a_map, &x_ful, &x_beg, &x_qtr, &x_haf, &x_thr, &x_end, &x_pos);
    /*---(handle)-------------------------*/
-   /*> --rce;  switch (a_minor) {                                                     <* 
-    *> case 'S' : case 'B' :                                                          <* 
-    *>    rc = ymap__grid_at (a_map, x_beg - x_ful + 1, '-');                         <* 
-    *>    break;                                                                      <* 
-    *> case 'H' : case 'J' :                                                          <* 
-    *>    rc = ymap__grid_at (a_map, x_beg - x_haf + 1, '-');                         <* 
-    *>    break;                                                                      <* 
-    *> case 's' : case 'b' :                                                          <* 
-    *>    rc = ymap__grid_at (a_map, x_beg            , 'y');                         <* 
-    *>    break;                                                                      <* 
-    *> case 'h' : case 'j' :                                                          <* 
-    *>    rc = ymap__grid_at (a_map, x_beg + x_qtr    , 'y');                         <* 
-    *>    break;                                                                      <* 
-    *> case 'c' : case 'm' :                                                          <* 
-    *>    rc = ymap__grid_at (a_map, x_beg + x_haf    , 'y');                         <* 
-    *>    break;                                                                      <* 
-    *> case 'l' : case 'k' :                                                          <* 
-    *>    rc = ymap__grid_at (a_map, x_beg + x_thr    , 'y');                         <* 
-    *>    break;                                                                      <* 
-    *> case 'e' : case 't' :                                                          <* 
-    *>    rc = ymap__grid_at (a_map, x_end            , 'y');                         <* 
-    *>    break;                                                                      <* 
-    *> case 'L' : case 'K' :                                                          <* 
-    *>    rc = ymap__grid_at (a_map, x_end + x_haf - 1, '-');                         <* 
-    *>    break;                                                                      <* 
-    *> case 'E' : case 'T' :                                                          <* 
-    *>    rc = ymap__grid_at (a_map, x_end + x_ful - 1, '-');                         <* 
-    *>    break;                                                                      <* 
-    *> default  :                                                                     <* 
-    *>    DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
    --rce;  switch (a_minor) {
    case 'S' : case 'B' :
       rc = ymap__grid_at (a_map, x_beg - x_ful + 1, '-');

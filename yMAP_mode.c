@@ -35,6 +35,62 @@ ymap__biggies           (uchar a_major, uchar a_minor)
    return 1;
 }
 
+/*> char                                                                                        <* 
+ *> ymap__controls          (uchar a_major, uchar a_minor)                                      <* 
+ *> {                                                                                           <* 
+ *>    /+---(locals)-----------+-----+-----+-+/                                                 <* 
+ *>    char        rc          =   -1;                                                          <* 
+ *>    int         c           =    0;                                                          <* 
+ *>    int         i           =    0;                                                          <* 
+ *>    uchar       x_ch        = '\0';                                                          <* 
+ *>    /+---(header)-------------------------+/                                                 <* 
+ *>    DEBUG_YMAP_U  yLOG_enter   (__FUNCTION__);                                               <* 
+ *>    switch (a_minor) {                                                                       <* 
+ *>    case  14 :                                                                               <* 
+ *>       DEBUG_YMAP_U  yLOG_note    ("page up (full)");                                        <* 
+ *>       rc = ymap_goto     (&g_xmap, 'T');                                                    <* 
+ *>       ymap_xchange (YMAP_POS);                                                              <* 
+ *>       break;                                                                                <* 
+ *>    case  15 :                                                                               <* 
+ *>       DEBUG_YMAP_U  yLOG_note    ("page up (half)");                                        <* 
+ *>       rc = ymap_goto     (&g_xmap, 'K');                                                    <* 
+ *>       ymap_xchange (YMAP_POS);                                                              <* 
+ *>       break;                                                                                <* 
+ *>    case  16 :                                                                               <* 
+ *>       DEBUG_YMAP_U  yLOG_note    ("page down (half)");                                      <* 
+ *>       rc = ymap_goto     (&g_xmap, 'J');                                                    <* 
+ *>       ymap_xchange (YMAP_POS);                                                              <* 
+ *>       break;                                                                                <* 
+ *>    case  17 :                                                                               <* 
+ *>       DEBUG_YMAP_U  yLOG_note    ("page down (full)");                                      <* 
+ *>       rc = ymap_goto     (&g_xmap, 'B');                                                    <* 
+ *>       ymap_xchange (YMAP_POS);                                                              <* 
+ *>       break;                                                                                <* 
+ *>       /+> if (yKEYS_is_horz_goto   (a_minor)) {                                       <*    <* 
+ *>        *>    rc = ymap_goto     (&g_xmap, a_minor);                                   <*    <* 
+ *>        *>    ymap_xchange (YMAP_POS);                                                 <*    <* 
+ *>        *>    ++c;                                                                     <*    <* 
+ *>        *> }                                                                           <*    <* 
+ *>        *> if (yKEYS_is_vert_goto   (a_minor)) {                                       <*    <* 
+ *>        *>    rc = ymap_goto     (&g_ymap, a_minor);                                   <*    <* 
+ *>        *>    ymap_ychange (YMAP_POS);                                                 <*    <* 
+ *>        *>    ++c;                                                                     <*    <* 
+ *>        *> }                                                                           <*    <* 
+ *>        *> if (yKEYS_is_deep_goto   (a_minor)) {                                       <*    <* 
+ *>        *>    rc = ymap_goto     (&g_zmap, a_minor);                                   <*    <* 
+ *>        *>    ymap_zchange (YMAP_POS);                                                 <*    <* 
+ *>        *>    ++c;                                                                     <*    <* 
+ *>        *> }                                                                           <+/   <* 
+ *>    default           :                                                                      <* 
+ *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                            <* 
+ *>       return 0;                                                                             <* 
+ *>       break;                                                                                <* 
+ *>    }                                                                                        <* 
+ *>    /+---(complete)-----------------------+/                                                 <* 
+ *>    DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                               <* 
+ *>    return 1;                                                                                <* 
+ *> }                                                                                           <*/
+
 char
 ymap__multibeg          (uchar a_major, uchar a_minor)
 {
@@ -724,6 +780,13 @@ ymap_mode               (uchar a_major, uchar a_minor)
       DEBUG_YMAP_U  yLOG_exitr   (__FUNCTION__, rc);
       return rc;
    }
+   /*---(control keys)-------------------*/
+   /*> rc = ymap__controls   (a_major, a_minor);                                      <* 
+    *> DEBUG_YMAP_U  yLOG_value   ("controls"  , rc);                                 <* 
+    *> if (rc != 0) {                                                                 <* 
+    *>    DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                  <* 
+    *>    return 0;                                                                   <* 
+    *> }                                                                              <*/
    /*---(repeat)-------------------------*/
    if (yKEYS_is_repeater (a_minor)) {
       DEBUG_YMAP_U  yLOG_note    ("repeating");
@@ -862,48 +925,48 @@ ymap_mode               (uchar a_major, uchar a_minor)
     *>       yvikeys_map_reposition  ();                                              <* 
     *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
     *>       return rc;                                                               <* 
-   *>    }                                                                           <* 
-      *>    /+---(mode changes)----------------+/                                       <* 
-      *>    if (strchr (s_map_modes, a_minor) != 0) {                                   <* 
-         *>       DEBUG_YMAP_U  yLOG_note    ("mode changes");                              <* 
-            *>       rc = yvikeys__map_mode_chg (a_minor);                                    <* 
+    *>    }                                                                           <* 
+    *>    /+---(mode changes)----------------+/                                       <* 
+    *>    if (strchr (s_map_modes, a_minor) != 0) {                                   <* 
+    *>       DEBUG_YMAP_U  yLOG_note    ("mode changes");                              <* 
+    *>       rc = yvikeys__map_mode_chg (a_minor);                                    <* 
+    *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
+    *>       return rc;                                                               <* 
+    *>    }                                                                           <* 
+    *>    if (strchr ("yYpPx", a_minor) != 0) {                                       <* 
+    *>       DEBUG_YMAP_U  yLOG_note    ("switch to a map register mode");             <* 
+    *>       yMODE_enter (SMOD_MREG);                                                 <* 
+    *>       rc = yvikeys_mreg_smode  (G_KEY_SPACE, a_minor);                         <* 
+    *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
+    *>       return rc;                                                               <* 
+    *>    }                                                                           <* 
+    *>    /+---(normal)----------------------+/                                       <* 
+    *>    if (strchr (g_hsimple, a_minor) != 0) {                                     <* 
+    *>       rc = yvikeys__map_horz   (a_major, a_minor);                             <* 
+   *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
+      *>       return rc;                                                               <* 
+      *>    }                                                                           <* 
+      *>    if (strchr (g_vsimple, a_minor) != 0) {                                     <* 
+         *>       rc = yvikeys__map_vert   (a_major, a_minor);                             <* 
             *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
             *>       return rc;                                                               <* 
             *>    }                                                                           <* 
-            *>    if (strchr ("yYpPx", a_minor) != 0) {                                       <* 
-               *>       DEBUG_YMAP_U  yLOG_note    ("switch to a map register mode");             <* 
-                  *>       yMODE_enter (SMOD_MREG);                                                 <* 
-                  *>       rc = yvikeys_mreg_smode  (G_KEY_SPACE, a_minor);                         <* 
-                  *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
-                  *>       return rc;                                                               <* 
-                  *>    }                                                                           <* 
-                  *>    /+---(normal)----------------------+/                                       <* 
-                  *>    if (strchr (g_hsimple, a_minor) != 0) {                                     <* 
-                     *>       rc = yvikeys__map_horz   (a_major, a_minor);                             <* 
+            *>    if (strchr (g_search, a_minor) != 0) {                                      <* 
+               *>       rc = yvikeys_srch_by_cursor (a_minor, NULL);                             <* 
+                  *>       if (rc >= 0) {                                                           <* 
+                     *>          yvikeys__screen (&g_xmap);                                            <* 
+                        *>          yvikeys__screen (&g_ymap);                                            <* 
+                        *>          yvikeys__screen (&g_zmap);                                            <* 
+                        *>          yvikeys_map_reposition  ();                                           <* 
+                        *>       }                                                                        <* 
                         *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
+                        *>       if (rc > 0)  rc = -1;                                                    <* 
                         *>       return rc;                                                               <* 
                         *>    }                                                                           <* 
-                        *>    if (strchr (g_vsimple, a_minor) != 0) {                                     <* 
-                           *>       rc = yvikeys__map_vert   (a_major, a_minor);                             <* 
-                              *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
-                              *>       return rc;                                                               <* 
-                              *>    }                                                                           <* 
-                              *>    if (strchr (g_search, a_minor) != 0) {                                      <* 
-                                 *>       rc = yvikeys_srch_by_cursor (a_minor, NULL);                             <* 
-                                    *>       if (rc >= 0) {                                                           <* 
-                                       *>          yvikeys__screen (&g_xmap);                                            <* 
-                                          *>          yvikeys__screen (&g_ymap);                                            <* 
-                                          *>          yvikeys__screen (&g_zmap);                                            <* 
-                                          *>          yvikeys_map_reposition  ();                                           <* 
-                                          *>       }                                                                        <* 
-                                          *>       DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);                                <* 
-                                          *>       if (rc > 0)  rc = -1;                                                    <* 
-                                          *>       return rc;                                                               <* 
-                                          *>    }                                                                           <* 
-                                          *>    DEBUG_YMAP_U  yLOG_note    ("no matches found");                             <* 
-                                          *> }                                                                              <*/
-                                          /*---(complete)------------------------------*/
-                                          DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
+                        *>    DEBUG_YMAP_U  yLOG_note    ("no matches found");                             <* 
+                        *> }                                                                              <*/
+                        /*---(complete)------------------------------*/
+                        DEBUG_YMAP_U  yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
