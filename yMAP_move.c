@@ -629,10 +629,10 @@ ymap_goto               (tyMAP *a_map, uchar a_minor)
    /*---(handle)-------------------------*/
    --rce;  switch (a_minor) {
    case 'S' : case 'B' :
-      rc = ymap__grid_at (a_map, x_beg - x_ful + 1, '-');
+      rc = ymap__grid_at (a_map, x_beg - x_ful    , '-');
       break;
    case 'H' : case 'J' :
-      rc = ymap__grid_at (a_map, x_beg - x_haf + 1, '-');
+      rc = ymap__grid_at (a_map, x_beg - x_haf    , '-');
       break;
    case 's' : case 'b' :
       rc = ymap__grid_at (a_map, x_beg            , 'y');
