@@ -156,6 +156,8 @@ typedef  unsigned short       ushort;
 #define     YMAP_DECIMALS     'd'
 #define     YMAP_UNITS        'u'
 #define     YMAP_MULTIPLE     '*'
+/*---(forcing position)----------*/
+#define     YMAP_POSITION     '!'
 /*---(validations)---------------*/
 #define     YMAP_FORMATS      "afdu"
 #define     YMAP_SIZES        "xyz"
@@ -166,6 +168,7 @@ typedef  unsigned short       ushort;
 #define     YMAP_MODES        "/[+"
 /*---(done)----------------------*/
 
+#define     YMAP_END          32767
 
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
@@ -279,6 +282,8 @@ char        yMAP_mundo_recalc       (char a_mode, char *a_label);
 char        yMAP_mundo_overwrite    (char a_mode, char *a_label, char* a_beforeF, char* a_before, char* a_afterF, char* a_after);
 char        yMAP_mundo_clear        (char a_mode, char *a_label, char* a_beforeF, char* a_before, char *a_afterF);
 char        yMAP_mundo_delete       (char a_mode, char *a_label, char* a_beforeF, char* a_before);
+/*---(aesthetic)------------*/
+char        yMAP_mundo_position     (char a_mode, char *a_label);
 /*---(done)-----------------*/
 
 char*       yMAP_univ_name          (char n);

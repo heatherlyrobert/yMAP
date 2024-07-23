@@ -306,7 +306,7 @@ ymap__refresh           (char *a_name, char a_axis, tyMAP *a_map)
          return rce;
       }
       rc = yMAP_start (a_axis, x_max);
-      for (i = 0; i < x_max; ++i) {
+      for (i = 0; i <= x_max; ++i) {
          DEBUG_YMAP_G  yLOG_value   ("ENTRY"     , i);
          rc = myMAP.e_entry (a_axis, i, &x_ref, &x_wide, &x_used);
          DEBUG_YMAP_G  yLOG_value   ("e_entry"   , rc);

@@ -60,6 +60,7 @@ ymap_office              (uchar a_axis, uchar *r_minor)
                DEBUG_YMAP   yLOG_sexitr  (__FUNCTION__, rce);
                return rce;
    }
+   DEBUG_YMAP   yLOG_schar   (*r_minor);
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_sexit   (__FUNCTION__);
    return 0;
@@ -94,6 +95,9 @@ ymap_corners            (uchar a_src, uchar a_axis, char *r_minor)
          case 'u'   : case 'U'   : *r_minor = 'E';  break;
          case 'd'   : case 'D'   : *r_minor = 'S';  break;
          case 'z'   : case 'Z'   : *r_minor = 'E';  break;
+         default    :
+            DEBUG_YMAP   yLOG_snote   ("no change found (audzAUDZ)");
+            break;
          }
          DEBUG_YMAP   yLOG_schar   (*r_minor);
          break;
@@ -104,6 +108,9 @@ ymap_corners            (uchar a_src, uchar a_axis, char *r_minor)
          case 'u'   : case 'U'   : *r_minor = 'T';  break;
          case 'd'   : case 'D'   : *r_minor = 'B';  break;
          case 'z'   : case 'Z'   : *r_minor = 'B';  break;
+         default    :
+            DEBUG_YMAP   yLOG_snote   ("no change found (audzAUDZ)");
+            break;
          }
          DEBUG_YMAP   yLOG_schar   (*r_minor);
          break;
@@ -130,6 +137,9 @@ ymap_corners            (uchar a_src, uchar a_axis, char *r_minor)
          case 'U'   : *r_minor = 'L';  break;
          case 'D'   : *r_minor = 'H';  break;
          case 'Z'   : *r_minor = 'L';  break;
+         default    :
+            DEBUG_YMAP   yLOG_snote   ("no change found (audz.AUDZ)");
+            break;
          }
          DEBUG_YMAP   yLOG_schar   (*r_minor);
          break;
@@ -145,6 +155,9 @@ ymap_corners            (uchar a_src, uchar a_axis, char *r_minor)
          case 'U'   : *r_minor = 'K';  break;
          case 'D'   : *r_minor = 'J';  break;
          case 'Z'   : *r_minor = 'J';  break;
+         default    :
+            DEBUG_YMAP   yLOG_snote   ("no change found (audz.AUDZ)");
+            break;
          }
          DEBUG_YMAP   yLOG_schar   (*r_minor);
          break;
@@ -537,7 +550,7 @@ ymap_simple              (tyMAP *a_map, uchar a_minor)
       rc = ymap__grid_up   (a_map,  a_map->inc * 5);
       break;
    case '$' : case '_' :
-      rc = ymap__grid_at   (a_map, 65535, '-');
+      rc = ymap__grid_at   (a_map, YMAP_END, '-');
       break;
    case '|' : case '%' :
       /*> DEBUG_YMAP   yLOG_value   ("repeats"   , yKEYS_repeats     ());             <*/
@@ -650,10 +663,12 @@ ymap_goto               (tyMAP *a_map, uchar a_minor)
       rc = ymap__grid_at (a_map, x_end            , 'y');
       break;
    case 'L' : case 'K' :
-      rc = ymap__grid_at (a_map, x_beg + x_ful + x_haf - 1, '-');
+      /*> rc = ymap__grid_at (a_map, x_beg + x_ful + x_haf - 1, '-');                 <*/
+      rc = ymap__grid_at (a_map, x_beg + x_ful + x_haf, '-');
       break;
    case 'E' : case 'T' :
-      rc = ymap__grid_at (a_map, x_beg + x_ful + x_ful - 1, '-');
+      /*> rc = ymap__grid_at (a_map, x_beg + x_ful + x_ful - 1, '-');                 <*/
+      rc = ymap__grid_at (a_map, x_beg + x_ful + x_ful, '-');
       break;
    default  :
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);

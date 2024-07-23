@@ -36,9 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.1-, clean up dependencies, better integration"
-#define     P_VERNUM    "2.1k"
-#define     P_VERTXT    "simple fix for accidental wrap-around in axis moves"
-#define     P_VERTXT    "better handling of page up and page left to hit proper mark"
+#define     P_VERNUM    "2.1l"
+#define     P_VERTXT    "update for new DEBUG_ macro calls"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -197,8 +196,7 @@ struct cMY {
    /*---(mreg)-----------------*/
    char      (*e_regkill)    (void *a_thing);
    void*     (*e_copier)     (char a_type, long a_stamp);
-   void*     (*e_clearer)    (char a_type, long a_stamp);
-   /*> char      (*e_clearer)    (char a_1st, ushort b, ushort x, ushort y, ushort z);   <*/
+   void*     (*e_clearer)    (char a_1st, char a_type, long a_stamp);
    char      (*e_paster)     (char a_regs, char a_1st, short a_uoff, short a_xoff, short a_yoff, short a_zoff, void *a_thing);
    char      (*e_finisher)   (char a_pros, char *a_target, char *a_labels, short uo, short xo, short yo, short zo);
    char      (*e_exim)       (char a_dir, char a_style);

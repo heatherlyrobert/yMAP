@@ -979,7 +979,7 @@ yMAP_mreg_labels        (char a_abbr)
 static void  o___ACTIONS_________o () { return; }
 
 char
-ymap__mreg_clear             (void)
+ymap__mreg_clear             (char a_first, char a_last)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -992,6 +992,7 @@ ymap__mreg_clear             (void)
    long        x_stamp     =    0;
    char        x_save      =  '-';
    int         x_reg       =    0;
+   char        x_label     [LEN_LABEL] = "";
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    DEBUG_YMAP   yLOG_char    ("h_1st"     , myMAP.h_1st);
@@ -1030,13 +1031,15 @@ ymap__mreg_clear             (void)
    s_regs [x_reg].z_all   = z;
    s_regs [x_reg].type    = S_REG_ACTIVE;
    DEBUG_YMAP   yLOG_complex ("register"  , "%c, %2d, %c, %2du, %3dx to %3dx, %3dy to %3dy", s_creg, x_reg, s_regs [x_reg].type, s_regs [x_reg].u_all, s_regs [x_reg].x_beg, s_regs [x_reg].x_end, s_regs [x_reg].y_beg, s_regs [x_reg].y_end);
-   /*---(save selection)-----------------*/
-   /*> rc = yMAP_visu_range (&u, &x_beg, &x_end, &y_beg, &y_end, &z, NULL, NULL);     <* 
-    *> DEBUG_YMAP   yLOG_value   ("visu rc"   , rc);                                  <* 
-    *> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return  rce;                                                                <* 
-    *> }                                                                              <*/
+   /*---(add position mark)--------------*/
+   rc = ymap_addresser (x_label, s_regs [x_reg].u_all, s_regs [x_reg].x_beg, s_regs [x_reg].y_beg, s_regs [x_reg].z_all);
+   DEBUG_YMAP   yLOG_value   ("addresser" , rc);
+   if (myMAP.h_1st == 'y' && rc >= 0) {
+      DEBUG_YMAP   yLOG_info    ("x_label"   , x_label);
+      rc = yMAP_mundo_position (YMAP_BEG, x_label);
+      DEBUG_YMAP   yLOG_value   ("position"  , rc);
+      myMAP.h_1st = '-';
+   }
    /*---(check clearer)------------------*/
    DEBUG_YMAP   yLOG_point   ("e_clearer" , myMAP.e_clearer);
    --rce;  if (myMAP.e_clearer == NULL) {
@@ -1044,21 +1047,10 @@ ymap__mreg_clear             (void)
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(clear)--------------------------*/
-   /*> for (x = x_beg; x <= x_end; ++x) {                                                                             <* 
-    *>    for (y = y_beg; y <= y_end; ++y) {                                                                          <* 
-    *>       rc = myMAP.e_clearer (myMAP.h_1st, u, x, y, z);                                                          <* 
-    *>       DEBUG_YMAP   yLOG_complex ("clearer"   , "%c, %4d, %2du %4dx %4dy %4dz", myMAP.h_1st, rc, u, x, y, z);   <* 
-    *>       if (rc >= 0 && myMAP.h_1st == 'y') {                                                                     <* 
-    *>          DEBUG_YMAP   yLOG_note    ("flip off the 1st switch");                                                <* 
-    *>          myMAP.h_1st = '-';                                                                                    <* 
-    *>       }                                                                                                        <* 
-    *>    }                                                                                                           <* 
-    *> }                                                                                                              <*/
    /*---(call clear)---------------------*/
    s_saving = 'y';
    x_stamp  = rand ();
-   rc = myMAP.e_clearer ('c', x_stamp);
+   rc = myMAP.e_clearer (myMAP.h_1st, 'c', x_stamp);
    DEBUG_YMAP   yLOG_value   ("clear"     , rc);
    --rce;  if (rc < 0) {
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
@@ -1069,13 +1061,19 @@ ymap__mreg_clear             (void)
    s_saving = '-';
    s_creg = x_save;
    s_regs [x_reg].type    = S_REG_EMPTY;
+   /*---(add position mark)--------------*/
+   if (a_last == 'y') {
+      DEBUG_YMAP   yLOG_info    ("x_label"   , x_label);
+      rc = yMAP_mundo_position (YMAP_ADD, x_label);
+      DEBUG_YMAP   yLOG_value   ("position"  , rc);
+   }
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
-char ymap_mreg_clear        (void) { myMAP.h_1st = 'y';  return ymap__mreg_clear (); }
-char ymap_mreg_clear_combo  (void) { return ymap__mreg_clear (); }
+char ymap_mreg_clear        (void) { myMAP.h_1st = 'y';  return ymap__mreg_clear ('y', 'y'); }
+char ymap_mreg_clear_combo  (void) { return ymap__mreg_clear ('y', '-'); }
 
 static short   s_boff  = 0;
 static short   s_xoff  = 0;
@@ -1149,9 +1147,11 @@ ymap__mreg_paste_set    (char *a_type)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
+   char        rc          =    0;
    int         x_len       =    0;
    int         i           =    0;
    int         n           =   -1;
+   char        x_label     [LEN_LABEL] = "";
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
@@ -1211,38 +1211,15 @@ ymap__mreg_paste_set    (char *a_type)
          s_regs [s_reg].y_beg + s_yoff, s_regs [s_reg].y_end + s_yoff,
          s_regs [s_reg].z_all + s_zoff, s_regs [s_reg].z_all + s_zoff,
          'e');
-   /*---(complete)-----------------------*/
-   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*-> prepare for a paste ----------------[ ------ [fe.842.023.21]*/ /*-[01.0000.015.!]-*/ /*-[--.---.---.--]-*/
-ymap__mreg_paste_clear  (void)
-{
-   /*---(locals)-----------+-----+-----+-*/
-   char        rce         =  -10;
-   char        rc          =    0;
-   int         x, y;
-   /*---(header)-------------------------*/
-   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
-   DEBUG_YMAP   yLOG_char    ("h_1st"     , myMAP.h_1st);
-   /*---(check clearer)------------------*/
-   DEBUG_YMAP   yLOG_point   ("e_clearer" , myMAP.e_clearer);
-   --rce;  if (myMAP.e_clearer == NULL) {
-      DEBUG_YMAP   yLOG_note    ("clearer must be set to operate");
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+   /*---(add position mark)--------------*/
+   rc = ymap_addresser (x_label, s_regs [s_reg].u_all + s_boff, s_regs [s_reg].x_beg + s_xoff, s_regs [s_reg].y_beg + s_yoff, s_regs [s_reg].z_all + s_zoff);
+   DEBUG_YMAP   yLOG_value   ("addresser" , rc);
+   if (rc >= 0) {
+      DEBUG_YMAP   yLOG_info    ("x_label"   , x_label);
+      rc = yMAP_mundo_position (YMAP_BEG, x_label);
+      DEBUG_YMAP   yLOG_value   ("position"  , rc);
+      myMAP.h_1st = '-';
    }
-   /*---(clear)--------------------------*/
-   DEBUG_YMAP   yLOG_complex ("range"     , "%3dx to %3dx, %3dy to %3dy", s_regs [s_reg].x_beg + s_xoff, s_regs [s_reg].x_end + s_xoff, s_regs [s_reg].y_beg + s_yoff, s_regs [s_reg].y_end + s_yoff);
-   /*> for (x = s_regs [s_reg].x_beg; x <= s_regs [s_reg].x_end; ++x) {                                                                              <* 
-    *>    for (y = s_regs [s_reg].y_beg; y <= s_regs [s_reg].y_end; ++y) {                                                                           <* 
-    *>       DEBUG_YMAP   yLOG_complex ("target"    , "%c, %3dx, %3dy, %3dz", myMAP.h_1st, x + s_xoff, y + s_yoff, s_regs [s_reg].z_all + s_zoff);   <* 
-    *>       /+> rc = myMAP.e_clearer (myMAP.h_1st, s_regs [s_reg].u_all + s_boff, x + s_xoff, y + s_yoff, s_regs [s_reg].z_all + s_zoff);   <+/     <* 
-    *>       rc = myMAP.e_clearer ('c', s_stamp);                                                                                                    <* 
-    *>       if (rc == 0)  myMAP.h_1st = '-';                                                                                                        <* 
-    *>    }                                                                                                                                          <* 
-    *> }                                                                                                                                             <*/
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -1257,9 +1234,12 @@ ymap__mreg_paste        (char *a_type)
    int         x, y, z;
    int         c           =    0;
    tITEM      *x_curr      = NULL;
-   char        x_list      [LEN_RECD] = "";
+   char        x_list      [LEN_RECD]  = "";
    char       *p           = NULL;
    char       *r           = NULL;
+   int         x_before    =    0;
+   int         x_after     =    0;
+   char        x_label     [LEN_LABEL] = "";
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    DEBUG_YMAP   yLOG_char    ("h_1st"     , myMAP.h_1st);
@@ -1270,6 +1250,9 @@ ymap__mreg_paste        (char *a_type)
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(get mundo count)----------------*/
+   x_before = yMAP_mundo_count ();
+   DEBUG_YMAP   yLOG_value   ("x_before"  , x_before);
    /*---(settings)-----------------------*/
    rc = ymap__mreg_paste_set (a_type);
    DEBUG_YMAP   yLOG_value   ("rc"        , rc);
@@ -1281,12 +1264,20 @@ ymap__mreg_paste        (char *a_type)
    DEBUG_YMAP   yLOG_char    ("s_clear"   , s_clear);
    if (s_clear == 'y') {
       /*> ymap__mreg_paste_clear ();                                                  <*/
-      ymap__mreg_clear ();
+      ymap__mreg_clear ('y', '-');
    }
    if (s_reqs == '-') {
       DEBUG_YMAP   yLOG_note    ("requested clear only");
       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
       return 0;
+   }
+   /*---(get mundo count)----------------*/
+   x_after  = yMAP_mundo_count ();
+   DEBUG_YMAP   yLOG_value   ("x_after"   , x_after );
+   if (x_after > x_before) {
+      DEBUG_YMAP   yLOG_note    ("cleared cells first, append mundo not new");
+      myMAP.h_1st = '-';
+      DEBUG_YMAP   yLOG_char    ("h_1st"     , myMAP.h_1st);
    }
    /*---(sync point)---------------------*/
    ystrlcpy (x_list, "", LEN_RECD);
@@ -1335,6 +1326,14 @@ ymap__mreg_paste        (char *a_type)
       rc = myMAP.e_paster ('?', myMAP.h_1st, s_boff, s_xoff, s_yoff, s_zoff, p);
       if (rc >=  0)  myMAP.h_1st = '-';
       p = strtok_r (NULL  , ",", &r);
+   }
+   /*---(add position mark)--------------*/
+   rc = ymap_addresser (x_label, s_regs [s_reg].u_all + s_boff, s_regs [s_reg].x_beg + s_xoff, s_regs [s_reg].y_beg + s_yoff, s_regs [s_reg].z_all + s_zoff);
+   DEBUG_YMAP   yLOG_value   ("addresser" , rc);
+   if (rc >= 0) {
+      DEBUG_YMAP   yLOG_info    ("x_label"   , x_label);
+      rc = yMAP_mundo_position (YMAP_ADD, x_label);
+      DEBUG_YMAP   yLOG_value   ("position"  , rc);
    }
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
@@ -1556,6 +1555,7 @@ ymap_mreg_smode         (uchar a_major, uchar a_minor)
       case 'F' :  rc = ymap_mreg_paste  ("FORCE");     break;
       default  :  rc = rce;                            break;
       }
+      ymap_visu_clear ();
       yMODE_exit ();
       DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
       return rc;

@@ -471,7 +471,8 @@ ymap_format_xmode       (uchar a_major, uchar a_minor)
    }
    /*---(check for standard controls)----*/
    switch (a_minor) {
-   case   G_KEY_RETURN : case   G_KEY_ESCAPE :
+   case   G_KEY_RETURN  : case   G_KEY_ESCAPE  :
+   case   G_CHAR_RETURN : case   G_CHAR_ESCAPE :
       yMODE_exit ();
       DEBUG_USER   yLOG_exit    (__FUNCTION__);
       return 0;   /* escape  */
@@ -563,6 +564,7 @@ ymap_units_xmode        (uchar a_major, uchar a_minor)
    DEBUG_USER   yLOG_enter   (__FUNCTION__);
    DEBUG_USER   yLOG_char    ("a_major"   , a_major);
    DEBUG_USER   yLOG_char    ("a_minor"   , ychrvisible (a_minor));
+   DEBUG_USER   yLOG_value   ("a_minor"   , a_minor);
    /*---(defenses)-----------------------*/
    DEBUG_USER   yLOG_char    ("mode"      , yMODE_curr ());
    --rce;  if (yMODE_not (XMOD_UNITS)) {
@@ -571,24 +573,28 @@ ymap_units_xmode        (uchar a_major, uchar a_minor)
       return rce;
    }
    /*---(look up)------------------------*/
-   n = ymap__format_units (a_minor);
-   DEBUG_USER   yLOG_value   ("abbr"      , n);
-   --rce;  if (n < 0) {
-      DEBUG_USER   yLOG_note    ("not a valid units key");
-      yMODE_exit   ();
-      DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+   DEBUG_USER   yLOG_value   ("ESCAPE"    , G_CHAR_ESCAPE);
+   if (a_minor != G_CHAR_ESCAPE) {
+      n = ymap__format_units (a_minor);
+      DEBUG_USER   yLOG_value   ("abbr"      , n);
+      --rce;  if (n < 0) {
+         DEBUG_USER   yLOG_note    ("not a valid units key");
+         yMODE_exit   ();
+         DEBUG_USER   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
    }
    /*---(execute)------------------------*/
-   rc = ymap__format_range (s_units [n].type, a_minor);
-   DEBUG_USER   yLOG_value   ("range"     , rc);
+   if (a_minor != G_CHAR_ESCAPE) {
+      rc = ymap__format_range (s_units [n].type, a_minor);
+      DEBUG_USER   yLOG_value   ("range"     , rc);
+   }
    /*---(after action)-------------------*/
    yMODE_exit   ();
    /*---(complete)-----------------------*/
    DEBUG_USER   yLOG_value   ("rc"        , rc);
    DEBUG_USER   yLOG_exit    (__FUNCTION__);
    return rc;
-   return 0;
 }
 
 

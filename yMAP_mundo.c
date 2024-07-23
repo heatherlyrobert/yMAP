@@ -41,6 +41,8 @@ static const tACTS s_acts [] = {
    { YMAP_FORMAT   , "format"       , "change display format"           },
    { YMAP_DECIMALS , "decimals"     , "change display decimal places"   },
    { YMAP_UNITS    , "units"        , "change display units of measure" },
+   /*---(aethetic)-----------------------*/
+   { YMAP_POSITION , "position"     , "forcing position in selections"  },
    /*---(done)---------------------------*/
    { 0             , "end"          , "" },
 };
@@ -860,6 +862,45 @@ yMAP_mundo_recalc       (char a_mode, char *a_label)
       ystrlcat (t, ","    , LEN_RECD);
       ySORT_labels (t);
       myMAP.h_tail->after  = strdup  (t);
+   }
+   /*---(complete)--------------------*/
+   DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rc);
+   return rc;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      simple aethetics                        ----===*/
+/*====================------------------------------------====================*/
+static void  o___AESTHETIC_______o () { return; }
+
+char
+yMAP_mundo_position     (char a_mode, char *a_label)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
+   /*---(late-defense)-------------------*/
+   DEBUG_YMAP  yLOG_char    ("active"    , myMAP.h_active);
+   if (myMAP.h_active != 'y') {
+      DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   if (a_mode      == YMAP_NONE) {
+      DEBUG_YMAP  yLOG_note    ("history is not requested on this action");
+      DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(add record)---------------------*/
+   rc = ymap__mundo_new (a_mode, YMAP_POSITION, a_label, NULL);
+   DEBUG_YMAP  yLOG_value   ("new"       , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YMAP  yLOG_note    ("creating a new mundo failed");
+      DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
    }
    /*---(complete)--------------------*/
    DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rc);
