@@ -5,6 +5,37 @@
 
 
 
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
+
 
 
 
@@ -19,32 +50,35 @@ struct  cACTS{
    char        desc         [LEN_DESC];
 };
 static const tACTS s_acts [] = {
-   /*---(univers changes)----------------*/
-   { YMAP_VOLUME   , "volume"       , "change universe maximum size"    },
-   { YMAP_TITLE    , "title"        , "change universe title/name"      },
-   /*---(object changes)-----------------*/
-   { YMAP_CREATE   , "create"       , "create object and attributes"    },
-   { YMAP_BLANK    , "blank"        , "new/create object"               },
-   { YMAP_DELETE   , "delete"       , "eliminate object"                },
-   { YMAP_WIDTH    , "width"        , "change object/column width"      },
-   { YMAP_HEIGHT   , "height"       , "change object/row height"        },
-   { YMAP_DEPTH    , "depth"        , "change object depth"             },
-   { YMAP_SHAPE    , "shape"        , "change object shape"             },
-   { YMAP_COLOR    , "color"        , "change object coloration"        },
-   { YMAP_SYNC     , "UNDO-SYNC"    , "undoing complex changes"         },
-   { YMAP_RECALC   , "REDO-SYNC"    , "recalc any error cells"          },
-   /*---(content changes)----------------*/
-   { YMAP_OVERWRITE, "overwrite"    , "change contents and formatting"  },
-   { YMAP_CLEAR    , "clear"        , "clear object contents"           },
-   { YMAP_SOURCE   , "source"       , "change content text"             },
-   { YMAP_ALIGN    , "align"        , "change display alignment"        },
-   { YMAP_FORMAT   , "format"       , "change display format"           },
-   { YMAP_DECIMALS , "decimals"     , "change display decimal places"   },
-   { YMAP_UNITS    , "units"        , "change display units of measure" },
-   /*---(aethetic)-----------------------*/
-   { YMAP_POSITION , "position"     , "forcing position in selections"  },
-   /*---(done)---------------------------*/
-   { 0             , "end"          , "" },
+   /*---(univers changes)--------------description---------------------------*/
+   { YMAP_VOLUME   , "volume"       , "change universe maximum size"          },
+   { YMAP_TITLE    , "title"        , "change universe title/name"            },
+   /*---(object changes)---------------description---------------------------*/
+   { YMAP_CREATE   , "create"       , "create object and attributes"          },
+   { YMAP_BLANK    , "blank"        , "new/create object"                     },
+   { YMAP_DELETE   , "delete"       , "eliminate object"                      },
+   { YMAP_WIDTH    , "width"        , "change object/column width"            },
+   { YMAP_HEIGHT   , "height"       , "change object/row height"              },
+   { YMAP_DEPTH    , "depth"        , "change object depth"                   },
+   { YMAP_SHAPE    , "shape"        , "change object shape"                   },
+   { YMAP_COLOR    , "color"        , "change object coloration"              },
+   { YMAP_SYNC     , "UNDO-SYNC"    , "undoing complex changes"               },
+   { YMAP_RECALC   , "REDO-SYNC"    , "recalc any error cells"                },
+   /*---(content changes)--------------description---------------------------*/
+   { YMAP_OVERWRITE, "overwrite"    , "change contents and formatting"        },
+   { YMAP_CLEAR    , "clear"        , "clear object contents"                 },
+   { YMAP_SOURCE   , "source"       , "change content text"                   },
+   { YMAP_ALIGN    , "align"        , "change display alignment"              },
+   { YMAP_FORMAT   , "format"       , "change display format"                 },
+   { YMAP_DECIMALS , "decimals"     , "change display decimal places"         },
+   { YMAP_UNITS    , "units"        , "change display units of measure"       },
+   { YMAP_FILLIN   , "fill"         , "change empty space fill"               },
+   { YMAP_ZEROS    , "zeros"        , "change representation of zeros"        },
+   { YMAP_SIGS     , "sigs"         , "change display significant digits"     },
+   /*---(aethetic)---------------------description---------------------------*/
+   { YMAP_POSITION , "position"     , "forcing position in selections"        },
+   /*---(done)-------------------------description---------------------------*/
+   { 0             , "end"          , ""                                      },
 };
 static int    s_nact =    0;
 
@@ -73,13 +107,31 @@ ymap__mundo_valid_act   (char a_act)
 char
 yMAP_mundo_make_add     (void)
 {
-   if (myMAP.h_tail != NULL)  myMAP.h_tail->mode = YMAP_ADD;
+   if (myMAP.h_tail != NULL)  myMAP.h_tail->h_mode = YMAP_ADD;
    return 0;
 }
 
-int yMAP_mundo_current      (void) { return myMAP.h_index; }
-
-int yMAP_mundo_count        (void) { return myMAP.h_count; }
+char*
+ymap_mundo_action   (char a_mode, char a_act)
+{
+   /*---(locals)-----------+-----------+-*/
+   int         i           = 0;
+   strcpy (myMAP.g_print, "n/a");
+   for (i = 0; i < s_nact; ++i) {
+      if (s_acts [i].act == 0)      break;
+      if (s_acts [i].act != a_act)  continue;
+      switch (a_mode) {
+      case YMAP_BEG :
+         strcpy (myMAP.g_print, s_acts [i].name);
+         break;
+      case YMAP_ADD :
+         sprintf (myMAP.g_print, "´ %s", s_acts [i].name);
+         break;
+      }
+      break;
+   }
+   return myMAP.g_print;
+}
 
 
 
@@ -89,7 +141,7 @@ int yMAP_mundo_count        (void) { return myMAP.h_count; }
 static void  o___MEMORY__________o () { return; }
 
 char
-ymap__mundo_new         (char a_mode, char a_act, char *a_label, tHIST **r_curr)
+ymap__mundo_new         (char a_mode, char a_act, char a_label [LEN_LABEL], tHIST **r_curr)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -146,13 +198,13 @@ ymap__mundo_new         (char a_mode, char a_act, char *a_label, tHIST **r_curr)
    }
    /*---(populate)-----------------------*/
    DEBUG_YMAP   yLOG_note    ("populate");
-   x_new->mode    = a_mode;
-   x_new->act     = a_act;
-   x_new->label   = strdup (a_label);
-   x_new->before  = s_nada;
-   x_new->after   = s_nada;
-   x_new->h_prev  = NULL;
-   x_new->h_next  = NULL;
+   x_new->h_mode    = a_mode;
+   x_new->h_act     = a_act;
+   x_new->h_label   = strdup (a_label);
+   x_new->h_before  = s_nada;
+   x_new->h_after   = s_nada;
+   x_new->h_prev    = NULL;
+   x_new->h_next    = NULL;
    /*---(tie to master list)-------------*/
    if (myMAP.h_head == NULL) {
       DEBUG_YMAP   yLOG_note    ("nothing in list, make first");
@@ -194,12 +246,12 @@ ymap__mundo_free        (tHIST **r_curr)
    DEBUG_YMAP   yLOG_sint    (myMAP.h_count);
    x_curr = *r_curr;
    /*---(free content)-------------------*/
-   if (x_curr->label  != s_nada)   free (x_curr->label);
-   x_curr->label  = NULL;
-   if (x_curr->before != s_nada)   free (x_curr->before);
-   x_curr->before = NULL;
-   if (x_curr->after  != s_nada)   free (x_curr->after);
-   x_curr->after  = NULL;
+   if (x_curr->h_label  != s_nada)   free (x_curr->h_label);
+   x_curr->h_label  = NULL;
+   if (x_curr->h_before != s_nada)   free (x_curr->h_before);
+   x_curr->h_before = NULL;
+   if (x_curr->h_after  != s_nada)   free (x_curr->h_after);
+   x_curr->h_after  = NULL;
    /*---(out of linked list)-------------*/
    if (x_curr->h_next != NULL)   x_curr->h_next->h_prev = x_curr->h_prev;
    else                          myMAP.h_tail           = x_curr->h_prev;
@@ -255,7 +307,7 @@ ymap_mundo_init         (void)
    myMAP.e_mundo  = NULL;
    /*---(check actions)------------------*/
    s_nact  = 0;
-   for (i = 0; i < LEN_LABEL; ++i) {
+   for (i = 0; i < LEN_DESC; ++i) {
       if (s_acts [i].act == 0)  break;
       ++s_nact;
    }
@@ -304,9 +356,9 @@ yMAP_mundo_config       (char a_len, void *a_mundo)
 char
 yMAP_mundo_rollback     (void)
 {
-   ymap__mundo_by_cursor (YDLST_TAIL);
+   ymap_mundo_by_cursor (YDLST_TAIL, NULL, NULL, NULL, NULL, NULL, NULL);
    ymap_mundo_undo ();
-   if (myMAP.h_head != myMAP.h_curr)  ymap__mundo_by_cursor (YDLST_NEXT);
+   if (myMAP.h_head != myMAP.h_curr)  ymap_mundo_by_cursor (YDLST_NEXT, NULL, NULL, NULL, NULL, NULL, NULL);
    ymap__mundo_prune ('-');
    return 0;
 }
@@ -368,64 +420,108 @@ ymap_mundo_wrap         (void)
 /*====================------------------------------------====================*/
 static void  o___SEARCH__________o () { return; }
 
+static tHIST *s_curr    = NULL;
+static int    s_index   =    0;
+
+int yMAP_mundo_current      (void) { return myMAP.h_index; }
+
+int yMAP_mundo_count        (void) { return myMAP.h_count; }
+
 char
-ymap__mundo_by_cursor   (char a_move)
+ymap_mundo_by_cursor    (char a_dir, char *r_mode, char *r_act, char r_label [LEN_LABEL], char r_before [LEN_RECD], char r_after [LEN_RECD], char r_display [LEN_FULL])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
-   char        rc          =    0;
+   tHIST      *x_curr      = NULL;
+   int         x_index     =    0;
+   /*---(default)------------------------*/
+   if (r_mode    != NULL)  *r_mode = '-';
+   if (r_act     != NULL)  *r_act  = '-';
+   if (r_label   != NULL)  strcpy (r_label  , "");
+   if (r_before  != NULL)  strcpy (r_before , "");
+   if (r_after   != NULL)  strcpy (r_after  , "");
+   if (r_display != NULL)  strcpy (r_display, "");
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
-   DEBUG_YMAP   yLOG_char    ("a_move"    , a_move);
-   /*---(defenses)-----------------------*/
-   DEBUG_YMAP   yLOG_point   ("h_head"    , myMAP.h_head);
+   DEBUG_YMAP   yLOG_char    ("a_dir"     , a_dir);
+   /*---(check head)---------------------*/
+   DEBUG_YMAP   yLOG_complex ("head"      , "%3d, %p", myMAP.h_count, myMAP.h_head);
+   /*---(check list)---------------------*/
    --rce;  if (myMAP.h_head == NULL) {
-      myMAP.h_curr  = NULL;
-      myMAP.h_index = -1;
+      if (r_display != NULL)  ystrlcpy (r_display, ymap__mundo_entry (x_index, NULL), LEN_FULL);
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_YMAP   yLOG_point   ("myMAP.h_curr"    , myMAP.h_curr);
-   --rce;  if (myMAP.h_curr == NULL && strchr ("<>", a_move) != NULL) {
-      myMAP.h_index = -1;
+   /*---(check current)------------------*/
+   DEBUG_YMAP   yLOG_complex ("curr"      , "%3d, %p", s_index, s_curr);
+   if (s_curr == NULL) {
+      s_curr  = myMAP.h_head;
+      s_index = 0;
+      DEBUG_YMAP   yLOG_complex ("fixed"     , "%3d, %p", s_index, s_curr);
+   }
+   /*---(prepare)------------------------*/
+   x_curr  = s_curr;
+   x_index = s_index;
+   /*---(move)---------------------------*/
+   --rce;  switch (a_dir) {
+   case YDLST_HEAD  : case YDLST_DHEAD :
+      DEBUG_YMAP   yLOG_note    ("head");
+      x_index = 0;
+      x_curr  = myMAP.h_head;
+      break;
+   case YDLST_PREV  : case YDLST_DPREV :
+      DEBUG_YMAP   yLOG_note    ("prev");
+      --x_index;
+      x_curr  = x_curr->h_prev;
+      break;
+   case YDLST_CURR  : case YDLST_DCURR :
+      DEBUG_YMAP   yLOG_note    ("curr");
+      break;
+   case YDLST_NEXT  : case YDLST_DNEXT :
+      DEBUG_YMAP   yLOG_note    ("next");
+      ++x_index;
+      x_curr  = x_curr->h_next;
+      break;
+   case YDLST_TAIL  : case YDLST_DTAIL :
+      DEBUG_YMAP   yLOG_note    ("tail");
+      x_index = myMAP.h_count - 1;
+      x_curr  = myMAP.h_tail;
+      break;
+   case '*' :
+      if (r_display != NULL)  ystrlcpy (r_display, ymap__mundo_entry (x_index, 0x1), LEN_FULL);
+      DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
+      return 1;
+   default  :
+      DEBUG_YMAP   yLOG_note    ("direction is not legal");
+      if (r_display != NULL)  ystrlcpy (r_display, ymap__mundo_entry (x_index, NULL), LEN_FULL);
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+      break;
+   }
+   /*---(trouble)------------------------*/
+   --rce;  if (x_curr == NULL) {
+      DEBUG_YMAP   yLOG_note    ("moved out-of-bounds, leave in current place");
+      if (r_display != NULL)  ystrlcpy (r_display, ymap__mundo_entry (x_index, NULL), LEN_FULL);
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_YMAP   yLOG_value   ("h_index"   , myMAP.h_index);
-   /*---(handle move)--------------------*/
-   DEBUG_YMAP   yLOG_note    ("check special shortcuts");
-   switch (a_move) {
-   case YDLST_HEAD :
-      myMAP.h_curr  = myMAP.h_head;
-      myMAP.h_index = 0;
-      break;
-   case YDLST_PREV :
-      myMAP.h_curr  = myMAP.h_curr->h_prev;
-      --myMAP.h_index;
-      break;
-   case YDLST_NEXT :
-      myMAP.h_curr  = myMAP.h_curr->h_next;
-      ++myMAP.h_index;
-      break;
-   case YDLST_TAIL :
-      myMAP.h_curr  = myMAP.h_tail;
-      myMAP.h_index = myMAP.h_count - 1;
-      break;
-   }
-   /*---(safeties)-----------------------*/
-   DEBUG_YMAP   yLOG_point   ("h_curr"    , myMAP.h_curr);
-   --rce;  if (myMAP.h_curr == NULL) {
-      myMAP.h_index = -1;
-      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(output)-------------------------*/
-   DEBUG_YMAP   yLOG_point   ("h_curr"    , myMAP.h_curr);
-   DEBUG_YMAP   yLOG_value   ("h_index"   , myMAP.h_index);
+   /*---(lock-in)------------------------*/
+   s_curr  = x_curr;
+   s_index = x_index;
+   DEBUG_YMAP   yLOG_complex ("curr"      , "%3d, %p", s_index, s_curr);
+   /*---(save-back)----------------------*/
+   if (r_mode    != NULL)  *r_mode = x_curr->h_mode;
+   if (r_act     != NULL)  *r_act  = x_curr->h_act;
+   if (r_label   != NULL)  strcpy (r_label , x_curr->h_label);
+   if (r_before  != NULL)  strcpy (r_before, x_curr->h_before);
+   if (r_after   != NULL)  strcpy (r_after , x_curr->h_after);
+   if (r_display != NULL)  ystrlcpy (r_display, ymap__mundo_entry (x_index, x_curr), LEN_FULL);
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
-   return 0;
+   return 1;
 }
+
+char* ymap_mundo_unit_cursor  (char a_dir) { ymap_mundo_by_cursor (a_dir, NULL, NULL, NULL, NULL, NULL, myMAP.g_print); return myMAP.g_print; }
 
 char
 ymap__mundo_by_index    (int n)
@@ -460,28 +556,6 @@ ymap__mundo_by_index    (int n)
    return 0;
 }
 
-char*
-ymap_mundo_action   (char a_mode, char a_act)
-{
-   /*---(locals)-----------+-----------+-*/
-   int         i           = 0;
-   strcpy (myMAP.g_print, "n/a");
-   for (i = 0; i < s_nact; ++i) {
-      if (s_acts [i].act == 0)      break;
-      if (s_acts [i].act != a_act)  continue;
-      switch (a_mode) {
-      case YMAP_BEG :
-         strcpy (myMAP.g_print, s_acts [i].name);
-         break;
-      case YMAP_ADD :
-         sprintf (myMAP.g_print, "´ %s", s_acts [i].name);
-         break;
-      }
-      break;
-   }
-   return myMAP.g_print;
-}
-
 
 /*====================------------------------------------====================*/
 /*===----                     simple character adds                    ----===*/
@@ -489,7 +563,7 @@ ymap_mundo_action   (char a_mode, char a_act)
 static void  o___SIMPLE__________o () { return; }
 
 char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.204.!]-*/ /*-[--.---.---.--]-*/
-ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char *a_label, char a_before, char a_after)
+ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char a_label [LEN_LABEL], char a_before, char a_after)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -523,10 +597,8 @@ ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char *a_label, c
    DEBUG_YMAP  yLOG_complex ("locator"   , "%4du, %4dx, %4dy, %4zx", u, x, y, z);
    /*---(mark changes)-------------------*/
    --rce;  switch (a_act) {
-   case YMAP_ALIGN    :
-   case YMAP_FORMAT   :
-   case YMAP_DECIMALS :
-   case YMAP_UNITS    :
+   case YMAP_ALIGN    : case YMAP_FORMAT   : case YMAP_DECIMALS : case YMAP_UNITS    :
+   case YMAP_FILLIN   : case YMAP_ZEROS    : case YMAP_SIGS     :
       break;
    default :
       DEBUG_YMAP  yLOG_note    ("action not known");
@@ -556,9 +628,9 @@ ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char *a_label, c
    /*---(add detail)------------------*/
    if (rc >= 0) {
       sprintf (s, "%c", a_before);
-      x_curr->before = strdup  (s);
+      x_curr->h_before = strdup  (s);
       sprintf (s, "%c", a_after );
-      x_curr->after  = strdup  (s);
+      x_curr->h_after  = strdup  (s);
    }
    /*---(complete)--------------------*/
    DEBUG_YMAP  yLOG_exitr   (a_func, rc);
@@ -566,28 +638,47 @@ ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char *a_label, c
 }
 
 char
-yMAP_mundo_align        (char a_mode, char *a_label, char a_before, char a_after)
+yMAP_mundo_align        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
 {
    return ymap__mundo_chars   (__FUNCTION__, a_mode, YMAP_ALIGN    , a_label, a_before, a_after);
 }
 
 char
-yMAP_mundo_format       (char a_mode, char *a_label, char a_before, char a_after)
+yMAP_mundo_format       (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
 {
    return ymap__mundo_chars   (__FUNCTION__, a_mode, YMAP_FORMAT   , a_label, a_before, a_after);
 }
 
 char
-yMAP_mundo_decimals     (char a_mode, char *a_label, char a_before, char a_after)
+yMAP_mundo_decimals     (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
 {
    return ymap__mundo_chars   (__FUNCTION__, a_mode, YMAP_DECIMALS , a_label, a_before, a_after);
 }
 
 char
-yMAP_mundo_units        (char a_mode, char *a_label, char a_before, char a_after)
+yMAP_mundo_units        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
 {
    return ymap__mundo_chars   (__FUNCTION__, a_mode, YMAP_UNITS    , a_label, a_before, a_after);
 }
+
+char
+yMAP_mundo_fillin       (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
+{
+   return ymap__mundo_chars   (__FUNCTION__, a_mode, YMAP_FILLIN   , a_label, a_before, a_after);
+}
+
+char
+yMAP_mundo_zeros        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
+{
+   return ymap__mundo_chars   (__FUNCTION__, a_mode, YMAP_ZEROS    , a_label, a_before, a_after);
+}
+
+char
+yMAP_mundo_sigs         (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
+{
+   return ymap__mundo_chars   (__FUNCTION__, a_mode, YMAP_SIGS     , a_label, a_before, a_after);
+}
+
 
 
 
@@ -597,7 +688,7 @@ yMAP_mundo_units        (char a_mode, char *a_label, char a_before, char a_after
 static void  o___NUMBER__________o () { return; }
 
 char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.204.!]-*/ /*-[--.---.---.--]-*/
-ymap__mundo_ints        (char *a_func, char a_mode, char a_act, char *a_label, char a_before, char a_after)
+ymap__mundo_ints        (char *a_func, char a_mode, char a_act, char a_label [LEN_LABEL], char a_before, char a_after)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -669,9 +760,9 @@ ymap__mundo_ints        (char *a_func, char a_mode, char a_act, char *a_label, c
    /*---(add detail)------------------*/
    if (rc >= 0) {
       sprintf (s, "%d", a_before);
-      x_curr->before = strdup  (s);
+      x_curr->h_before = strdup  (s);
       sprintf (s, "%d", a_after );
-      x_curr->after  = strdup  (s);
+      x_curr->h_after  = strdup  (s);
    }
    /*---(complete)--------------------*/
    DEBUG_YMAP  yLOG_exitr   (a_func, rc);
@@ -679,19 +770,19 @@ ymap__mundo_ints        (char *a_func, char a_mode, char a_act, char *a_label, c
 }
 
 char
-yMAP_mundo_width        (char a_mode, char *a_label, char a_before, char a_after)
+yMAP_mundo_width        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
 {
    return ymap__mundo_ints    (__FUNCTION__, a_mode, YMAP_WIDTH    , a_label, a_before, a_after);
 }
 
 char
-yMAP_mundo_height       (char a_mode, char *a_label, char a_before, char a_after)
+yMAP_mundo_height       (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
 {
    return ymap__mundo_ints    (__FUNCTION__, a_mode, YMAP_HEIGHT   , a_label, a_before, a_after);
 }
 
 char
-yMAP_mundo_depth        (char a_mode, char *a_label, char a_before, char a_after)
+yMAP_mundo_depth        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after)
 {
    return ymap__mundo_ints    (__FUNCTION__, a_mode, YMAP_DEPTH    , a_label, a_before, a_after);
 }
@@ -704,7 +795,7 @@ yMAP_mundo_depth        (char a_mode, char *a_label, char a_before, char a_after
 static void  o___STRING__________o () { return; }
 
 char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.204.!]-*/ /*-[--.---.---.--]-*/
-ymap__mundo_string      (char *a_func, char a_mode, char a_act, char *a_label, char *a_before, char *a_after)
+ymap__mundo_string      (char *a_func, char a_mode, char a_act, char a_label [LEN_LABEL], char *a_before, char *a_after)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -770,8 +861,8 @@ ymap__mundo_string      (char *a_func, char a_mode, char a_act, char *a_label, c
    }
    /*---(add detail)------------------*/
    if (rc >= 0) {
-      x_curr->before = strdup  (b);
-      x_curr->after  = strdup  (a);
+      x_curr->h_before = strdup  (b);
+      x_curr->h_after  = strdup  (a);
    }
    /*---(complete)--------------------*/
    DEBUG_YMAP  yLOG_exitr   (a_func, rc);
@@ -779,7 +870,7 @@ ymap__mundo_string      (char *a_func, char a_mode, char a_act, char *a_label, c
 }
 
 char
-yMAP_mundo_source       (char a_mode, char *a_label, char *a_before, char *a_after)
+yMAP_mundo_source       (char a_mode, char a_label [LEN_LABEL], char *a_before, char *a_after)
 {
    char        rc          =    0;
    ushort      x, y, z;
@@ -790,13 +881,13 @@ yMAP_mundo_source       (char a_mode, char *a_label, char *a_before, char *a_aft
 }
 
 char
-yMAP_mundo_volume       (char a_mode, char *a_label, char *a_before, char *a_after)
+yMAP_mundo_volume       (char a_mode, char a_label [LEN_LABEL], char *a_before, char *a_after)
 {
    return ymap__mundo_string  (__FUNCTION__, a_mode, YMAP_VOLUME   , a_label, a_before, a_after);
 }
 
 char
-yMAP_mundo_title        (char a_mode, char *a_label, char *a_before, char *a_after)
+yMAP_mundo_title        (char a_mode, char a_label [LEN_LABEL], char *a_before, char *a_after)
 {
    return ymap__mundo_string  (__FUNCTION__, a_mode, YMAP_TITLE    , a_label, a_before, a_after);
 }
@@ -808,7 +899,7 @@ yMAP_mundo_sync         (char a_mode, char *a_reqs, char *a_pros)
 }
 
 char
-yMAP_mundo_recalc       (char a_mode, char *a_label)
+yMAP_mundo_recalc       (char a_mode, char a_label [LEN_LABEL])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -843,7 +934,7 @@ yMAP_mundo_recalc       (char a_mode, char *a_label)
       return 0;
    }
    /*---(add record)---------------------*/
-   --rce;  if (myMAP.h_tail->act != YMAP_RECALC) {
+   --rce;  if (myMAP.h_tail->h_act != YMAP_RECALC) {
       DEBUG_YMAP  yLOG_note    ("brand new recalc");
       rc = ymap__mundo_new (a_mode, YMAP_RECALC, "n/a", &x_curr);
       DEBUG_YMAP  yLOG_value   ("new"       , rc);
@@ -853,15 +944,15 @@ yMAP_mundo_recalc       (char a_mode, char *a_label)
          return rce;
       }
       sprintf (t, ",%s,", a_label);
-      myMAP.h_tail->after  = strdup  (t);
+      myMAP.h_tail->h_after  = strdup  (t);
    } else {
       DEBUG_YMAP  yLOG_note    ("appending to recalc on tail");
-      ystrlcpy (t, myMAP.h_tail->after , LEN_RECD);
-      free (myMAP.h_tail->after );
+      ystrlcpy (t, myMAP.h_tail->h_after , LEN_RECD);
+      free (myMAP.h_tail->h_after );
       ystrlcat (t, a_label, LEN_RECD);
       ystrlcat (t, ","    , LEN_RECD);
       ySORT_labels (t);
-      myMAP.h_tail->after  = strdup  (t);
+      myMAP.h_tail->h_after  = strdup  (t);
    }
    /*---(complete)--------------------*/
    DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rc);
@@ -876,7 +967,7 @@ yMAP_mundo_recalc       (char a_mode, char *a_label)
 static void  o___AESTHETIC_______o () { return; }
 
 char
-yMAP_mundo_position     (char a_mode, char *a_label)
+yMAP_mundo_position     (char a_mode, char a_label [LEN_LABEL])
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -953,7 +1044,7 @@ ymap__mundo_concat      (char *a_format, char *a_content, char **a_final)
 }
 
 char         /*-> record a cell change ---------------[ leaf   [gz.520.101.00]*/ /*-[01.0000.204.!]-*/ /*-[--.---.---.--]-*/
-ymap__mundo_complex     (char *a_func, char a_mode, char a_act, char *a_label, char* a_beforeF, char* a_before, char* a_afterF, char* a_after)
+ymap__mundo_complex     (char *a_func, char a_mode, char a_act, char a_label [LEN_LABEL], char* a_beforeF, char* a_before, char* a_afterF, char* a_after)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -1027,8 +1118,8 @@ ymap__mundo_complex     (char *a_func, char a_mode, char a_act, char *a_label, c
    }
    /*---(add detail)------------------*/
    if (rc >= 0) {
-      x_curr->before = b;
-      x_curr->after  = a;
+      x_curr->h_before = b;
+      x_curr->h_after  = a;
    }
    /*---(complete)--------------------*/
    DEBUG_YMAP  yLOG_exitr   (a_func, rc);
@@ -1036,13 +1127,13 @@ ymap__mundo_complex     (char *a_func, char a_mode, char a_act, char *a_label, c
 }
 
 char
-yMAP_mundo_overwrite    (char a_mode, char *a_label, char* a_beforeF, char* a_before, char* a_afterF, char* a_after)
+yMAP_mundo_overwrite    (char a_mode, char a_label [LEN_LABEL], char* a_beforeF, char* a_before, char* a_afterF, char* a_after)
 {
    return ymap__mundo_complex (__FUNCTION__, a_mode, YMAP_OVERWRITE, a_label, a_beforeF, a_before, a_afterF, a_after);
 }
 
 char
-yMAP_mundo_clear        (char a_mode, char *a_label, char* a_beforeF, char* a_before, char *a_afterF)
+yMAP_mundo_clear        (char a_mode, char a_label [LEN_LABEL], char* a_beforeF, char* a_before, char *a_afterF)
 {
    char        x_exec      =    0;
    if (a_before != NULL && a_before [0] != '\0')   x_exec = 1;
@@ -1052,7 +1143,7 @@ yMAP_mundo_clear        (char a_mode, char *a_label, char* a_beforeF, char* a_be
 }
 
 char
-yMAP_mundo_delete       (char a_mode, char *a_label, char* a_beforeF, char* a_before)
+yMAP_mundo_delete       (char a_mode, char a_label [LEN_LABEL], char* a_beforeF, char* a_before)
 {
    return ymap__mundo_complex (__FUNCTION__, a_mode, YMAP_DELETE   , a_label, a_beforeF, a_before, NULL, NULL);
 }
@@ -1110,10 +1201,10 @@ ymap__mundo_undo_one    (void)
    /*---(header)-------------------------*/
    DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(identify location)--------------*/
-   DEBUG_YMAP  yLOG_info    ("label"     , myMAP.h_curr->label);
-   if (strcmp (myMAP.h_curr->label, "n/a") != 0) {
+   DEBUG_YMAP  yLOG_info    ("label"     , myMAP.h_curr->h_label);
+   if (strcmp (myMAP.h_curr->h_label, "n/a") != 0) {
       /*---(parse location)--------------*/
-      rc = ymap_locator (myMAP.h_curr->label, &u, &x, &y, &z);
+      rc = ymap_locator (myMAP.h_curr->h_label, &u, &x, &y, &z);
       DEBUG_YMAP  yLOG_value   ("locator"     , rc);
       --rce;  if (rc < 0) {
          DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
@@ -1129,14 +1220,14 @@ ymap__mundo_undo_one    (void)
       }
    }
    /*---(parse data)---------------------*/
-   ymap__mundo_parse (myMAP.h_curr->act, myMAP.h_curr->before, x_format, x_content);
+   ymap__mundo_parse (myMAP.h_curr->h_act, myMAP.h_curr->h_before, x_format, x_content);
    /*---(handle request)-----------------*/
    DEBUG_YMAP  yLOG_point   ("e_mundo"     , myMAP.e_mundo);
    --rce;  if (myMAP.e_mundo == NULL) {
       DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   rc = myMAP.e_mundo ('<', myMAP.h_curr->act, myMAP.h_curr->label, x_format, x_content);
+   rc = myMAP.e_mundo ('<', myMAP.h_curr->h_act, myMAP.h_curr->h_label, x_format, x_content);
    DEBUG_YMAP  yLOG_value   ("undo"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
@@ -1182,7 +1273,7 @@ ymap_mundo_undo         (void)
    /*---(process)------------------------*/
    while (rc == 0) {
       /*---(save mode)-------------------*/
-      x_mode = myMAP.h_curr->mode;
+      x_mode = myMAP.h_curr->h_mode;
       DEBUG_YMAP  yLOG_char    ("curr mode" , x_mode);
       /*---(process current)-------------*/
       rc = ymap__mundo_undo_one ();
@@ -1193,7 +1284,7 @@ ymap_mundo_undo         (void)
          return rc;
       }
       /*---(update position)-------------*/
-      rc = ymap__mundo_by_cursor (YDLST_PREV);
+      rc = ymap_mundo_by_cursor (YDLST_PREV, NULL, NULL, NULL, NULL, NULL, NULL);
       /*---(check for breakpoint)--------*/
       if (x_mode == YMAP_BEG) {
          DEBUG_YMAP  yLOG_note    ("hit start of undo chain, done");
@@ -1222,10 +1313,10 @@ ymap__mundo_redo_one    (void)
    /*---(header)-------------------------*/
    DEBUG_YMAP  yLOG_enter   (__FUNCTION__);
    /*---(identify location)--------------*/
-   DEBUG_YMAP  yLOG_info    ("label"     , myMAP.h_curr->label);
-   if (strcmp (myMAP.h_curr->label, "n/a") != 0) {
+   DEBUG_YMAP  yLOG_info    ("label"     , myMAP.h_curr->h_label);
+   if (strcmp (myMAP.h_curr->h_label, "n/a") != 0) {
       /*---(parse location)--------------*/
-      rc = ymap_locator (myMAP.h_curr->label, &u, &x, &y, &z);
+      rc = ymap_locator (myMAP.h_curr->h_label, &u, &x, &y, &z);
       DEBUG_YMAP  yLOG_value   ("locator"     , rc);
       --rce;  if (rc < 0) {
          DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
@@ -1241,14 +1332,14 @@ ymap__mundo_redo_one    (void)
       }
    }
    /*---(parse data)---------------------*/
-   ymap__mundo_parse (myMAP.h_curr->act, myMAP.h_curr->after, x_format, x_content);
+   ymap__mundo_parse (myMAP.h_curr->h_act, myMAP.h_curr->h_after, x_format, x_content);
    /*---(handle request)-----------------*/
    DEBUG_YMAP  yLOG_point   ("e_mundo"     , myMAP.e_mundo);
    --rce;  if (myMAP.e_mundo == NULL) {
       DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   rc = myMAP.e_mundo ('>', myMAP.h_curr->act, myMAP.h_curr->label, x_format, x_content);
+   rc = myMAP.e_mundo ('>', myMAP.h_curr->h_act, myMAP.h_curr->h_label, x_format, x_content);
    DEBUG_YMAP  yLOG_value   ("undo"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_YMAP  yLOG_exitr   (__FUNCTION__, rce);
@@ -1283,9 +1374,9 @@ ymap_mundo_redo        (void)
    }
    /*---(prepare)------------------------*/
    myMAP.h_active = '-';
-   if      (myMAP.h_curr  == NULL)  ymap__mundo_by_cursor (YDLST_HEAD);
-   else if (myMAP.h_index == -1)    ymap__mundo_by_cursor (YDLST_HEAD);
-   else                             ymap__mundo_by_cursor (YDLST_NEXT);
+   if      (myMAP.h_curr  == NULL)  ymap_mundo_by_cursor (YDLST_HEAD, NULL, NULL, NULL, NULL, NULL, NULL);
+   else if (myMAP.h_index == -1)    ymap_mundo_by_cursor (YDLST_HEAD, NULL, NULL, NULL, NULL, NULL, NULL);
+   else                             ymap_mundo_by_cursor (YDLST_NEXT, NULL, NULL, NULL, NULL, NULL, NULL);
    /*---(process)------------------------*/
    while (rc == 0) {
       /*---(process current)-------------*/
@@ -1299,22 +1390,139 @@ ymap_mundo_redo        (void)
       DEBUG_YMAP  yLOG_value   ("h_index"     , myMAP.h_index);
       if (myMAP.h_curr == NULL) {
          DEBUG_YMAP  yLOG_note    ("hit end of of history, done");
-         ymap__mundo_by_cursor (YDLST_TAIL);
+         ymap_mundo_by_cursor (YDLST_TAIL, NULL, NULL, NULL, NULL, NULL, NULL);
          myMAP.h_index = myMAP.h_count - 1;
          break;
       }
       /*---(check for breakpoint)--------*/
-      if (myMAP.h_curr->h_next == NULL || myMAP.h_curr->h_next->mode == YMAP_BEG) {
+      if (myMAP.h_curr->h_next == NULL || myMAP.h_curr->h_next->h_mode == YMAP_BEG) {
          DEBUG_YMAP  yLOG_note    ("hit end of undo chain, done");
          break;
       }
       /*---(next)------------------------*/
-      rc = ymap__mundo_by_cursor (YDLST_NEXT);
+      rc = ymap_mundo_by_cursor (YDLST_NEXT, NULL, NULL, NULL, NULL, NULL, NULL);
    }
    /*---(reset)--------------------------*/
    myMAP.h_active = 'y';
    /*---(complete)-----------------------*/
    DEBUG_YMAP  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char*
+ymap__mundo_entry       (int n, tHIST *a_hist)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         c           =    0;
+   tHIST      *x_curr      = NULL;
+   char       *x_null      = "-·· -··  - - - -···········  -······  ··- -·············································  ··- -·············································  Ï";
+   char       *x_title     = "tot seq  k m a desc········  address  len before········································  len after·········································  Ï";
+   char        x_mark      =  '·';
+   char        x_desc      [LEN_LABEL] = "";
+   char        x_before    [LEN_HUND]  = "";
+   char        x_after     [LEN_HUND]  = "";
+   /*---(defense)------------------------*/
+   if (a_hist == NULL)  return x_null;
+   if (a_hist == 0x1 )  return x_title;
+   /*---(prepare)------------------------*/
+   if (a_hist == myMAP.h_tail)  x_mark = '>';
+   strlcpy (x_desc, ymap_mundo_action (a_hist->h_mode, a_hist->h_act), LEN_LABEL);
+   sprintf (x_before, "%3då%-.45s", strlen (a_hist->h_before), a_hist->h_before);
+   if (strlen (a_hist->h_before) > 45)  strlcat (x_before, ">", LEN_HUND);
+   else                                 strlcat (x_before, "æ", LEN_HUND);
+   sprintf (x_after , "%3då%-.45s", strlen (a_hist->h_after ), a_hist->h_after );
+   if (strlen (a_hist->h_after ) > 45)  strlcat (x_after , ">", LEN_HUND);
+   else                                 strlcat (x_after , "æ", LEN_HUND);
+   /*---(create)-------------------------*/
+   sprintf (myMAP.g_print, "%-3d %-3d  %c %c %c %-12.12s  %-7.7s  %-50.50s  %-50.50s  Ï", myMAP.h_count, n,
+         x_mark, a_hist->h_mode, a_hist->h_act, x_desc, a_hist->h_label, x_before, x_after);
+   /*---(complete)-----------------------*/
+   return myMAP.g_print;
+}
+
+char*
+yMAP_mundo_detail       (int n)
+{
+   int         c           =    0;
+   tHIST      *x_curr      = NULL;
+   char        s           [LEN_HUND]  = "";
+   char        t           [LEN_HUND]  = "";
+   char        r           [LEN_LABEL] = "";
+   if      (n == -1)  n  = myMAP.h_index;
+   else if (n <  0)   return "n/a";
+   x_curr = myMAP.h_head;
+   while (x_curr != NULL) {
+      if (c == n) {
+         sprintf (s, "%2då%-.30sæ", strlen (x_curr->h_before), x_curr->h_before);
+         sprintf (t, "%2då%-.30sæ", strlen (x_curr->h_after ), x_curr->h_after );
+         ystrlcpy (r, ymap_mundo_action (x_curr->h_mode, x_curr->h_act), LEN_LABEL);
+         sprintf (myMAP.g_print, "%-4d %c %-4d %c %c %-12.12s %-7.7s %-34.34s  %s",
+               myMAP.h_count, (myMAP.h_index == c) ? '>' : '·', c,
+               x_curr->h_mode, x_curr->h_act, r, x_curr->h_label, s, t);
+         return myMAP.g_print;
+      }
+      x_curr = x_curr->h_next;
+      ++c;
+   }
+   return "n/a";
+}
+
+char
+ymap_mundo_by_cursor_OLD   (char a_move)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMAP   yLOG_char    ("a_move"    , a_move);
+   /*---(defenses)-----------------------*/
+   DEBUG_YMAP   yLOG_point   ("h_head"    , myMAP.h_head);
+   --rce;  if (myMAP.h_head == NULL) {
+      myMAP.h_curr  = NULL;
+      myMAP.h_index = -1;
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_YMAP   yLOG_point   ("myMAP.h_curr"    , myMAP.h_curr);
+   --rce;  if (myMAP.h_curr == NULL && strchr ("<>", a_move) != NULL) {
+      myMAP.h_index = -1;
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_YMAP   yLOG_value   ("h_index"   , myMAP.h_index);
+   /*---(handle move)--------------------*/
+   DEBUG_YMAP   yLOG_note    ("check special shortcuts");
+   switch (a_move) {
+   case YDLST_HEAD :
+      myMAP.h_curr  = myMAP.h_head;
+      myMAP.h_index = 0;
+      break;
+   case YDLST_PREV :
+      myMAP.h_curr  = myMAP.h_curr->h_prev;
+      --myMAP.h_index;
+      break;
+   case YDLST_NEXT :
+      myMAP.h_curr  = myMAP.h_curr->h_next;
+      ++myMAP.h_index;
+      break;
+   case YDLST_TAIL :
+      myMAP.h_curr  = myMAP.h_tail;
+      myMAP.h_index = myMAP.h_count - 1;
+      break;
+   }
+   /*---(safeties)-----------------------*/
+   DEBUG_YMAP   yLOG_point   ("h_curr"    , myMAP.h_curr);
+   --rce;  if (myMAP.h_curr == NULL) {
+      myMAP.h_index = -1;
+      DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(output)-------------------------*/
+   DEBUG_YMAP   yLOG_point   ("h_curr"    , myMAP.h_curr);
+   DEBUG_YMAP   yLOG_value   ("h_index"   , myMAP.h_index);
+   /*---(complete)-----------------------*/
+   DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

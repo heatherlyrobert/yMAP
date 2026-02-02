@@ -4,6 +4,37 @@
 #include    "yMAP_priv.h"
 
 
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
 /*> if      (strcmp (a_question, "pos"            )   == 0) {                                                                                               <* 
  *>    rc = ymap_pick_map (a_index, &x_map, NULL);                                                                                                          <* 
  *>    if (rc < 0)  snprintf (unit_answer, LEN_FULL, "MAP pos      (·) : L  ·i  §  U    ·a    ·b    ·c    ·e    ·t    ·l    ·x  §  G    ·b    ·c    ·e");   <* 
@@ -218,32 +249,32 @@ ymap_visu_dump          (FILE *f)
 /*====================------------------------------------====================*/
 static void  o___MUNDO___________o () { return; }
 
-char*
-yMAP_mundo_detail       (int n)
-{
-   int         c           =    0;
-   tHIST      *x_curr      = NULL;
-   char        s           [LEN_HUND]  = "";
-   char        t           [LEN_HUND]  = "";
-   char        r           [LEN_LABEL] = "";
-   if      (n == -1)  n  = myMAP.h_index;
-   else if (n <  0)   return "n/a";
-   x_curr = myMAP.h_head;
-   while (x_curr != NULL) {
-      if (c == n) {
-         sprintf (s, "%2då%-.30sæ", strlen (x_curr->before), x_curr->before);
-         sprintf (t, "%2då%-.30sæ", strlen (x_curr->after ), x_curr->after );
-         ystrlcpy (r, ymap_mundo_action (x_curr->mode, x_curr->act), LEN_LABEL);
-         sprintf (myMAP.g_print, "%-4d %c %-4d %c %c %-12.12s %-7.7s %-34.34s  %s",
-               myMAP.h_count, (myMAP.h_index == c) ? '>' : '·', c,
-               x_curr->mode, x_curr->act, r, x_curr->label, s, t);
-         return myMAP.g_print;
-      }
-      x_curr = x_curr->h_next;
-      ++c;
-   }
-   return "n/a";
-}
+/*> char*                                                                                  <* 
+ *> yMAP_mundo_detail       (int n)                                                        <* 
+ *> {                                                                                      <* 
+ *>    int         c           =    0;                                                     <* 
+ *>    tHIST      *x_curr      = NULL;                                                     <* 
+ *>    char        s           [LEN_HUND]  = "";                                           <* 
+ *>    char        t           [LEN_HUND]  = "";                                           <* 
+ *>    char        r           [LEN_LABEL] = "";                                           <* 
+ *>    if      (n == -1)  n  = myMAP.h_index;                                              <* 
+ *>    else if (n <  0)   return "n/a";                                                    <* 
+ *>    x_curr = myMAP.h_head;                                                              <* 
+ *>    while (x_curr != NULL) {                                                            <* 
+ *>       if (c == n) {                                                                    <* 
+ *>          sprintf (s, "%2då%-.30sæ", strlen (x_curr->h_before), x_curr->h_before);      <* 
+ *>          sprintf (t, "%2då%-.30sæ", strlen (x_curr->h_after ), x_curr->h_after );      <* 
+ *>          ystrlcpy (r, ymap_mundo_action (x_curr->h_mode, x_curr->h_act), LEN_LABEL);   <* 
+ *>          sprintf (myMAP.g_print, "%-4d %c %-4d %c %c %-12.12s %-7.7s %-34.34s  %s",    <* 
+ *>                myMAP.h_count, (myMAP.h_index == c) ? '>' : '·', c,                     <* 
+ *>                x_curr->h_mode, x_curr->h_act, r, x_curr->h_label, s, t);               <* 
+ *>          return myMAP.g_print;                                                         <* 
+ *>       }                                                                                <* 
+ *>       x_curr = x_curr->h_next;                                                         <* 
+ *>       ++c;                                                                             <* 
+ *>    }                                                                                   <* 
+ *>    return "n/a";                                                                       <* 
+ *> }                                                                                      <*/
 
 char         /*-> list history -----------------------[ leaf   [ge.740.042.20]*/ /*-[03.0000.103.!]-*/ /*-[--.---.---.--]-*/
 ymap_mundo_dump         (FILE *f)
@@ -262,8 +293,8 @@ ymap_mundo_dump         (FILE *f)
       if (c % 5 == 0)  fprintf (f, "\n#tot c ref- m a ---action--- -label- § ---before----------------------------------------- § ---after------------------------------------------ §\n");
       fprintf (f, "%-4d %c %-4d %c %c %-12.12s %-7.7s § %-50s § %-50s §\n",
             myMAP.h_count, (myMAP.h_index == c) ? '>' : '·', c,
-            x_curr->mode, x_curr->act, ymap_mundo_action (x_curr->mode, x_curr->act),
-            x_curr->label, x_curr->before, x_curr->after);
+            x_curr->h_mode, x_curr->h_act, ymap_mundo_action (x_curr->h_mode, x_curr->h_act),
+            x_curr->h_label, x_curr->h_before, x_curr->h_after);
       ++c;
       x_curr = x_curr->h_next;
    }

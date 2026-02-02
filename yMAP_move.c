@@ -5,6 +5,37 @@
 
 
 
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
+
 /*====================------------------------------------====================*/
 /*===----                     movement translations                    ----===*/
 /*====================------------------------------------====================*/
@@ -224,7 +255,7 @@ ymap_set_by_grid        (tyMAP *a_map, ushort b, ushort c, ushort e)
          DEBUG_YMAP   yLOG_sint    (b);
       }
       a_map->gbeg = b;
-      a_map->ubeg = a_map->grid [b].unit;
+      a_map->ubeg = a_map->grid [b].g_unit;
       DEBUG_YMAP   yLOG_sint    (a_map->ubeg);
    } else {
       DEBUG_YMAP   yLOG_snote   ("ignore beg");
@@ -240,7 +271,7 @@ ymap_set_by_grid        (tyMAP *a_map, ushort b, ushort c, ushort e)
          DEBUG_YMAP   yLOG_sint    (c);
       }
       a_map->gcur = c;
-      a_map->ucur = a_map->grid [c].unit;
+      a_map->ucur = a_map->grid [c].g_unit;
       DEBUG_YMAP   yLOG_sint    (a_map->ucur);
    } else {
       DEBUG_YMAP   yLOG_snote   ("ignore cur");
@@ -256,7 +287,7 @@ ymap_set_by_grid        (tyMAP *a_map, ushort b, ushort c, ushort e)
          DEBUG_YMAP   yLOG_sint    (e);
       }
       a_map->gend = e;
-      a_map->uend = a_map->grid [e].unit;
+      a_map->uend = a_map->grid [e].g_unit;
       DEBUG_YMAP   yLOG_sint    (a_map->uend);
    } else {
       DEBUG_YMAP   yLOG_snote   ("ignore end");
@@ -474,7 +505,7 @@ ymap_grid_dest        (tyMAP *a_map, ushort a_grid)
    if (a_grid < a_map->gmin)    a_grid = a_map->gmin;
    if (a_grid > a_map->gmax)    a_grid = a_map->gmax;
    /*---(set current)--------------------*/
-   ymap_set_by_unit (a_map, a_map->grid [a_grid].unit);
+   ymap_set_by_unit (a_map, a_map->grid [a_grid].g_unit);
    DEBUG_YMAP   yLOG_sexit   (__FUNCTION__);
    /*---(post-work)---------------------*/
    ymap_change (a_map->axis, YMAP_POS);
@@ -741,8 +772,8 @@ ymap_scroll             (tyMAP *a_map, uchar a_minor)
    ymap_office  (a_map->axis, &a_minor);
    DEBUG_YMAP   yLOG_char    ("a_minor"   , a_minor);
    /*---(distances)----------------------*/
-   x_wid  = a_map->grid [a_map->gcur].wide;
-   DEBUG_YMAP   yLOG_complex ("char"      , "%3dc, %3du, %3dw", a_map->gcur, a_map->grid [a_map->gcur].unit, x_wid);
+   x_wid  = a_map->grid [a_map->gcur].g_wide;
+   DEBUG_YMAP   yLOG_complex ("char"      , "%3dc, %3du, %3dw", a_map->gcur, a_map->grid [a_map->gcur].g_unit, x_wid);
    ymap__partition (a_map, &x_ful, &x_beg, &x_qtr, &x_haf, &x_thr, &x_end, &x_pos);
    /*---(handle)-------------------------*/
    --rce;  switch (a_minor) {

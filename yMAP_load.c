@@ -5,6 +5,37 @@
 
 
 
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
+
 #define     YMAP_VALID     "°Ï´·<>|"
 #define     YMAP_LIMITS    "<>|"
 #define     YMAP_REAL      "°Ï´"
@@ -85,10 +116,10 @@ ymap_grid_clear         (tGRID *a_grid, ushort a_len)
    int         i           =    0;
    if (a_grid == NULL)  return -1;
    for (i = 0; i < a_len; ++i) {
-      a_grid [i].ref  = YMAP_EMPTY;
-      a_grid [i].wide = 0;
-      a_grid [i].used = YMAP_NADA;
-      a_grid [i].unit = 0;
+      a_grid [i].g_ref  = YMAP_EMPTY;
+      a_grid [i].g_wide = 0;
+      a_grid [i].g_used = YMAP_NADA;
+      a_grid [i].g_unit = 0;
    }
    return 0;
 }
@@ -358,7 +389,7 @@ yMAP_size               (uchar a_axis, ushort a_len)
    /*---(show)---------------------------*/
    DEBUG_YMAP    yLOG_value   ("glen"      , x_map->glen);
    /*> for (i = 0; i < x_map->glen; ++i) {                                                                                  <* 
-    *>    DEBUG_YMAP   yLOG_complex ("auditing"  , "%3d, %6d, %2d, %c", i, x_new [i].ref, x_new [i].wide, x_new [i].used);   <* 
+    *>    DEBUG_YMAP   yLOG_complex ("auditing"  , "%3d, %6d, %2d, %c", i, x_new [i].g_ref, x_new [i].g_wide, x_new [i].g_used);   <* 
     *> }                                                                                                                    <*/
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
@@ -414,8 +445,8 @@ yMAP_entry              (uchar a_axis, ushort n, short a_ref, uchar a_wide, ucha
       return rce;
    }
    /*---(populate)-----------------------*/
-   if (a_ref  > -32000) x_grid [n].ref  = a_ref;
-   if (a_wide != 255)   x_grid [n].wide = a_wide;
+   if (a_ref  > -32000) x_grid [n].g_ref  = a_ref;
+   if (a_wide != 255)   x_grid [n].g_wide = a_wide;
    if (a_used != 255) {
       DEBUG_YMAP   yLOG_complex ("a_used"    , "%3d/%c, %s", a_used, a_used, YMAP_VALID);
       /*---(translate)-------------------*/
@@ -423,10 +454,10 @@ yMAP_entry              (uchar a_axis, ushort n, short a_ref, uchar a_wide, ucha
       if (a_used == 'y')                                        a_used = YMAP_USED;
       if (a_used == 0 || strchr (YMAP_VALID, a_used) == NULL)   a_used = YMAP_NADA;
       /*---(update grid)-----------------*/
-      x_grid [n].used = a_used;
+      x_grid [n].g_used = a_used;
       /*---(done)------------------------*/
    }
-   DEBUG_YMAP   yLOG_complex ("change"    , "%3d, %6d, %3d, %c", n, x_grid [n].ref, x_grid [n].wide, x_grid [n].used);
+   DEBUG_YMAP   yLOG_complex ("change"    , "%3d, %6d, %3d, %c", n, x_grid [n].g_ref, x_grid [n].g_wide, x_grid [n].g_used);
    /*---(prepare update)-----------------*/
    ymap_change (x_map->axis, YMAP_POS);
    /*---(complete)-----------------------*/
@@ -518,20 +549,20 @@ ymap__load_limits       (tyMAP *a_map, ushort a_umin, ushort a_umax)
    for (i = 0; i < a_map->glen; ++i) {
       /*---(filter)----------------------*/
       DEBUG_YMAP    yLOG_sint    (i);
-      if (a_map->grid [i].ref == YMAP_EMPTY)  break;
+      if (a_map->grid [i].g_ref == YMAP_EMPTY)  break;
       /*---(accum units)-----------------*/
-      x_len += a_map->grid [i].wide;
+      x_len += a_map->grid [i].g_wide;
       /*---(full min/max)----------------*/
       if (i == 0) a_map->gmin  = i;
       if (x_len > 0)  a_map->umax  = x_len - 1;
       a_map->gmax  = i;
       /*---(absolute min/max)------------*/
-      if (strchr (YMAP_LIMITS, a_map->grid [i].used) != NULL) {
+      if (strchr (YMAP_LIMITS, a_map->grid [i].g_used) != NULL) {
          DEBUG_YMAP    yLOG_snote   ("limit");
-         a_map->grid [i].used = YMAP_NADA;
+         a_map->grid [i].g_used = YMAP_NADA;
       }
       /*---(local min/max)---------------*/
-      if (strchr (YMAP_REAL, a_map->grid [i].used) != NULL) {
+      if (strchr (YMAP_REAL, a_map->grid [i].g_used) != NULL) {
          if (a_map->glmin > 65000)  a_map->glmin = i;
          a_map->glmax = i;
          ++x_used;
@@ -546,7 +577,7 @@ ymap__load_limits       (tyMAP *a_map, ushort a_umin, ushort a_umax)
    if (x_used > 0)  a_map->gavg = x_sum / x_used;
    else             a_map->gavg = a_map->gcur;
    if (a_map->glmin > 65000)  a_map->glmin = a_map->gcur;
-   if (a_map->glmax == 0 && a_map->grid [0].used == YMAP_NADA)  a_map->glmax = a_map->gcur;
+   if (a_map->glmax == 0 && a_map->grid [0].g_used == YMAP_NADA)  a_map->glmax = a_map->gcur;
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
    /*---(absolute)-----------------------*/
    DEBUG_YMAP    yLOG_sint    (a_umin);
@@ -556,13 +587,13 @@ ymap__load_limits       (tyMAP *a_map, ushort a_umin, ushort a_umax)
    if (a_umin <= a_map->gmax && a_umin < a_map->glmin) {
       DEBUG_YMAP    yLOG_snote   ("gamin");
       a_map->gamin = a_umin;
-      if (a_map->grid [a_umin].used == YMAP_NADA) a_map->grid [a_umin].used = YMAP_LOWER;
+      if (a_map->grid [a_umin].g_used == YMAP_NADA) a_map->grid [a_umin].g_used = YMAP_LOWER;
    }
    a_map->gamax = a_map->glmax;
    if (a_umax <= a_map->gmax && a_umax > a_map->glmax) {
       DEBUG_YMAP    yLOG_snote   ("gamax");
       a_map->gamax = a_umax;
-      if (a_map->grid [a_umax].used == YMAP_NADA) a_map->grid [a_umax].used = YMAP_UPPER;
+      if (a_map->grid [a_umax].g_used == YMAP_NADA) a_map->grid [a_umax].g_used = YMAP_UPPER;
    }
    a_map->gmid = (a_umin + a_umax) / 2;
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
@@ -636,8 +667,8 @@ ymap__load_ends         (tyMAP *a_map, char a_dir)
       return 0;
    }
    /*---(prepare)------------------------*/
-   c = x_grid [x_cur    ].used;
-   n = x_grid [x_cur + a].used;
+   c = x_grid [x_cur    ].g_used;
+   n = x_grid [x_cur + a].g_used;
    /*---(target use)---------------------*/
    if      (c == G_CHAR_SPACE)                         t = G_CHAR_HUGEDOT;
    else if (c == G_CHAR_HUGEDOT && n == G_CHAR_SPACE)  t = G_CHAR_HUGEDOT;
@@ -646,9 +677,9 @@ ymap__load_ends         (tyMAP *a_map, char a_dir)
    for (i = x_cur + a; i >= 0 && i <= a_map->gmax; i += a) {
       /*---(filter)----------------------*/
       DEBUG_YMAP   yLOG_sint    (i);
-      if (x_grid [i].ref == YMAP_EMPTY)  break;
+      if (x_grid [i].g_ref == YMAP_EMPTY)  break;
       /*---(prepare)---------------------*/
-      c = x_grid [i].used;
+      c = x_grid [i].g_used;
       DEBUG_YMAP   yLOG_schar   (c);
       /*---(used)------------------------*/
       if (*x_use == x_cur)  if (strchr (YMAP_REAL, c) != NULL)  *x_use = i;
@@ -718,7 +749,7 @@ ymap_update_large       (uchar a_axis)
    }
    DEBUG_YMAP   yLOG_complex ("CUR"       ,  "%4du, %4dg", g_umap.ucur, g_umap.gcur);
    /*---(make length)--------------------*/
-   if (x_grid [0].ref == YMAP_EMPTY)  x_len = 0;
+   if (x_grid [0].g_ref == YMAP_EMPTY)  x_len = 0;
    else                               x_len = x_map->umax + 1;
    DEBUG_YMAP    yLOG_value   ("x_len"     , x_len);
    /*---(free)-----------*/
@@ -750,11 +781,11 @@ ymap_update_large       (uchar a_axis)
    }
    /*---(populate map)-------------------*/
    for (i = 0; i < x_map->glen; ++i) {
-      if (x_grid [i].ref == YMAP_EMPTY)  break;
+      if (x_grid [i].g_ref == YMAP_EMPTY)  break;
       /*> printf ("LOOP %3d\n", i);                                                   <*/
-      x_grid [i].unit = n;
-      DEBUG_YMAP    yLOG_complex ("unit"      , "grid %2d, unit %4d", i, x_grid [i].unit);
-      while (c < x_grid [i].wide) {
+      x_grid [i].g_unit = n;
+      DEBUG_YMAP    yLOG_complex ("unit"      , "grid %2d, unit %4d", i, x_grid [i].g_unit);
+      while (c < x_grid [i].g_wide) {
          /*> printf (" assign %3d into %3d %3d\n", i, n, c);                          <*/
          x_map->map [n] = i;
          ++n;  ++c;
@@ -921,9 +952,9 @@ yMAP_by_index           (uchar a_axis, uchar a_pos, ushort *r_pos, short *r_ref,
    /*---(save back)----------------------*/
    s_pos = a_pos;
    if (r_pos  != NULL)  *r_pos  = s_pos;
-   if (r_ref  != NULL)  *r_ref  = x_grid [a_pos].ref;
-   if (r_wide != NULL)  *r_wide = x_grid [a_pos].wide;
-   if (r_used != NULL)  *r_used = x_grid [a_pos].used;
+   if (r_ref  != NULL)  *r_ref  = x_grid [a_pos].g_ref;
+   if (r_wide != NULL)  *r_wide = x_grid [a_pos].g_wide;
+   if (r_used != NULL)  *r_used = x_grid [a_pos].g_used;
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -1004,9 +1035,9 @@ yMAP_by_cursor          (uchar a_axis, uchar a_dir, ushort *r_pos, short *r_ref,
    /*---(save back)----------------------*/
    s_pos = x_pos;
    if (r_pos  != NULL)  *r_pos  = s_pos;
-   if (r_ref  != NULL)  *r_ref  = x_grid [x_pos].ref;
-   if (r_wide != NULL)  *r_wide = x_grid [x_pos].wide;
-   if (r_used != NULL)  *r_used = x_grid [x_pos].used;
+   if (r_ref  != NULL)  *r_ref  = x_grid [x_pos].g_ref;
+   if (r_wide != NULL)  *r_wide = x_grid [x_pos].g_wide;
+   if (r_used != NULL)  *r_used = x_grid [x_pos].g_used;
    /*---(complete)-----------------------*/
    DEBUG_YMAP   yLOG_exit    (__FUNCTION__);
    return rc;
@@ -1078,7 +1109,7 @@ yMAP_axis_force         (uchar a_axis, ushort a_beg, ushort a_cur, ushort a_end)
       ++rc;
    }
    x_map->gbeg  = a_beg;
-   x_map->ubeg  = x_grid [x_map->gbeg].unit;
+   x_map->ubeg  = x_grid [x_map->gbeg].g_unit;
    /*---(current)------------------------*/
    DEBUG_YMAP   yLOG_value   ("a_cur"     , a_cur);
    if (a_cur > x_map->gmax) {
@@ -1086,7 +1117,7 @@ yMAP_axis_force         (uchar a_axis, ushort a_beg, ushort a_cur, ushort a_end)
       ++rc;
    }
    x_map->gcur  = a_cur;
-   x_map->ucur  = x_grid [x_map->gcur].unit;
+   x_map->ucur  = x_grid [x_map->gcur].g_unit;
    /*---(end)----------------------------*/
    DEBUG_YMAP   yLOG_value   ("a_end"     , a_end);
    if (a_end > x_map->gmax) {
@@ -1094,7 +1125,7 @@ yMAP_axis_force         (uchar a_axis, ushort a_beg, ushort a_cur, ushort a_end)
       ++rc;
    }
    x_map->gend  = a_end;
-   x_map->uend  = x_grid [x_map->gend].unit;
+   x_map->uend  = x_grid [x_map->gend].g_unit;
    /*---(rework display)-----------------*/
    ymap_display      (x_map);
    /*---(complete)-----------------------*/

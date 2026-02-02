@@ -4,6 +4,37 @@
 #include    "yMAP_priv.h"
 
 
+
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+
+#define  P_COPYRIGHT   \
+   "copyright (c) 2010 robert.s.heatherly at balsashrike at gmail dot com"
+
+#define  P_LICENSE     \
+   "the only place you could have gotten this code is my github, my website,¦"   \
+   "or illegal sharing. given that, you should be aware that this is GPL licensed."
+
+#define  P_COPYLEFT    \
+   "the GPL COPYLEFT REQUIREMENT means any modifications or derivative works¦"   \
+   "must be released under the same GPL license, i.e, must be free and open."
+
+#define  P_INCLUDE     \
+   "the GPL DOCUMENTATION REQUIREMENT means that you must include the original¦" \
+   "copyright notice and the full licence text with any resulting anything."
+
+#define  P_AS_IS       \
+   "the GPL NO WARRANTY CLAUSE means the software is provided without any¦"      \
+   "warranty and the author cannot be held liable for damages."
+
+#define  P_THEFT    \
+   "if you knowingly violate the spirit of these ideas, i suspect you might "    \
+   "find any number of freedom-minded hackers may take it quite personally ;)"
+
+/*´´·········1·········2·········3·········4·········5·········6·········7·········8  */
+/*===[[ GNU GENERAL PUBLIC LICENSE (GPL) ]]===================================*/
+
+
 static char  s_hist = YMAP_BEG;
 
 #define    MAX_FORMATS      100
@@ -76,14 +107,14 @@ static const struct {
    { YMAP_FORMAT   , 'd' , "date"             },
    { YMAP_FORMAT   , 'D' , "full date"        },
    /*---(string fillers)---------------------*/
-   { YMAP_FORMAT   , '!' , "empty"            },
-   { YMAP_FORMAT   , '-' , "dashes"           },
-   { YMAP_FORMAT   , '=' , "equals"           },
-   { YMAP_FORMAT   , '_' , "underlines"       },
-   { YMAP_FORMAT   , '.' , "dots"             },
-   { YMAP_FORMAT   , '+' , "dots and pluses"  },
-   { YMAP_FORMAT   , '@' , "dots and bigs"    },
-   { YMAP_FORMAT   , '~' , "ruler"            },
+   { YMAP_FILLIN   , '!' , "empty"            },
+   { YMAP_FILLIN   , '-' , "dashes"           },
+   { YMAP_FILLIN   , '=' , "equals"           },
+   { YMAP_FILLIN   , '_' , "underlines"       },
+   { YMAP_FILLIN   , '.' , "dots"             },
+   { YMAP_FILLIN   , '+' , "dots and pluses"  },
+   { YMAP_FILLIN   , '@' , "dots and bigs"    },
+   { YMAP_FILLIN   , '~' , "ruler"            },
    /*---(decimals)---------------------------*/
    { YMAP_DECIMALS , '0' , "integer"          },
    { YMAP_DECIMALS , '1' , "exactly one"      },
@@ -95,6 +126,12 @@ static const struct {
    { YMAP_DECIMALS , '7' , "exactly seven"    },
    { YMAP_DECIMALS , '8' , "exactly eight"    },
    { YMAP_DECIMALS , '9' , "exactly nine"     },
+   /*---(zero markers)-----------------------*/
+   { YMAP_ZEROS    , 'U' , "zero mask"        },
+   { YMAP_ZEROS    , 'u' , "zero show"        },
+   /*---(significant digits)-----------------*/
+   { YMAP_SIGS     , 'Q' , "more"             },
+   { YMAP_SIGS     , 'q' , "less"             },
    /*---(multiples)--------------------------*/
    { YMAP_MULTIPLE , '?' , "all to defaults"  },
    { YMAP_MULTIPLE , 'G' , "real with 6 dec"  },
@@ -279,6 +316,27 @@ ymap__format_range      (uchar a_type, uchar a_abbr)
          rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, NULL);
          if (rc > 0) {
             yMAP_mundo_units    (s_hist, x_label, rc, a_abbr);
+            s_hist = YMAP_ADD;
+         }
+         break;
+      case YMAP_FILLIN   :
+         rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, NULL);
+         if (rc > 0) {
+            yMAP_mundo_fillin   (s_hist, x_label, rc, a_abbr);
+            s_hist = YMAP_ADD;
+         }
+         break;
+      case YMAP_ZEROS    :
+         rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, NULL);
+         if (rc > 0) {
+            yMAP_mundo_zeros    (s_hist, x_label, rc, a_abbr);
+            s_hist = YMAP_ADD;
+         }
+         break;
+      case YMAP_SIGS     :
+         rc = myMAP.e_format (a_type, a_abbr, u, x, y, z, NULL);
+         if (rc > 0) {
+            yMAP_mundo_sigs     (s_hist, x_label, rc, a_abbr);
             s_hist = YMAP_ADD;
          }
          break;
@@ -531,6 +589,9 @@ ymap_format_xmode       (uchar a_major, uchar a_minor)
          rc = ymap__format_range (YMAP_FORMAT   , '?');
          rc = ymap__format_range (YMAP_DECIMALS , '0');
          rc = ymap__format_range (YMAP_UNITS    , '-');
+         rc = ymap__format_range (YMAP_FILLIN   , '!');
+         rc = ymap__format_range (YMAP_ZEROS    , '-');
+         rc = ymap__format_range (YMAP_SIGS     , '0');
          break;
       case 'G' :
          rc = ymap__format_range (YMAP_FORMAT   , 'f');
