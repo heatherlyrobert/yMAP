@@ -35,46 +35,63 @@
 
 
 
-/*===[[ BEG_HEADER ]]=========================================================*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
 
-/*===[[ ONE_LINERS ]]=========================================================*/
-
+/*===[[ HEADER BEG ]]=========================================================*/
+/*                      ´·········1·········2·········3·········4·········5·········6·········7*/
+/*--------- 12345678901 ´123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
+/*········· ··········· ´·····························´········································*/
+#define     P_NAME      "yMAP"
+/*········· ··········· ´·····························´········································*/
 #define     P_FOCUS     "RS (run-time support)"
 #define     P_NICHE     "us (user control)"
 #define     P_SUBJECT   "vi-keys location management"
-#define     P_PURPOSE   ""
-
+#define     P_PURPOSE   "create a usable workspace grid for other applications to use"
+/*········· ··········· ´·····························´········································*/
 #define     P_NAMESAKE  "theseus"
-#define     P_HERITAGE  ""
+#define     P_PRONOUNCE "thee·see·uhs"
+#define     P_HERITAGE  "divine hero, king, and famous explorer of the ancient greek world"
+#define     P_BRIEFLY   "famous explorer and hero"
 #define     P_IMAGERY   "young, handsome, vigorous man armed only with sword and sandals"
 #define     P_REASON    ""
-
+/*········· ··········· ´·····························´········································*/
 #define     P_ONELINE   P_NAMESAKE " " P_SUBJECT
-
+/*········· ··········· ´·····························´········································*/
+#define     P_HOMEDIR   "/home/system/yMAP.vikeys_location_mapping"
 #define     P_BASENAME  "yMAP"
 #define     P_FULLPATH  "/usr/local/lib64/libyMAP"
-#define     P_SUFFIX    ""
-#define     P_CONTENT   ""
-
+#define     P_SUFFIX    "´"
+#define     P_CONTENT   "´"
+/*········· ··········· ´·····························´········································*/
 #define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
 #define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
+#define     P_COMPILER  "gcc 11.3.0"
 #define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
-#define     P_DEPENDS   "none"
-
+/*········· ··········· ´·····························´········································*/
+#define     P_DEPSTDC   "stdio,stdlib,string,math,time,malloc"
+#define     P_DEPPOSIX  ""
+#define     P_DEPCORE   "yURG,yLOG,ySTR"
+#define     P_DEPVIKEYS "yMODE,yKEYS,yVIHUB"
+#define     P_DEPOTHER  "ySORT"
+#define     P_DEPGRAPH  ""
+#define     P_DEPHEAD   "yDLST_solo"
+/*········· ··········· ´·····························´········································*/
 #define     P_AUTHOR    "heatherlyrobert"
 #define     P_CREATED   ""
-
+/*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.2-, updating for new koios and gyges formatting updates"
-#define     P_VERNUM    "2.2a"
-#define     P_VERTXT    "unit tests compile, working on cleaning mundo now"
-
+#define     P_VERNUM    "2.2b"
+#define     P_VERTXT    "mundo updated and passed all unit tests"
+/*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
 #define     P_REMINDER  "there are many better options, but i *own* every byte of this one"
+/*········· ··········· ´·····························´········································*/
+/*--------- 12345678901 ´123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
+/*                      ´·········1·········2·········3·········4·········5·········6·········7*/
+/*===[[ HEADER END ]]=========================================================*/
 
-/*===[[ END_HEADER ]]=========================================================*/
+
 
 /*---(ansi-c standard)-------------------*/
 #include    <stdio.h>             /* clibc  standard input/output             */
@@ -447,11 +464,12 @@ char        ymap_mundo_wrap         (void);
 /*········´ ´··············search·´ ´·········································*/
 int         yMAP_mundo_current      (void);
 int         yMAP_mundo_count        (void);
-char        ymap_mundo_by_cursor    (char a_dir, char *r_mode, char *r_act, char r_label [LEN_LABEL], char r_before [LEN_RECD], char r_after [LEN_RECD], char r_display [LEN_FULL]);
-char*       ymap_mundo_unit_cursor  (char a_dir);
+char        ymap__mundo_by_cursor   (char c_prod, char c_dir, char *r_mode, char *r_act, char r_label [LEN_LABEL], char r_before [LEN_RECD], char r_after [LEN_RECD], char r_display [LEN_FULL]);
+char        ymap_mundo_by_cursor    (char c_dir);
+char*       ymap_mundo_unit_cursor  (char c_dir);
 char        ymap__mundo_by_index    (int n);
 /*········´ ´···········character·´ ´·········································*/
-char        ymap__mundo_chars       (char *a_func, char a_mode, char a_act, char a_label [LEN_LABEL], char a_before, char a_after);
+char        ymap__mundo_chars       (char a_func [LEN_TITLE], char a_mode, char a_act, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_align        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_format       (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_decimals     (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
@@ -460,27 +478,27 @@ char        yMAP_mundo_fillin       (char a_mode, char a_label [LEN_LABEL], char
 char        yMAP_mundo_zeros        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_sigs         (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 /*········´ ´·············integer·´ ´·········································*/
-char        ymap__mundo_ints        (char *a_func, char a_mode, char a_act, char a_label [LEN_LABEL], char a_before, char a_after);
+char        ymap__mundo_ints        (char a_func [LEN_TITLE], char a_mode, char a_act, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_width        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_height       (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_depth        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 /*········´ ´··············string·´ ´·········································*/
-char        ymap__mundo_string      (char *a_func, char a_mode, char a_act, char a_label [LEN_LABEL], char *a_before, char *a_after);
-char        yMAP_mundo_source       (char a_mode, char a_label [LEN_LABEL], char *a_before, char *a_after);
-char        yMAP_mundo_volumn       (char a_mode, char a_label [LEN_LABEL], char *a_before, char *a_after);
-char        yMAP_mundo_title        (char a_mode, char a_label [LEN_LABEL], char *a_before, char *a_after);
-char        yMAP_mundo_sync         (char a_mode, char *a_reqs, char *a_pros);
+char        ymap__mundo_string      (char a_func [LEN_TITLE], char a_mode, char a_act, char a_label [LEN_LABEL], char a_before [LEN_RECD], char a_after [LEN_RECD]);
+char        yMAP_mundo_source       (char a_mode, char a_label [LEN_LABEL], char a_before [LEN_RECD], char a_after [LEN_RECD]);
+char        yMAP_mundo_volumn       (char a_mode, char a_label [LEN_LABEL], char a_before [LEN_RECD], char a_after [LEN_RECD]);
+char        yMAP_mundo_title        (char a_mode, char a_label [LEN_LABEL], char a_before [LEN_RECD], char a_after [LEN_RECD]);
+char        yMAP_mundo_sync         (char a_mode, char a_reqs [LEN_RECD], char a_pros [LEN_RECD]);
 /*········´ ´·············special·´ ´·········································*/
 char        yMAP_mundo_recalc       (char a_mode, char a_label [LEN_LABEL]);
 char        yMAP_mundo_position     (char a_mode, char a_label [LEN_LABEL]);
 /*········´ ´·············complex·´ ´·········································*/
-char        ymap__mundo_concat      (char *a_format, char *a_content, char **a_final);
-char        ymap__mundo_complex     (char *a_func, char a_mode, char a_act, char a_label [LEN_LABEL], char* a_beforeF, char* a_before, char* a_afterF, char* a_after);
-char        yMAP_mundo_overwrite    (char a_mode, char a_label [LEN_LABEL], char* a_beforeF, char* a_before, char* a_afterF, char* a_after);
-char        yMAP_mundo_clear        (char a_mode, char a_label [LEN_LABEL], char* a_beforeF, char* a_before, char *a_afterF);
-char        yMAP_mundo_delete       (char a_mode, char a_label [LEN_LABEL], char* a_beforeF, char* a_before);
+char        ymap__mundo_concat      (char a_format [LEN_LABEL], char a_content [LEN_RECD], char *r_final [LEN_RECD]);
+char        ymap__mundo_complex     (char a_func [LEN_TITLE], char a_mode, char a_act, char a_label [LEN_LABEL], char a_bformat [LEN_LABEL], char a_bcontent [LEN_RECD], char a_aformat [LEN_LABEL], char a_acontent [LEN_RECD]);
+char        yMAP_mundo_overwrite    (char a_mode, char a_label [LEN_LABEL], char a_bformat [LEN_LABEL], char a_bcontent [LEN_RECD], char a_aformat [LEN_LABEL], char a_acontent [LEN_RECD]);
+char        yMAP_mundo_clear        (char a_mode, char a_label [LEN_LABEL], char a_bformat [LEN_LABEL], char a_bcontent [LEN_RECD], char a_aformat [LEN_LABEL]);
+char        yMAP_mundo_delete       (char a_mode, char a_label [LEN_LABEL], char a_bformat [LEN_LABEL], char a_bcontent [LEN_RECD]);
 /*········´ ´···········undo/redo·´ ´·········································*/
-char        ymap__mundo_parse       (char a_act, char *a_field, char *a_format, char *a_content);
+char        ymap__mundo_parse       (char a_act, char a_field [LEN_RECD], char r_format [LEN_LABEL], char r_content [LEN_RECD]);
 char        ymap__mundo_undo_one    (void);
 char        ymap_mundo_undo         (void);
 char        ymap__mundo_redo_one    (void);
