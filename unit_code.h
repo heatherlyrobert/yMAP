@@ -7,6 +7,8 @@
 char        ymap__unit_quiet        (void);
 char        ymap__unit_loud         (void);
 char        ymap__unit_end          (void);
+char*       ymap__unit_screen       (char a_axis);
+char*       ymap__unit_grid         (char a_axis);
 /*········´ ´················load·´ ´·········································*/
 char        ymap__unit_massive      (void);
 char        ymap__unit_load         (uchar a_axis, uchar a_style);

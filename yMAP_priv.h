@@ -80,8 +80,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.2-, updating for new koios and gyges formatting updates"
-#define     P_VERNUM    "2.2b"
-#define     P_VERTXT    "mundo updated and passed all unit tests"
+#define     P_VERNUM    "2.2c"
+#define     P_VERTXT    "fixed (and simplied) ends/next calc to remove prenicous issue ;)"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -287,9 +287,6 @@ extern char        g_print     [LEN_RECD];
 char*       yMAP_version            (void);
 /*---(shared)---------------*/
 char        ymap_pick_map           (uchar a_axis, tyMAP **r_map, tGRID **r_grid);
-char        ymap_grid_set           (uchar a_axis, tyMAP *a_map, tGRID *a_grid);
-char        ymap_grid_free          (uchar a_full, uchar a_axis);
-char        ymap_grid_clear         (tGRID *a_grid, ushort a_len);
 char        yMAP_init               (void);
 char        ymap_locator            (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
 char        ymap_locator_strict     (char *a_label, ushort *u, ushort *x, ushort *y, ushort *z);
@@ -299,22 +296,6 @@ char        ymap_valid              (ushort u, ushort x, ushort y, ushort z);
 /*> char        ymap_remap              (void);                                       <*/
 char        ymap_refresh            (void);
 char        yMAP_wrap               (void);
-
-
-
-/*===[[ yMAP_load.c ]]========================================================*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-/*---(program)--------------*/
-char        ymap__clear             (uchar a_full, uchar a_axis);
-char        ymap_mapinit            (uchar a_axis);
-char        ymap_factory            (uchar a_axis);
-char        yMAP_clear              (uchar a_axis);
-/*---(walking)--------------*/
-char        ymap__load_limits       (tyMAP *a_map, ushort a_umin, ushort a_umax);
-char        ymap__load_ends         (tyMAP *a_map, char a_dir);
-char        ymap_update_large       (uchar a_axis);
-char        ymap_update_small       (uchar a_axis);
-/*---(done)-----------------*/
 
 
 
@@ -446,7 +427,44 @@ char        ymap_mreg_smode         (uchar a_major, uchar a_minor);
 
 
 
-/*===[[ yMAP_mreg.c ]]==================================================(all)=*/
+/*===[[ yMAP_load.c ]]==================================================(all)=*/
+/*········´ ´·············support·´ ´·········································*/
+char        ymap_grid_set           (uchar a_axis, tyMAP *a_map, tGRID *a_grid);
+char        ymap_grid_clear         (tGRID *a_grid, ushort a_len);
+/*········´ ´··············memory·´ ´·········································*/
+char        ymap_grid_free          (uchar a_full, uchar a_axis);
+/*········´ ´·············program·´ ´·········································*/
+char        ymap__clear             (uchar a_full, uchar a_axis);
+char        ymap_mapinit            (uchar a_axis);
+char        ymap_factory            (uchar a_axis);
+char        yMAP_clear              (uchar a_axis);
+/*········´ ´··············sizing·´ ´·········································*/
+char        yMAP_size               (uchar a_axis, ushort a_len);
+char        yMAP_allsize            (ushort u, ushort x, ushort y, ushort z, ushort w);
+/*········´ ´··············adding·´ ´·········································*/
+char        yMAP_entry              (uchar a_axis, ushort n, short a_ref, uchar a_wide, uchar a_used);
+char        yMAP_start              (uchar a_axis, ushort a_len);
+char        yMAP_append             (short a_ref, uchar a_wide, uchar a_used);
+char        yMAP_finish             (void);
+/*········´ ´················calc·´ ´·········································*/
+char        ymap__load_limits       (tyMAP *a_map, ushort a_umin, ushort a_umax);
+char        ymap__load_ends_prep    (tyMAP *a_map, char a_dir, tGRID **r_grid, ushort *r_cur, char *r_inc, ushort **r_end, ushort **r_use);
+char        ymap__load_ends         (tyMAP *a_map, char a_dir);
+char        ymap_update_large       (uchar a_axis);
+char        ymap_update_small       (uchar a_axis);
+/*········´ ´··············search·´ ´·········································*/
+char        yMAP_by_index           (uchar a_axis, uchar a_pos, ushort *r_pos, short *r_ref, uchar *r_wide, uchar *r_used);
+char        yMAP_by_cursor          (uchar a_axis, uchar a_dir, ushort *r_pos, short *r_ref, uchar *r_wide, uchar *r_used);
+/*········´ ´··············access·´ ´·········································*/
+char        yMAP_axis_avail         (uchar a_axis, ushort a_avail);
+char        yMAP_axis_force         (uchar a_axis, ushort a_beg, ushort a_cur, ushort a_end);
+char        yMAP_axis_grid          (uchar a_axis, ushort *a_beg, ushort *a_cur, ushort *a_end, uchar *a_extra);
+/*········´ ´················DONE·´ ´·········································*/
+
+
+
+
+/*===[[ yMAP_mundo.c ]]=================================================(all)=*/
 /*········´ ´·············support·´ ´·········································*/
 char        ymap__mundo_valid_act   (char a_act);
 char        yMAP_mundo_make_add     (void);
@@ -513,17 +531,26 @@ char        ymap_mundo_hmode        (uchar a_major, uchar a_minor);
 
 
 
+/*===[[ yMAP_univ.c ]]==================================================(all)=*/
+/*········´ ´·············support·´ ´·········································*/
+char*       yMAP_univ_name          (char n);
+/*········´ ´················move·´ ´·········································*/
+char        ymap_univ_current       (void);
+char        yMAP_universe           (ushort a_pos, uchar a_used);
+char        yMAP_switch             (ushort a_pos);
+char        ymap_univ_change        (char a_pos);
+/*········´ ´·············program·´ ´·········································*/
+char        ymap_univ_init          (void);
+char        yMAP_univ_config        (void *a_switcher);
+char        ymap_univ_umode         (uchar a_major, uchar a_minor);
+/*········´ ´················DONE·´ ´·········································*/
+
+
+
 /*===[[ yMAP_rptg.c ]]========================================================*/
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
 char        ymap_map_dump           (FILE *f);
 
-
-
-/*===[[ yMAP_univ.c ]]========================================================*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-char        ymap_univ_init          (void);
-char        ymap_univ_current       (void);
-char        ymap_univ_umode         (uchar a_major, uchar a_minor);
 
 
 

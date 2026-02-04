@@ -311,10 +311,6 @@ ymap__map_dump          (FILE *f, char *a_axis)
    fprintf (f, "\n");
    fprintf (f, "axis     %c\n", a_axis);
    fprintf (f, "load     %s\n", ymap_print (a_axis));
-   fprintf (f, "pos      L %2di  §  U %4da %4db %4dc %4de %4dt %4dl %4dx  §  G %4db %4dc %4de\n",
-         x_map->inc,
-         x_map->uavail, x_map->ubeg, x_map->ucur, x_map->uend, x_map->utend, x_map->ulen, x_map->umax,
-         x_map->gbeg, x_map->gcur, x_map->gend);
    fprintf (f, "grid     %4dg %4da %4dl § %4dp %4du § %4db %4dc %4de § %4du %4dn § %4dl %4da %4dg\n",
          x_map->gmin , x_map->gamin, x_map->glmin, x_map->gprev, x_map->gpuse,
          x_map->gbeg , x_map->gcur , x_map->gend ,

@@ -125,7 +125,7 @@ static const char    s_unames [][LEN_LABEL] = {
    "question",
 };
 
-char*
+char*        /*-> optionally provides default names for tabs -----------------*/
 yMAP_univ_name          (char n)
 {
    if (!VALID_tab (n))  return "tbd";
@@ -241,12 +241,16 @@ ymap_univ_change        (char a_pos)
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
+   DEBUG_YMAP   yLOG_value   ("a_pos"     , a_pos);
    rc = yMAP_by_index (YMAP_UNIV, a_pos, NULL, NULL, NULL, &x_used);
+   DEBUG_YMAP   yLOG_value   ("by_index"  , rc);
    --rce;  if (rc < 0) {
+      DEBUG_YMAP   yLOG_note    ("can not find");
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    --rce;  if (x_used == YMAP_NADA) {
+      DEBUG_YMAP   yLOG_note    ("universe is empty/null");
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -351,7 +355,9 @@ ymap_univ_umode         (uchar a_major, uchar a_minor)
    }
    /*---(absolute mode)------------------*/
    p = strchr (YSTR_UNIV, a_minor);
+   DEBUG_YMAP   yLOG_point   ("p"         , p);
    if (p != NULL)  u = p - YSTR_UNIV;
+   DEBUG_YMAP   yLOG_value   ("u"         , u);
    --rce;  if (u >= 0) {
       DEBUG_YMAP   yLOG_note    ("absolute mode");
       rc = ymap_univ_change (u);
@@ -365,11 +371,15 @@ ymap_univ_umode         (uchar a_major, uchar a_minor)
       return 0;
    }
    /*---(look for cursoring)-------------*/
-   DEBUG_YMAP   yLOG_complex ("map"       , "%2dh, %2du, %2dp, %2dl, %2dn, %2du, %2dt", g_umap.gamin, g_umap.gpuse, g_umap.gprev, myMAP.u_last, g_umap.gnext, g_umap.gnuse, g_umap.gamax);
+   DEBUG_YMAP   yLOG_complex ("map"       , "%2d[, %2d{, %2d<, %2d,, %2d>, %2d}, %2d]", g_umap.gamin, g_umap.gprev, g_umap.gpuse, myMAP.u_last, g_umap.gnuse, g_umap.gnext, g_umap.gamax);
    --rce;  switch (a_minor) {
    case  YDLST_HEAD  :
       DEBUG_YMAP   yLOG_note    ("switch to first/head used universe");
       ymap_univ_change (g_umap.gamin);
+      break;
+   case  YDLST_BPREV :
+      DEBUG_YMAP   yLOG_note    ("switch to local end-left universe");
+      ymap_univ_change (g_umap.gprev);
       break;
    case  YDLST_PREV  :
       DEBUG_YMAP   yLOG_note    ("switch to previous used universe");
@@ -382,6 +392,10 @@ ymap_univ_umode         (uchar a_major, uchar a_minor)
    case  YDLST_NEXT  :
       DEBUG_YMAP   yLOG_note    ("switch to next used universe");
       ymap_univ_change (g_umap.gnuse);
+      break;
+   case  YDLST_BNEXT :
+      DEBUG_YMAP   yLOG_note    ("switch to local end-right universe");
+      ymap_univ_change (g_umap.gnext);
       break;
    case  YDLST_TAIL  :
       DEBUG_YMAP   yLOG_note    ("switch to last/tail used universe");

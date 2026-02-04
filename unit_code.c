@@ -27,8 +27,8 @@ ymap__unit_quiet         (void)
 char       /*----: set up program urgents/debugging --------------------------*/
 ymap__unit_loud          (void)
 {
-   int         x_narg       = 1;
-   char       *x_args [20]  = {"yMAP_unit" };
+   int         x_narg       = 4;
+   char       *x_args [20]  = {"yMAP_unit" , "@@ymode", "@@ykeys", "@@ymap" };
    yURG_logger   (x_narg, x_args);
    yURG_urgs     (x_narg, x_args);
    yURG_by_name  ("kitchen"      , YURG_ON);
@@ -64,6 +64,35 @@ ymap__unit_end           (void)
 }
 
 
+
+char*
+ymap__unit_screen       (char a_axis)
+{
+   tyMAP      *x_map       = NULL;
+   tGRID      *x_grid      = NULL;
+   ymap_pick_map (a_axis, &x_map, &x_grid);
+   sprintf (g_print, "yMAP screen  (%c)  Ï  L %2di  Ï  U %4da %4db %4dc %4de %4dt %4dl %4dx  Ï  G %4db %4dc %4de  Ï",
+         a_axis, x_map->inc,
+         x_map->uavail, x_map->ubeg, x_map->ucur, x_map->uend, x_map->utend, x_map->ulen, x_map->umax,
+         x_map->gbeg, x_map->gcur, x_map->gend);
+   return g_print;
+}
+
+char*
+ymap__unit_grid         (char a_axis)
+{
+   tyMAP      *x_map       = NULL;
+   tGRID      *x_grid      = NULL;
+   ymap_pick_map (a_axis, &x_map, &x_grid);
+   sprintf (g_print, "yMAP grid    (%c)  Ï  min %4dg %4da %4dl  Ï  prv %4de %4du  Ï  cur %4d< %4d^ %4d>  Ï  nxt %4du %4de  Ï  max %4dl %4da %4dg  Ï",
+         a_axis,
+         x_map->gmin , x_map->gamin, x_map->glmin,
+         x_map->gprev, x_map->gpuse, 
+         x_map->gbeg , x_map->gcur , x_map->gend ,
+         x_map->gnuse, x_map->gnext,
+         x_map->glmax, x_map->gamax, x_map->gmax );
+   return g_print;
+}
 
 typedef  struct cMOCK  tMOCK;
 static struct cMOCK {
@@ -218,13 +247,13 @@ struct {
    {  'r',    5,   1, 'Ï' },
    {  'r',    6,   1, 'Ï' },
    {  'r',    7,   1, 'Ï' },
-   {  'r',    8,   1, 'Ï' },
-   {  'r',    9,   1, 'Ï' },
+   {  'r',    8,   1, '´' },
+   {  'r',    9,   1, '´' },
    {  'r',   10,   1, 'Ï' },
    {  'r',   11,   1, 'Ï' },
    {  'r',   12,   1, 'Ï' },
    {  'r',   13,   1, 'Ï' },
-   {  'r',   14,   1, 'Ï' },
+   {  'r',   14,   1, '´' },
    {  'r',   15,   1, 'Ï' },
    {  'r',   16,   1, 'Ï' },
    {  'r',   17,   1, 'Ï' },
@@ -236,7 +265,7 @@ struct {
    {  'r',   23,   1, '·' },
    {  'r',   24,   1, 'Ï' },
    {  'r',   25,   1, 'Ï' },
-   {  'r',   26,   1, 'Ï' },
+   {  'r',   26,   1, '´' },
    {  'r',   27,   1, '·' },
    {  'r',   28,   1, '·' },
    {  'r',   29,   1, '·' },

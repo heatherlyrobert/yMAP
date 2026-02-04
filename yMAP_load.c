@@ -603,78 +603,76 @@ ymap__load_limits       (tyMAP *a_map, ushort a_umin, ushort a_umax)
 }
 
 char
+ymap__load_ends_prep    (tyMAP *a_map, char a_dir, tGRID **r_grid, ushort *r_cur, char *r_inc, ushort **r_end, ushort **r_use)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =    0;
+   /*---(header)-------------------------*/
+   --rce;  if (a_map  == NULL)  return rce;
+   --rce;  if (a_dir  == 0   )  return rce;
+   --rce;  if (r_grid == NULL)  return rce;
+   --rce;  if (r_end  == NULL)  return rce;
+   --rce;  if (r_use  == NULL)  return rce;
+   /*---(quick-out)----------------------*/
+   if (a_map->gmax <= 0)                       return 0;   /* empty grid layout            */
+   /*---(save grid)----------------------*/
+   *r_grid = a_map->grid;
+   --rce;  if (*r_grid == NULL) return rce;
+   /*---(handle current)-----------------*/
+   *r_cur  = a_map->gcur;
+   if (a_dir == '<' && *r_cur <= 0)            return 0;   /* already hit bottom going down */
+   if (a_dir == '>' && *r_cur >= a_map->gmax)  return 0;   /* already hit top going up      */
+   /*---(handle saving pointers)---------*/
+   switch (a_dir) {
+   case '<'  : *r_inc = -1; *r_end = &(a_map->gprev); *r_use = &(a_map->gpuse); break;
+   case '>'  : *r_inc =  1; *r_end = &(a_map->gnext); *r_use = &(a_map->gnuse); break;
+   default   : return rce;                                                     break;
+   }
+   /*---(default)------------------------*/
+   **r_end = **r_use = *r_cur;
+   /*---(complete)-----------------------*/
+   return 1;
+}
+
+char
 ymap__load_ends         (tyMAP *a_map, char a_dir)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =    0;
+   char        rc          =    0;
    tGRID      *x_grid      = NULL;
    ushort      x_cur, i;
    ushort     *x_end, *x_use;
    uchar       c, n, t;
-   char        a;
+   char        x_inc;
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_senter  (__FUNCTION__);
-   /*---(defense)------------------------*/
-   DEBUG_YMAP   yLOG_spoint  (a_map);
-   --rce;  if (a_map == NULL) {
+   /*---(prepare)------------------------*/
+   rc = ymap__load_ends_prep (a_map, a_dir, &x_grid, &x_cur, &x_inc, &x_end, &x_use);
+   DEBUG_YMAP   yLOG_sint    (rc);
+   --rce;  if (rc < 0) {
       DEBUG_YMAP   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   x_grid = a_map->grid;
-   DEBUG_YMAP   yLOG_spoint  (x_grid);
-   --rce;  if (x_grid == NULL) {
-      DEBUG_YMAP   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(default)------------------------*/
-   DEBUG_YMAP   yLOG_schar   (a_dir);
-   x_cur = a_map->gcur;
-   DEBUG_YMAP   yLOG_sint    (x_cur);
-   switch (a_dir) {
-   case '<'  :
-      a     = -1;
-      x_end = &(a_map->gprev);
-      x_use = &(a_map->gpuse);
-      break;
-   case '>'  :
-      a     =  1;
-      x_end = &(a_map->gnext);
-      x_use = &(a_map->gnuse);
-      break;
-   default :
-      DEBUG_YMAP   yLOG_sexitr  (__FUNCTION__, rce);
-      return rce;
-   }
-   DEBUG_YMAP   yLOG_sint    (a);
-   *x_end = *x_use = x_cur;
-   DEBUG_YMAP   yLOG_sint    (a_map->umax);
-   DEBUG_YMAP   yLOG_sint    (a_map->gmax);
-   if (a_map->gmax <= 0) {
-      DEBUG_YMAP   yLOG_snote   ("nothing to process");
-      DEBUG_YMAP   yLOG_sexit   (__FUNCTION__);
-      return 0;
-   }
-   /*---(quick out)----------------------*/
-   if (a_dir == '<' && x_cur <= 0) {
-      DEBUG_YMAP   yLOG_snote   ("bottomed");
-      DEBUG_YMAP   yLOG_sexit   (__FUNCTION__);
-      return 0;
-   }
-   DEBUG_YMAP   yLOG_sint    (a_map->gmax);
-   if (a_dir == '>' && x_cur >= a_map->gmax) {
-      DEBUG_YMAP   yLOG_snote   ("topped");
+   if (rc == 0) {
+      DEBUG_YMAP   yLOG_snote   ("nothing to do");
       DEBUG_YMAP   yLOG_sexit   (__FUNCTION__);
       return 0;
    }
    /*---(prepare)------------------------*/
-   c = x_grid [x_cur    ].g_used;
-   n = x_grid [x_cur + a].g_used;
+   c = x_grid [x_cur        ].g_used;
+   DEBUG_YMAP   yLOG_schar   (c);
+   n = x_grid [x_cur + x_inc].g_used;
+   DEBUG_YMAP   yLOG_schar   (n);
    /*---(target use)---------------------*/
-   if      (c == G_CHAR_SPACE)                         t = G_CHAR_HUGEDOT;
-   else if (c == G_CHAR_HUGEDOT && n == G_CHAR_SPACE)  t = G_CHAR_HUGEDOT;
-   else                                                t = G_CHAR_SPACE;
+   if      (c == YMAP_NADA)                    t = YMAP_USED;
+   else if (c != YMAP_NADA && n == YMAP_NADA)  t = YMAP_USED;
+   else                                        t = YMAP_NADA;
+   DEBUG_YMAP   yLOG_schar   (t);
+   DEBUG_YMAP   yLOG_sint    (*x_end);
+   DEBUG_YMAP   yLOG_sint    (*x_use);
    /*---(walk)---------------------------*/
-   for (i = x_cur + a; i >= 0 && i <= a_map->gmax; i += a) {
+   for (i = x_cur + x_inc; i >= 0 && i <= a_map->gmax; i += x_inc) {
       /*---(filter)----------------------*/
       DEBUG_YMAP   yLOG_sint    (i);
       if (x_grid [i].g_ref == YMAP_EMPTY)  break;
@@ -682,11 +680,15 @@ ymap__load_ends         (tyMAP *a_map, char a_dir)
       c = x_grid [i].g_used;
       DEBUG_YMAP   yLOG_schar   (c);
       /*---(used)------------------------*/
-      if (*x_use == x_cur)  if (strchr (YMAP_REAL, c) != NULL)  *x_use = i;
+      if (*x_use == x_cur) {  /* not changed */
+         if (strchr (YMAP_REAL, c) != NULL)  *x_use = i;
+      }
       /*---(prev)------------------------*/
-      if (*x_end == x_cur && c == t) {
-         if (t ==  G_CHAR_SPACE)  *x_end = i - a;
-         else                     *x_end = i;
+      if (*x_end == x_cur) {  /* not changed */
+         switch (t) {
+         case YMAP_NADA : if (c == YMAP_NADA)                 *x_end = i - x_inc;   break;
+         case YMAP_USED : if (strchr (YMAP_REAL, c) != NULL)  *x_end = i;           break;
+         }
       }
       /*---(done)------------------------*/
    }

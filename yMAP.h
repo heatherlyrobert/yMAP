@@ -288,17 +288,17 @@ char*       yMAP_mreg_reqs          (char a_abbr);
 
 
 
-/*===[[ yMAP_mundo.c ]]=======================================================*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
-/*---(support)--------------*/
+/*===[[ yMAP_mundo.c ]]=================================================(all)=*/
+/*········´ ´·············support·´ ´·········································*/
 char        yMAP_mundo_make_add     (void);
-int         yMAP_mundo_count        (void);
-int         yMAP_mundo_current      (void);
-/*---(program)--------------*/
+/*········´ ´·············program·´ ´·········································*/
 char        yMAP_mundo_config       (char a_len, void *a_mundo);
 char        yMAP_mundo_rollback     (void);
 char        yMAP_mundo_purge        (void);
-/*---(simple)---------------*/
+/*········´ ´··············search·´ ´·········································*/
+int         yMAP_mundo_count        (void);
+int         yMAP_mundo_current      (void);
+/*········´ ´···········character·´ ´·········································*/
 char        yMAP_mundo_align        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_format       (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_decimals     (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
@@ -306,27 +306,39 @@ char        yMAP_mundo_units        (char a_mode, char a_label [LEN_LABEL], char
 char        yMAP_mundo_fillin       (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_zeros        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_sigs         (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
-/*---(number)---------------*/
+/*········´ ´·············integer·´ ´·········································*/
 char        yMAP_mundo_width        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_height       (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
 char        yMAP_mundo_depth        (char a_mode, char a_label [LEN_LABEL], char a_before, char a_after);
-/*---(string)---------------*/
-char        yMAP_mundo_source       (char a_mode, char a_label [LEN_LABEL], char* a_before, char* a_after);
-char        yMAP_mundo_volume       (char a_mode, char a_label [LEN_LABEL], char* a_before, char* a_after);
-char        yMAP_mundo_sync         (char a_mode, char *a_reqs  , char *a_pros);
+/*········´ ´··············string·´ ´·········································*/
+char        yMAP_mundo_source       (char a_mode, char a_label [LEN_LABEL], char a_before [LEN_RECD], char a_after [LEN_RECD]);
+char        yMAP_mundo_volumn       (char a_mode, char a_label [LEN_LABEL], char a_before [LEN_RECD], char a_after [LEN_RECD]);
+char        yMAP_mundo_title        (char a_mode, char a_label [LEN_LABEL], char a_before [LEN_RECD], char a_after [LEN_RECD]);
+char        yMAP_mundo_sync         (char a_mode, char a_reqs [LEN_RECD], char a_pros [LEN_RECD]);
+/*········´ ´·············special·´ ´·········································*/
 char        yMAP_mundo_recalc       (char a_mode, char a_label [LEN_LABEL]);
-/*---(complex)--------------*/
-char        yMAP_mundo_overwrite    (char a_mode, char a_label [LEN_LABEL], char* a_beforeF, char* a_before, char* a_afterF, char* a_after);
-char        yMAP_mundo_clear        (char a_mode, char a_label [LEN_LABEL], char* a_beforeF, char* a_before, char *a_afterF);
-char        yMAP_mundo_delete       (char a_mode, char a_label [LEN_LABEL], char* a_beforeF, char* a_before);
-/*---(aesthetic)------------*/
 char        yMAP_mundo_position     (char a_mode, char a_label [LEN_LABEL]);
-/*---(done)-----------------*/
+/*········´ ´·············complex·´ ´·········································*/
+char        yMAP_mundo_overwrite    (char a_mode, char a_label [LEN_LABEL], char a_bformat [LEN_LABEL], char a_bcontent [LEN_RECD], char a_aformat [LEN_LABEL], char a_acontent [LEN_RECD]);
+char        yMAP_mundo_clear        (char a_mode, char a_label [LEN_LABEL], char a_bformat [LEN_LABEL], char a_bcontent [LEN_RECD], char a_aformat [LEN_LABEL]);
+char        yMAP_mundo_delete       (char a_mode, char a_label [LEN_LABEL], char a_bformat [LEN_LABEL], char a_bcontent [LEN_RECD]);
+/*········´ ´················DONE·´ ´·········································*/
 
+
+
+
+
+/*===[[ yMAP_univ.c ]]==================================================(all)=*/
+/*········´ ´·············support·´ ´·········································*/
 char*       yMAP_univ_name          (char n);
-char        yMAP_univ_config        (void *a_switcher);
+/*········´ ´················move·´ ´·········································*/
 char        yMAP_universe           (ushort a_pos, uchar a_used);
 char        yMAP_switch             (ushort a_pos);
+/*········´ ´·············program·´ ´·········································*/
+char        yMAP_univ_config        (void *a_switcher);
+/*········´ ´················DONE·´ ´·········································*/
+
+
 
 char        yMAP_multi_wide         (char *a_label, uchar a_size, uchar a_count);
 char        yMAP_multi_tall         (char *a_label, uchar a_size, uchar a_count);
