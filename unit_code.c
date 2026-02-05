@@ -79,7 +79,65 @@ ymap__unit_screen       (char a_axis)
 }
 
 char*
-ymap__unit_grid         (char a_axis)
+ymap__unit_grid_disp    (char a_axis)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         i           =    0;
+   char        x_seq       [LEN_TERSE] = "";
+   char        x_ref       [LEN_TERSE] = "";
+   char        x_wide      [LEN_TERSE] = "";
+   char        t           [LEN_LABEL] = "";
+   tyMAP      *x_map       = NULL;
+   tGRID      *x_grid      = NULL;
+   /*---(defense)------------------------*/
+   rc = ymap_pick_map (a_axis, &x_map, &x_grid);
+   --rce;  if (rc < 0) return "n/a";
+   /*---(content)------------------------*/
+   sprintf (g_print, "%c å", x_map->axis);
+   for (i = 0; i <= x_map->mlen; ++i) {
+      if (x_grid [i].g_ref == YMAP_EMPTY)  break;
+      ystrlpadn (i                , x_seq , '!', '>', 2);
+      ystrlpadn (x_grid [i].g_ref , x_ref , '!', '>', 2);
+      ystrlpadn (x_grid [i].g_wide, x_wide, '!', '<', 3);
+      sprintf (t, "%2.2s%c%2.2s ", x_seq, x_grid [i].g_used, x_wide);
+      /*> sprintf (t, "[%2.2s)%2.2s%c%2.2s]", x_seq, x_ref, x_grid [i].g_used, x_wide);   <*/
+      ystrlcat (g_print, t, LEN_RECD);
+   }
+   strcat (g_print, "æ");
+   /*---(complete)-----------------------*/
+   return g_print;
+}
+
+char*
+ymap_print_grid_TEMP    (uchar a_axis)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rc          =    0;
+   int         i           =    0;
+   char        t           [LEN_TERSE] = "";
+   char        s           [LEN_TERSE] = "";
+   tyMAP      *x_map       = NULL;
+   tGRID      *x_grid      = NULL;
+   /*---(defense)------------------------*/
+   rc = ymap_pick_map (a_axis, &x_map, &x_grid);
+   if (rc < 0)  return "n/a";
+   /*---(content)------------------------*/
+   sprintf (g_print, "%c å", x_map->axis);
+   for (i = 0; i < x_map->glen; ++i) {
+      if (x_grid [i].g_ref == YMAP_EMPTY)  break;
+      sprintf (t, "%2d%c%-2d", x_grid [i].g_ref, x_grid [i].g_used, x_grid [i].g_wide);
+      sprintf (s, "%s "  , t);
+      strcat (g_print, s);
+   }
+   strcat (g_print, "æ");
+   /*---(end)----------------------------*/
+   return g_print;
+}
+
+char*
+ymap__unit_grid_stats   (char a_axis)
 {
    tyMAP      *x_map       = NULL;
    tGRID      *x_grid      = NULL;
@@ -204,6 +262,15 @@ struct {
    {  'u',    5,   8, '·' },
    {  'u',    6,   8, '·' },
    {  'u',    7,   8, '·' },
+   /*---(uniform2------------------------*/
+   {  'U',    0,   8, '·' },
+   {  'U',    1,   8, 'Ï' },
+   {  'U',    2,   8, '´' },
+   {  'U',    3,   8, '·' },
+   {  'U',    4,   8, 'Ï' },
+   {  'U',    5,   8, '·' },
+   {  'U',    6,   8, '·' },
+   {  'U',    7,   8, '´' },
    /*---(acsending)----------------------*/
    {  'a',    0,   1, 'Ï' },
    {  'a',    1,   2, '·' },
@@ -406,7 +473,7 @@ ymap__unit_load         (uchar a_axis, uchar a_style)
    }
    DEBUG_YMAP   yLOG_point   ("x_grid"    , x_grid);
    DEBUG_YMAP   yLOG_complex ("assign"    , "%c, b%-10p, x%-10p, y%-10p, z%-10p, t%-10p", a_axis, g_ugrid, g_xgrid, g_ygrid, g_zgrid, g_wgrid);
-   --rce;  if (a_style == 0 || strchr ("fF+uadsr-w1", a_style) == NULL) {
+   --rce;  if (a_style == 0 || strchr ("fF+uUadsr-w1", a_style) == NULL) {
       DEBUG_YMAP   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -1596,10 +1663,10 @@ yMAP__unit              (char *a_question, char a_index)
       sprintf (unit_answer, "MAP refresh      : univ %d, xaxis %d, yaxis %d, zaxis %d", g_umap.change, g_xmap.change, g_ymap.change, g_zmap.change);
    }
    else if (strcmp (a_question, "mreg_list"      )   == 0) {
-         snprintf (unit_answer, LEN_FULL, "MAP mreg list    : %s", ymap_mreg_list   (a_index));
+      snprintf (unit_answer, LEN_FULL, "MAP mreg list    : %s", ymap_mreg_list   (a_index));
    }
    else if (strcmp (a_question, "mreg_detail"    )   == 0) {
-         snprintf (unit_answer, LEN_FULL, "MAP mreg detail  : %s", ymap_mreg_detail (a_index));
+      snprintf (unit_answer, LEN_FULL, "MAP mreg detail  : %s", ymap_mreg_detail (a_index));
    }
    else if (strcmp (a_question, "visual"         )   == 0) {
       n = ymap_visu_index (a_index);

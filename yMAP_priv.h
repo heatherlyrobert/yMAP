@@ -80,8 +80,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.2-, updating for new koios and gyges formatting updates"
-#define     P_VERNUM    "2.2c"
-#define     P_VERTXT    "fixed (and simplied) ends/next calc to remove prenicous issue ;)"
+#define     P_VERNUM    "2.2d"
+#define     P_VERTXT    "cleaned up univ after changes, found another ends bug (fixed)"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"

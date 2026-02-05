@@ -620,8 +620,8 @@ ymap__load_ends_prep    (tyMAP *a_map, char a_dir, tGRID **r_grid, ushort *r_cur
    --rce;  if (*r_grid == NULL) return rce;
    /*---(handle current)-----------------*/
    *r_cur  = a_map->gcur;
-   if (a_dir == '<' && *r_cur <= 0)            return 0;   /* already hit bottom going down */
-   if (a_dir == '>' && *r_cur >= a_map->gmax)  return 0;   /* already hit top going up      */
+   /*> if (a_dir == '<' && *r_cur <= 0)            return 0;   /+ already hit bottom going down +/   <*/
+   /*> if (a_dir == '>' && *r_cur >= a_map->gmax)  return 0;   /+ already hit top going up      +/   <*/
    /*---(handle saving pointers)---------*/
    switch (a_dir) {
    case '<'  : *r_inc = -1; *r_end = &(a_map->gprev); *r_use = &(a_map->gpuse); break;
@@ -648,6 +648,7 @@ ymap__load_ends         (tyMAP *a_map, char a_dir)
    /*---(header)-------------------------*/
    DEBUG_YMAP   yLOG_senter  (__FUNCTION__);
    /*---(prepare)------------------------*/
+   DEBUG_YMAP   yLOG_schar   (a_dir);
    rc = ymap__load_ends_prep (a_map, a_dir, &x_grid, &x_cur, &x_inc, &x_end, &x_use);
    DEBUG_YMAP   yLOG_sint    (rc);
    --rce;  if (rc < 0) {
